@@ -13,11 +13,14 @@
 <head>
     <meta charset="utf-8">
     <title>Quality Caps - Contact Us</title>
-    <link rel="stylesheet" type="text/css" href="../css/jquery-ui.css">
-    <link rel="stylesheet" type="text/css" href="../css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../css/jquery-ui.min.css">
+    <link rel="stylesheet" type="text/css" href="../css/jquery-ui.structure.min.css">
+    <link rel="stylesheet" type="text/css" href="../css/jquery-ui.theme.min.css">
+    <link rel="stylesheet" type="text/css" href="../css/Common.css">
     <script type="text/javascript" src="../js/jquery.js"></script>
     <script type="text/javascript" src="../js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="../js/common.js"></script>
 </head>
 
 <body>

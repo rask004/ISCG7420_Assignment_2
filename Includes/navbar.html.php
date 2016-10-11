@@ -22,22 +22,22 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-left" href="/Pages/home.php"><img Height="80" alt="Logo" src="/images/Logo.png"/></a>
+            <a class="navbar-left" href="../Pages/home.php"><img Height="80" alt="Logo" src="../images/Logo.png"/></a>
         </div>
         <div class="navbar-collapse collapse col-sm-8 col-md-9">
             <div class="container-fluid">
                 <div class="row">
                     <ul class="nav navbar-nav">
-                        <li><a style="color: white; text-align: center" href="/Pages/contact.php">Contact Us</a></li>
-                        <li><a id="navbarProfileLink" style="color: white; text-align: center" href="/Pages/profile.php">Register</a></li>
-                        <li><a id="navbarLoginLink" style="color: white; text-align: center" href="/Pages/login.php">Login</a></li>
+                        <li><a style="color: white; text-align: center" href="../Pages/contact.php">Contact Us</a></li>
+                        <li><a id="navbarProfileLink" style="color: white; text-align: center" href="../Pages/profile.php">Register</a></li>
+                        <li><a id="navbarLoginLink" style="color: white; text-align: center" href="../Pages/login.php">Login</a></li>
                     </ul>
                 </div>
                 <div class="row">
                     <ul class="nav navbar-nav">
                         <li><a id="navbarCartClearLink" style="color: white; text-align: center" href="#">Clear Cart</a></li>
-                        <li><a id="navbarCheckoutLink" style="color: white; text-align: center" href="/Pages/checkout.php">Checkout</a></li>
-                        <li><label id="navbarCartTotal">$ 0.00</label></li>
+                        <li><a id="navbarCheckoutLink" style="color: white; text-align: center" href="../Pages/checkout.php">Checkout</a></li>
+                        <li><a id="navbarCartTotal" style="color: white; text-align: center">$ 0.00</li>
                     </ul>
                 </div>
             </div>
