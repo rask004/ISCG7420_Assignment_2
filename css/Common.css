@@ -49,7 +49,9 @@
     border: black solid 1px; 
     height: 86%;
     margin: 4px;
+    margin-top: 60px;
     padding: 1%;
+    color:black;
 }
 
 .AdminSection {

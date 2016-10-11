@@ -14,7 +14,7 @@
 ?>
 
 <a id="navbarProfileLink" style="color: white; text-align: center" href="/Pages/profile.php">Register</a>
-<div class="navbar navbar-inverse navbar-fixed-top">
+<nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
         <div class="navbar-header col-sm-4 col-md-3">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -27,21 +27,21 @@
         <div class="navbar-collapse collapse col-sm-8 col-md-9">
             <div class="container-fluid">
                 <div class="row">
-                    <ul class="nav navbar-nav">
-                        <li><a style="color: white; text-align: center" href="../Pages/contact.php">Contact Us</a></li>
-                        <li><a id="navbarProfileLink" style="color: white; text-align: center" href="../Pages/profile.php">Register</a></li>
-                        <li><a id="navbarLoginLink" style="color: white; text-align: center" href="../Pages/login.php">Login</a></li>
-                    </ul>
-                </div>
-                <div class="row">
-                    <ul class="nav navbar-nav">
-                        <li><a id="navbarCartClearLink" style="color: white; text-align: center" href="#">Clear Cart</a></li>
-                        <li><a id="navbarCheckoutLink" style="color: white; text-align: center" href="../Pages/checkout.php">Checkout</a></li>
-                        <li><a id="navbarCartTotal" style="color: white; text-align: center">$ 0.00</li>
-                    </ul>
+                    <div class="col-sm-12 col-md-12">
+                        <ul class="nav navbar-nav navbar-left">
+                            <li><a style="color: white; text-align: center" href="../Pages/contact.php">Contact Us</a></li>
+                            <li><a id="navbarProfileLink" style="color: white; text-align: center" href="../Pages/profile.php">Register</a></li>
+                            <li><a id="navbarLoginLink" style="color: white; text-align: center" href="../Pages/login.php">Login</a></li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><a id="navbarCartClearLink" style="color: white; text-align: center" href="#">Clear Cart</a></li>
+                            <li><a id="navbarCheckoutLink" style="color: white; text-align: center" href="../Pages/checkout.php">Checkout</a></li>
+                            <li><a id="navbarCartTotal" style="color: white; text-align: center">$ 0.00</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
 
     </div>
-</div>
+</nav>

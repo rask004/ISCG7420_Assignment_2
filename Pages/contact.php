@@ -33,7 +33,196 @@
 
             </div>
             <div id="divCentreSpace" class="col-md-6">
-                <p>This is the contact us page.</p>
+                <div class="container-fluid PageSection">
+                    <div class="row">
+                        <div class="col-xs-0 col-sm-1 col-md-2">
+
+                        </div>
+                        <div class="col-xs-12 col-sm-5 col-md-4">
+                            <p style="float:left">Phone Number:</p>
+                        </div>
+                        <div class="col-xs-12 col-sm-5 col-md-4">
+                            <p style="float:left">99-5555-5555</p>
+                        </div>
+                        <div class="col-xs-0 col-sm-1 col-md-2">
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-0 col-sm-1 col-md-2">
+
+                        </div>
+                        <div class="col-xs-12 col-sm-5 col-md-4">
+                            <p style="float:left">(9am to 5:30pm)</p>
+                        </div>
+                        <div class="col-xs-12 col-sm-5 col-md-4">
+                            <p style="float:left"></p>
+                        </div>
+                        <div class="col-xs-0 col-sm-1 col-md-2">
+
+                        </div>
+                    </div>
+
+                    <br/>
+
+                    <div class="row">
+                        <div class="col-xs-0 col-sm-1 col-md-2">
+
+                        </div>
+                        <div class="col-xs-12 col-sm-5 col-md-4">
+                            <p style="float:left">Fax Number:</p>
+                        </div>
+                        <div class="col-xs-12 col-sm-5 col-md-4">
+                            <p style="float:left">99-5555-6666</p>
+                        </div>
+                        <div class="col-xs-0 col-sm-1 col-md-2">
+
+                        </div>
+                    </div>
+
+                    <br/>
+
+                    <div class="row">
+                        <div class="col-xs-0 col-sm-1 col-md-2">
+
+                        </div>
+                        <div class="col-xs-12 col-sm-5 col-md-4">
+                            <p style="float:left">Sales:</p>
+                        </div>
+                        <div class="col-xs-12 col-sm-5 col-md-4">
+                            <p style="float:left">sales@QualityCaps.co.nz</p>
+                        </div>
+                        <div class="col-xs-0 col-sm-1 col-md-2">
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-0 col-sm-1 col-md-2">
+
+                        </div>
+                        <div class="col-xs-12 col-sm-5 col-md-4">
+                            <p style="float:left">General:</p>
+                        </div>
+                        <div class="col-xs-12 col-sm-5 col-md-4">
+                            <p style="float:left">general@QualityCaps.co.nz</p>
+                        </div>
+                        <div class="col-xs-0 col-sm-1 col-md-2">
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-0 col-sm-1 col-md-2">
+
+                        </div>
+                        <div class="col-xs-12 col-sm-5 col-md-4">
+                            <p style="float:left">IT Support:</p>
+                        </div>
+                        <div class="col-xs-12 col-sm-5 col-md-4">
+                            <p style="float:left">support@QualityCaps.co.nz</p>
+                        </div>
+                        <div class="col-xs-0 col-sm-1 col-md-2">
+
+                        </div>
+                    </div>
+
+                    <br/>
+
+                    <div class="row">
+                        <div class="col-xs-0 col-sm-1 col-md-2">
+
+                        </div>
+                        <div class="col-xs-12 col-sm-5 col-md-4">
+                            <p style="float:left">Mailing Address:</p>
+                        </div>
+                        <div class="col-xs-12 col-sm-5 col-md-4">
+                            <p style="float:left">PO Box 7711</p>
+                        </div>
+                        <div class="col-xs-0 col-sm-1 col-md-2">
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-0 col-sm-1 col-md-2">
+
+                        </div>
+                        <div class="col-xs-12 col-sm-5 col-md-4">
+                            <p style="float:left">44 Simon Says Street</p>
+                        </div>
+                        <div class="col-xs-12 col-sm-5 col-md-4">
+                            <p style="float:left"></p>
+                        </div>
+                        <div class="col-xs-0 col-sm-1 col-md-2">
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-0 col-sm-1 col-md-2">
+
+                        </div>
+                        <div class="col-xs-12 col-sm-5 col-md-4">
+                            <p style="float:left">Sunny Side Suburb</p>
+                        </div>
+                        <div class="col-xs-12 col-sm-5 col-md-4">
+                            <p style="float:left"></p>
+                        </div>
+                        <div class="col-xs-0 col-sm-1 col-md-2">
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-0 col-sm-1 col-md-2">
+
+                        </div>
+                        <div class="col-xs-12 col-sm-5 col-md-4">
+                            <p style="float:left">Auckland</p>
+                        </div>
+                        <div class="col-xs-12 col-sm-5 col-md-4">
+                            <p style="float:left"></p>
+                        </div>
+                        <div class="col-xs-0 col-sm-1 col-md-2">
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-0 col-sm-1 col-md-2">
+
+                        </div>
+                        <div class="col-xs-12 col-sm-5 col-md-4">
+                            <p style="float:left">Postcode:</p>
+                        </div>
+                        <div class="col-xs-12 col-sm-5 col-md-4">
+                            <p style="float:left">9999</p>
+                        </div>
+                        <div class="col-xs-0 col-sm-1 col-md-2">
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-0 col-sm-1 col-md-2">
+
+                        </div>
+                        <div class="col-xs-12 col-sm-5 col-md-4">
+                            <p style="float:left">Country:</p>
+                        </div>
+                        <div class="col-xs-12 col-sm-5 col-md-4">
+                            <p style="float:left">New Zealand</p>
+                        </div>
+                        <div class="col-xs-0 col-sm-1 col-md-2">
+
+                        </div>
+                    </div>
+
+                    <br/>
+
+                </div>
             </div>
             <div id="divRightsidebar" class="col-md-3">
 
