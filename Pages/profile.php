@@ -18,7 +18,7 @@ header("Cache-Control: no-cache");
     <link rel="stylesheet" type="text/css" href="../css/jquery-ui.css">
     <link rel="stylesheet" type="text/css" href="../css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
-    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/jquery.js"></script>
     <script type="text/javascript" src="../js/jquery-ui.min.js"></script>
 </head>
 
