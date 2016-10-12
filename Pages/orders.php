@@ -31,8 +31,51 @@ if (!isset($_SESSION['IsAuthenticated']) || $_SESSION['IsAuthenticated'] != 1)
 </head>
 
 <body>
+    <?php
+        include_once("../Includes/navbar.member.php");
+    ?>
 
-<?= 'This is the orders page' ?>
+    <div class="container-fluid PageContainer">
+
+        <div class="row">
+            <div id="divLeftSidebar" class="col-md-3">
+
+            </div>
+            <div id="divCentreSpace" class="col-md-6">
+                <div class="container-fluid PageSection">
+                    <br/>
+
+                    <div class="row" style="margin: auto 20px">
+                        <div class="col-xs-0 col-sm-4 col-md-3">
+                        </div>
+                        <div class="col-xs-12 col-sm-4 col-md-6 DecoHeader">
+                            <H3>
+                                Orders
+                            </H3>
+                        </div>
+                        <div class="col-xs-0 col-sm-4 col-md-3">
+                        </div>
+                    </div>
+
+                    <br/>
+                    <br/>
+
+                    <div class="row" style="margin-top: 4px">
+
+                    </div>
+                </div>
+            </div>
+            <div id="divRightSidebar" class="col-md-3">
+                <br/>
+                <?php print_r($_SESSION) ?>
+                <br/>
+                <?php print_r($_REQUEST) ?>
+            </div>
+        </div>
+
+    </div>
+
+    <?php include_once("../Includes/footer.php"); ?>
 </body>
 </html>
 

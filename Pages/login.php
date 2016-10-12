@@ -40,7 +40,7 @@ if (isset($_SESSION['IsAuthenticated']) && $_SESSION['IsAuthenticated'] == 1)
 </head>
 
 <body>
-    <?php include_once ("../Includes/navbar.html.php"); ?>
+    <?php include_once("../Includes/navbar.visitor.php"); ?>
 
     <div class="container-fluid PageContainer">
 
@@ -138,7 +138,7 @@ if (isset($_SESSION['IsAuthenticated']) && $_SESSION['IsAuthenticated'] == 1)
         </div>
     </div>
 
-    <?php include_once ("../Includes/footer.html.php"); ?>
+    <?php include_once("../Includes/footer.php"); ?>
 </body>
 </html>
 

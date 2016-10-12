@@ -27,8 +27,19 @@
             </span>
     </div>
 
-    <div class="col-xs-12 col-sm-4 col-md-4" style="color: white">
-        <span id="loginGreeting"></span>
+    <div class="col-xs-12 col-sm-4 col-md-4" style="color: white; text-align: center">
+        <span id="loginGreeting">
+                <?php
+                if (isset($_SESSION['IsAuthenticated']) && $_SESSION['IsAuthenticated'] == 1)
+                {
+                    echo 'Welcome back!';
+                }
+                else
+                {
+                    echo 'Greetings, Visitor!';
+                }
+                ?>
+        </span>
     </div>
 
     <div class="col-xs-12 col-sm-4 col-md-4" style="color: white"><span style="float:right">&copy;Quality Caps LTD.</span></div>

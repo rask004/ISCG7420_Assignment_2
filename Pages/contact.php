@@ -5,6 +5,9 @@
  * Date: 11/10/2016
  * Time: 10:16 PM
  */
+
+include_once('../Includes/Session.php');
+
 ?>
 
 <!doctype html>
@@ -21,7 +24,16 @@
 </head>
 
 <body>
-    <?php include_once ("../Includes/navbar.html.php"); ?>
+    <?php
+        if (isset($_SESSION['IsAuthenticated']) && $_SESSION['IsAuthenticated'] == 1)
+        {
+            include_once("../Includes/navbar.member.php");
+        }
+        else
+        {
+            include_once("../Includes/navbar.visitor.php");
+        }
+    ?>
 
     <div class="container-fluid PageContainer">
 
@@ -248,7 +260,7 @@
     </div>
 
 
-    <?php include_once ("../Includes/footer.html.php"); ?>
+    <?php include_once("../Includes/footer.php"); ?>
 </body>
 </html>
 
