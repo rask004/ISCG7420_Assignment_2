@@ -6,7 +6,7 @@
  * Time: 10:19 PM
  */
 
-include_once('../Includes/Startup.php');
+include_once('../Includes/Session.php');
 
 ?>
 

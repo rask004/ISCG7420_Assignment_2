@@ -6,7 +6,7 @@
  * Time: 10:09 PM
  */
 
-include_once('../Includes/Startup.php');
+include_once('../Includes/Session.php');
 
 // process postback - for testing, currently expect a particular user and pass (not real user).
 if (isset($_POST['inputLogin']) && isset($_POST['inputPassword'])
@@ -18,7 +18,7 @@ if (isset($_POST['inputLogin']) && isset($_POST['inputPassword'])
 }
 
 //  redirect already authenticated users - redirect to home.
-if ($_SESSION['IsAuthenticated'])
+if (isset($_SESSION['IsAuthenticated']) && $_SESSION['IsAuthenticated'] == 1)
 {
     header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/home.php");
     exit;
@@ -131,9 +131,6 @@ if ($_SESSION['IsAuthenticated'])
 
             </div>
             <div id="divRightsidebar" class="col-md-3">
-                <br/>
-                <br/>
-                <p><?php print_r($_POST); ?></p>
                 <br/>
                 <br/>
                 <p><?php print_r($_SESSION); ?></p>

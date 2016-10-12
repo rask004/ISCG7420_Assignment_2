@@ -6,10 +6,8 @@
  * Time: 5:38 PM
  */
 
-
-if (!isset($_SESSION['IsAuthenticated']))
-{
-    $_SESSION['IsAuthenticated'] = 0;
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
 }
 
 ?>

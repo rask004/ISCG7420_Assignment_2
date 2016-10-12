@@ -28,7 +28,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-sm-12 col-md-12">
-                        <ul class="nav navbar-nav navbar-right">
+                        <ul class="nav navbar-nav navbar-left">
                             <li><a style="color: white; text-align: center" href="../Pages/contact.php">Contact Us</a></li>
                             <li><a id="navbarProfileLink" style="color: white; text-align: center" href="../Pages/profile.php">Register</a></li>
                             <li><a id="navbarLoginLink" style="color: white; text-align: center" href="../Pages/login.php">Login</a></li>

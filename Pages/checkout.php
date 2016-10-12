@@ -6,8 +6,14 @@
  * Time: 10:18 PM
  */
 
-header("Cache-Control: no-cache");
-include_once('../Includes/Startup.php');
+include_once('../Includes/Session.php');
+
+// non-authenticated users should not be here.
+if (!isset($_SESSION['IsAuthenticated']) || $_SESSION['IsAuthenticated'] != 1)
+{
+    header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/home.php");
+    exit;
+}
 
 ?>
 

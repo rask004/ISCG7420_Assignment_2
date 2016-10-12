@@ -5,7 +5,6 @@
  * Date: 11/10/2016
  * Time: 10:16 PM
  */
-
 ?>
 
 <!doctype html>
@@ -24,7 +23,7 @@
 <body>
     <?php include_once ("../Includes/navbar.html.php"); ?>
 
-    <div class="container-fluid" style="margin-top: 30px;">
+    <div class="container-fluid PageContainer">
 
         <div class="row">
             <div id="divLeftSidebar" class="col-md-3">
@@ -244,7 +243,6 @@
                 </div>
             </div>
             <div id="divRightsidebar" class="col-md-3">
-
             </div>
         </div>
     </div>

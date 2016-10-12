@@ -6,7 +6,7 @@
  * Time: 10:13 PM
  */
 
-include_once('../Includes/Startup.php');
+include_once('../Includes/Session.php');
 
 ?>
 
@@ -33,3 +33,14 @@ include_once('../Includes/Startup.php');
 </body>
 </html>
 
+
+
+<?php
+    // check if session contains IsAuthenticated and expected value matches.
+    if (isset($_SESSION['IsAuthenticated']) && $_SESSION['IsAuthenticated'] == 1)
+    {
+        // logged in user - change links in nav-bar.
+
+        // logged in user - load data into form, change button behaviour.
+    }
+?>
