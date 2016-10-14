@@ -41,6 +41,44 @@ else
     <link rel="stylesheet" type="text/css" href="../css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="../css/Common.css">
     <script type="text/javascript" src="../js/jquery.js"></script>
+    <script type="text/javascript">
+	
+		function make_form_editable() 
+		{
+				$("#txtFirstName").prop( 'disabled', false);
+				$("#txtLastName").prop( 'disabled', false);
+				$("#txtLogin").prop( 'disabled', false);
+				$("#txtPassword").prop( 'disabled', false);
+				$("#txtHomePhone").prop( 'disabled', false);
+				$("#txtWorkPhone").prop( 'disabled', false);
+				$("#txtMobilePhone").prop( 'disabled', false);
+				$("#txtAddress").prop( 'disabled', false);
+				$("#txtSuburb").prop( 'disabled', false);
+				$("#txtCity").prop( 'disabled', false);
+				$("#submit").prop( 'disabled', false);
+				$("#resetForm").prop( 'hidden', false);
+				$("#btnEditForm").prop( 'hidden', true);
+		}
+
+
+		function reset_form() 
+		{
+				$("#txtFirstName").prop( 'disabled', true);
+				$("#txtLastName").prop( 'disabled', true);
+				$("#txtLogin").prop( 'disabled', true);
+				$("#txtPassword").prop( 'disabled', true);
+				$("#txtHomePhone").prop( 'disabled', true);
+				$("#txtWorkPhone").prop( 'disabled', true);
+				$("#txtMobilePhone").prop( 'disabled', true);
+				$("#txtAddress").prop( 'disabled', true);
+				$("#txtSuburb").prop( 'disabled', true);
+				$("#txtCity").prop( 'disabled', true);
+				$("#submit").prop( 'disabled', true);
+				$("#resetForm").prop( 'hidden', true);
+				$("#btnEditForm").prop( 'hidden', false);
+		}
+			
+    </script>
 </head>
 
 <body>
@@ -257,11 +295,12 @@ else
                             {
                                 $submitValue = 'Save';
 
-                                echo '<div class="col-xs-12 col-sm-3 col-md-3">' .
-                                    '<input type="button" id="btnEditProfile" value="Edit" />' .
+                                echo '<div class="col-xs-6 col-sm-3 col-md-3">' .
+                                    '<input type="button" id="btnEditForm" onclick="make_form_editable();" value="Edit" />' .
+									'<input type="reset" value="Reset" hidden id="resetForm" onclick="reset_form();" />' .
                                     '</div>' .
-                                    '<div class="col-xs-6 col-sm-2 col-md-2">' .
-                                    '<input name="reset" type="reset" id="resetProfile" />' .
+                                    '<div class="col-xs-12 col-sm-2 col-md-2">' .
+									'<a href="../Pages/orders.php">Orders</a>' .
                                     '</div>' ;
                             }
                             else
@@ -269,7 +308,7 @@ else
                                 $submitValue = 'Register';
 
                                 echo '<div class="col-xs-6 col-sm-3 col-md-3">' .
-                                    '<input type="reset" name="reset" id="resetRegister" />' .
+                                    '<input type="reset" value="Reset" id="resetRegister" />' .
                                     '</div>' .
                                     '<div class="col-xs-0 col-sm-2 col-md-2">' .
                                     '</div>';
@@ -295,41 +334,7 @@ else
             </div>
 
         </div>
-        <script type="text/javascript">
-            $(document).ready(function()
-            {
-                $("#resetProfile").click(function() {
-                    $("#txtFirstName").prop( 'disabled', true);
-                    $("#txtLastName").prop( 'disabled', true);
-                    $("#txtLogin").prop( 'disabled', true);
-                    $("#txtPassword").prop( 'disabled', true);
-                    $("#txtHomePhone").prop( 'disabled', true);
-                    $("#txtWorkPhone").prop( 'disabled', true);
-                    $("#txtMobilePhone").prop( 'disabled', true);
-                    $("#txtAddress").prop( 'disabled', true);
-                    $("#txtSuburb").prop( 'disabled', true);
-                    $("#txtCity").prop( 'disabled', true);
-                    $("#btnEditProfile").prop( 'disabled', false);
-                    $("#submit").prop( 'disabled', true);
-                });
-
-                $("#btnEditProfile").click(function() {
-                    $("#txtFirstName").prop( 'disabled', false);
-                    $("#txtLastName").prop( 'disabled', false);
-                    $("#txtLogin").prop( 'disabled', false);
-                    $("#txtPassword").prop( 'disabled', false);
-                    $("#txtHomePhone").prop( 'disabled', false);
-                    $("#txtWorkPhone").prop( 'disabled', false);
-                    $("#txtMobilePhone").prop( 'disabled', false);
-                    $("#txtAddress").prop( 'disabled', false);
-                    $("#txtSuburb").prop( 'disabled', false);
-                    $("#txtCity").prop( 'disabled', false);
-                    $("#btnEditProfile").prop( 'disabled', true);
-                    $("#submit").prop( 'disabled', false);
-
-                });
-            });
-        </script>
+        
 
     </form>
 
