@@ -17,7 +17,6 @@ class DataManager
 	private function _buildTables()
 	{
 		$this->_openConnection();
-		//$this->_conn->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
 		
 		if(!$this->_conn->query("create table if not exists `SiteUser`(`id` int UNSIGNED AUTO_INCREMENT primary key, `login`   varchar(64)    not null, " .
                             "`passwordhash`    varchar(64)    not null, `userType`    char(1)     not null, `emailAddress`    varchar(100)   not null, " .
@@ -25,74 +24,52 @@ class DataManager
                             "`lastName`    varchar(32), `streetAddress`   varchar(64), `suburb`      varchar(24), `city`        varchar(16), " .
                             "`isDisabled`  BIT(1)    not null DEFAULT 0 );"))
 		{
-			echo 'Siteuser Creation failed';
 			echo ($this->_conn->errno . "; " . $this->_conn->error);
 		}
 		
 
-        if(!$this->_conn->query("create table if not exists CustomerOrder(`id` int UNSIGNED AUTO_INCREMENT primary key, `userId`  int not null, " .
-                           "`status` varchar(7) not null DEFAULT 'waiting', `datePlaced` datetime not null DEFAULT NOW()".
-						   "Foreign Key (`userId`) References `SiteUser`(`id`));"))
+        if(!$this->_conn->query("create table if not exists CustomerOrder(`id` int UNSIGNED AUTO_INCREMENT primary key, `userId` int UNSIGNED not null, " .
+                           "`status` varchar(7) not null DEFAULT 'waiting', `datePlaced` datetime not null, ".
+						   "CONSTRAINT fk_OrderCustomer Foreign Key (`userId`) References `SiteUser`(`id`));"))
 		{
-			echo 'CustomerOrder Creation failed';
 			echo ($this->_conn->errno . "; " . $this->_conn->error);
 		}
 		
 
-        if(!$this->_conn->query("create table if not exists `Supplier`(`id` int UNSIGNED AUTO_INCREMENT primary key, `name`    varchar(32)    not null, " .
-                            "`homeNumber`   varchar(11)    null, `worknumber`   varchar(11)    null, " .
-                            "`mobileNumber` varchar(13)    null, `emailAddress`    varchar(64)    not null);"))
+        if(!$this->_conn->query("create table if not exists `Supplier`(`id` int UNSIGNED AUTO_INCREMENT primary key, `name` varchar(32) not null, " .
+                            "`homeNumber`   varchar(11) null, `worknumber` varchar(11) null, " .
+                            "`mobileNumber` varchar(13) null, `emailAddress` varchar(64) not null);"))
 		{
-			echo 'Supplier Creation failed';
 			echo ($this->_conn->errno . "; " . $this->_conn->error);
 		}
 		
 
-        if(!$this->_conn->query("create table if not exists `Category`(`id` int UNSIGNED AUTO_INCREMENT primary key, `name`    varchar(40)    not null); "))
+        if(!$this->_conn->query("create table if not exists `Category`(`id` int UNSIGNED AUTO_INCREMENT primary key, `name` varchar(40) not null); "))
 		{
-			echo 'Category Creation failed';
 			echo ($this->_conn->errno . "; " . $this->_conn->error);
 		}
 		
 
         if(!$this->_conn->query("create table if not exists `Cap`(`id` int UNSIGNED AUTO_INCREMENT primary key, `name`    varchar(40)    not null, " .
-                            "`price`    real UNSIGNED    not null, `description` varchar(512)   not null, `imageUrl` varchar(96) not null, " .
-                            "`supplierId` int UNSIGNED     not null,    " .
-                            "`categoryId`  int UNSIGNED     not null,    " . "CONSTRAINT fk_supplier Foreign Key (`supplierId`) References  `Supplier`(`id`), CONSTRAINT fk_category Foreign Key (`categoryId`) References `Category`(`id`)); "))
+                            "`price` real UNSIGNED not null, `description` varchar(512)   not null, `imageUrl` varchar(96) not null, " .
+                            "`supplierId` int UNSIGNED not null,    " .
+                            "`categoryId` int UNSIGNED not null,    " . 
+							"CONSTRAINT fk_supplier Foreign Key (`supplierId`) References  `Supplier`(`id`), " .
+							"CONSTRAINT fk_category Foreign Key (`categoryId`) References `Category`(`id`)); "))
 		{
-			echo 'Cap Creation failed';
 			echo ($this->_conn->errno . "; " . $this->_conn->error);
 		}
 		
 
-        if(!$this->_conn->query("create table if not exists `OrderItem`(`orderId`     int UNSIGNED      not null , " .
-                                                       "`capId`       int UNSIGNED     not null, " .
-                                                       "`quantity`    smallint UNSIGNED    not null, " .
-                                                       "Constraint  orderItem_pk    Primary Key(`capId`, `orderId`),".
-													   "CONSTRAINT fk_OrderOrderItem Foreign Key (`orderId`) References `CustomerOrder`(`id`)". 
+        if(!$this->_conn->query("create table if not exists `OrderItem`(`orderId` int UNSIGNED not null , " .
+                                                       "`capId` int UNSIGNED not null, " .
+                                                       "`quantity` smallint UNSIGNED not null, " .
+                                                       "Constraint orderItem_pk Primary Key(`capId`, `orderId`), ".
+													   "CONSTRAINT fk_OrderOrderItem Foreign Key (`orderId`) References `CustomerOrder`(`id`), ". 
 													   "CONSTRAINT fk_capOrderItem Foreign Key (`capId`) References `Cap`(`id`)); "))
 		{
-			echo 'OrderItem Creation failed';
 			echo ($this->_conn->errno . "; " . $this->_conn->error);
 		}
-		
-		/*
-		if (!$this->_conn->commit())
-		{
-			echo 'Table construction failed.<br/>';
-		}
-		else 
-		{
-			$results = $this->_conn->query("SHOW TABLES;");
-			$rows = $results->fetch_all();
-			$results->free();
-			
-			foreach ($rows as $row) 
-			{
-				print_r($row);	
-			}
-		}
-		*/
 														  
 		$this->_closeConnection();
 	}
@@ -129,13 +106,15 @@ class DataManager
 			$data = $this->_conn->fetch_assoc($result);
 			$next_order_id = $data['auto_increment'];
 			
+			$now = new DateTime();
+			
 			$this->_conn->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
 			// create the customer order.
-			$sql = "insert into CustomerOrder (id, userId) values (".$next_order_id.",".$customer_id.");";
+			$sql = "insert into CustomerOrder (id, userId, datePlaced) values (".$next_order_id.",".$customer_id.",".$now->format('Y-m-d H:i:s').");";
 			$this->_conn->query($sql);
 
 			// create each new order item, using the order id.
-			$sql = "insert into OrderItem (orderId, capId, quantity) values ";			
+			$sql = "insert into OrderItem (orderId, capId, quantity ) values ";			
 			$first_item = true;
 			foreach ($cap_quantity_list as $cap_item)
 			{
@@ -233,4 +212,306 @@ class DataManager
 	}
 	
 	//TODO: do retrieval functions.	
+	
+	/*
+		request one customer, using an id.
+	*/
+	public function selectSingleCustomer(int $id)
+	{
+		$this->_openConnection();	
+		
+		$query_result = $this->_conn->query("Select * from SiteUser where UserType='C' and id=" . $id . ";");
+		
+		// of cannot find such a customer, return an empty array.
+		$customer = array();
+		
+		if ($query_result->num_rows > 0)
+		{
+			// only fetch the first customer found, if multiple customers found.
+			// as ID is PK and unique, assumed that multiple customers will never be returned.
+			
+			$customer = $query_result->fetch_array(MYSQLI_BOTH);
+		}
+		
+		$query_result->free();
+		
+		$this->_closeConnection();	
+		
+		return $customer;	
+	}
+	
+	/*
+		request one customer, using a login.
+	*/
+	public function selectSingleCustomerByLogin(string $login)
+	{
+		$this->_openConnection();	
+		
+		$query_result = $this->_conn->query("Select * from SiteUser where UserType='C' and login=" . $login . ";");
+		
+		// of cannot find such a customer, return an empty array.
+		$customer = array();
+		
+		if ($query_result->num_rows > 0)
+		{
+			// only fetch the first customer found, if multiple customers found.
+			// as ID is PK and unique, assumed that multiple customers will never be returned.
+			
+			$customer = $query_result->fetch_array(MYSQLI_BOTH);
+		}
+		
+		$query_result->free();
+		
+		$this->_closeConnection();	
+		
+		return $customer;	
+	}
+	
+	/*
+		check for matching customer, using a login or email
+	*/
+	public function matchCustomerByLogin(string $login)
+	{
+		$this->_openConnection();	
+		
+		$query_result = $this->_conn->query("Select * from SiteUser where UserType='C' and login=" . $login . ";");
+		
+		// of cannot find such a customer, return an empty array.
+		$match = false;
+		
+		if ($query_result->num_rows > 0)
+		{
+			$match = true;
+		}
+		
+		$query_result->free();
+		
+		$this->_closeConnection();	
+		
+		return $match;	
+	}
+	
+	/*
+		check for matching customer, using a login or email
+	*/
+	public function matchCustomerByEmail(string $email)
+	{
+		$this->_openConnection();	
+		
+		$query_result = $this->_conn->query("Select * from SiteUser where UserType='C' and email=" . $email . ";");
+		
+		// of cannot find such a customer, return an empty array.
+		$match = false;
+		
+		if ($query_result->num_rows > 0)
+		{
+			$match = true;
+		}
+		
+		$query_result->free();
+		
+		$this->_closeConnection();	
+		
+		return $match;	
+	}
+	
+	/*
+		request one customer, using an id.
+	*/
+	public function selectSingleAdmin(int $id)
+	{
+		$this->_openConnection();	
+		
+		$query_result = $this->_conn->query("Select * from SiteUser where UserType='A' and id=" . $id . ";");
+		
+		// of cannot find such a customer, return an empty array.
+		$customer = array();
+		
+		if ($query_result->num_rows > 0)
+		{
+			// only fetch the first customer found, if multiple customers found.
+			// as ID is PK and unique, assumed that multiple customers will never be returned.
+			
+			$customer = $query_result->fetch_array(MYSQLI_BOTH);
+		}
+		
+		$query_result->free();
+		
+		$this->_closeConnection();	
+		
+		return $customer;	
+	}
+	
+	/*
+		request one customer, using an id.
+	*/
+	public function selectSingleAdminByLogin(string $login)
+	{
+		$this->_openConnection();	
+		
+		$query_result = $this->_conn->query("Select * from SiteUser where UserType='A' and login=" . $login . ";");
+		
+		// of cannot find such a customer, return an empty array.
+		$customer = array();
+		
+		if ($query_result->num_rows > 0)
+		{
+			// only fetch the first customer found, if multiple customers found.
+			// as ID is PK and unique, assumed that multiple customers will never be returned.
+			
+			$customer = $query_result->fetch_array(MYSQLI_BOTH);
+		}
+		
+		$query_result->free();
+		
+		$this->_closeConnection();	
+		
+		return $customer;	
+	}
+	
+	/*
+		check for matching customer, using a login or email
+	*/
+	public function matchAdminByLogin(string $login)
+	{
+		$this->_openConnection();	
+		
+		$query_result = $this->_conn->query("Select * from SiteUser where UserType='A' and login=" . $login . ";");
+		
+		// of cannot find such a customer, return an empty array.
+		$match = false;
+		
+		if ($query_result->num_rows > 0)
+		{
+			$match = true;
+		}
+		
+		$query_result->free();
+		
+		$this->_closeConnection();	
+		
+		return $match;	
+	}
+	
+	/*
+		get all categories with associated products. use LIMIT.
+	*/
+	public function selectAvailableCategoriesWithLimit(int $limit_start, int $limit_length)
+	{
+		if ($limit_length < 1 ) 
+		{
+			$limit_length = 1;
+		}
+		if ($limit_start < 0 ) 
+		{
+			$limit_start = 0;
+		}
+		
+		$this->_openConnection();	
+		
+		$query_result = $this->_conn->query("Select * from `category` WHERE id in (select distinct categoryId from cap) LIMIT "
+		. $limit_start . ", " . $limit_length . ";");
+		
+		$available_categories = array();
+		
+		if ($query_result->num_rows > 0)
+		{
+			while ($row = $query_result->fetch_array(MYSQLI_BOTH))
+			{
+					$available_categories[] = $row;
+			}
+		}
+		
+		$query_result->free();
+		
+		$this->_closeConnection();	
+		
+		return $available_categories;	
+	}
+	
+	/*
+		get all products for a category, using the categoryId. use LIMIT.
+	*/
+	public function selectCapsbyCategoryIdWithLimit(int $categoryId, int $limit_start, int $limit_length)
+	{
+		if ($limit_length < 1) 
+		{
+			$limit_length = 1;
+		}
+		if ($limit_start < 0 ) 
+		{
+			$limit_start = 0;
+		}
+		
+		$this->_openConnection();	
+		
+		$query_result = $this->_conn->query("Select * from `cap` WHERE categoryId = " . $categoryId . " LIMIT "
+		. $limit_start . ", " . $limit_length . ";");
+		
+		$caps = array();
+		
+		if ($query_result->num_rows > 0)
+		{
+			while ($row = $query_result->fetch_array(MYSQLI_BOTH))
+			{
+					$caps[] = $row;
+			}
+		}
+		
+		$query_result->free();
+		
+		$this->_closeConnection();	
+		
+		return $caps;	
+	}
+	
+	/*
+		get a single cap.
+	*/
+	public function selectSingleCap(int $capId)
+	{
+		$this->_openConnection();	
+		
+		$query_result = $this->_conn->query("Select * from `cap` WHERE id = " . $capId . ";");
+		
+		$cap = array();
+		
+		if ($query_result->num_rows > 0)
+		{
+			$cap = $query_result->fetch_array(MYSQLI_BOTH));
+		}
+		
+		$query_result->free();
+		
+		$this->_closeConnection();	
+		
+		return $cap;	
+	}
+	
+	/*
+		get all orders and orderitems for a customer. use LIMIT.
+	*/
+	public function selectOrderswithItemsBycustomer(int $customerId, int $limit_start, int $limit_length)
+	{
+		$this->_openConnection();	
+		
+		$query_result = $this->_conn->query("Select id, userId, status, datePlaced, capId, quantity from `CustomerOrder` co JOIN `OrderItem`" .
+						" oi ON oi.`OrderId`=co.`id` WHERE userId=" . $customerId . ";");
+		
+		$orders = array();
+		
+		if ($query_result->num_rows > 0)
+		{
+			while ($row = $query_result->fetch_array(MYSQLI_BOTH))
+			{
+				$orders[] = $row;			
+			}
+		}
+		
+		$query_result->free();
+		
+		$this->_closeConnection();	
+		
+		return $cap;	
+	}
 }
