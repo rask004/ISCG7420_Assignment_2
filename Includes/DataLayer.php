@@ -154,7 +154,7 @@ class DataManager
 		$this->_openConnection();	
 		$this->_conn->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
 		
-		$sql =  "insert into SiteUser (firstName, lastName, login, passwordhash, email, homenumber, worknumber, mobilenumber," .
+		$sql =  "insert into SiteUser (firstName, lastName, login, passwordhash, emailAddress, homenumber, worknumber, mobilenumber," .
 				" streetaddress, suburb, city) values ('".$first_name."','".$last_name."','".$login."','".$password_hash."','".$email."','" .
 				$home_number."','".$work_number."','".$mobile_number."','".$street_address."','".$suburb."','".$city."');";
 		$this->_conn->query($sql);
@@ -179,7 +179,7 @@ class DataManager
 		$this->_conn->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
 		
 		$sql =  "update SiteUser set firstName='".$first_name."', set lastName='".$last_name."', set login='".$login."'," .
-		" set email='".$email."', set homenumber='".$home_number."', set worknumber='".$work_number."', set mobilenumber='".$mobile_number."',". 
+		" set emailAddress='".$email."', set homenumber='".$home_number."', set worknumber='".$work_number."', set mobilenumber='".$mobile_number."',". 
 		" set streetaddress='".$street_address."', set suburb='".$suburb."', set city='".$city."' " .
 		" where id=" . $id . ";";
 		$this->_conn->query($sql);
@@ -211,18 +211,19 @@ class DataManager
 		$this->_closeConnection();								
 	}
 	
-	//TODO: do retrieval functions.	
-	
 	/*
 		request one customer, using an id.
 	*/
-	public function selectSingleCustomer(int $id)
+	public function selectSingleCustomer( $id)
 	{
 		$this->_openConnection();	
 		
-		$query_result = $this->_conn->query("Select * from SiteUser where UserType='C' and id=" . $id . ";");
+		if (!$query_result = $this->_conn->query("Select * from SiteUser where UserType='C' and id=" . $id . ";"))
+		{
+			//TODO: should stop, rollback and redirect to error page if an error occurs.
+		}
 		
-		// of cannot find such a customer, return an empty array.
+		// if cannot find such a customer, return an empty array.
 		$customer = array();
 		
 		if ($query_result->num_rows > 0)
@@ -230,10 +231,13 @@ class DataManager
 			// only fetch the first customer found, if multiple customers found.
 			// as ID is PK and unique, assumed that multiple customers will never be returned.
 			
-			$customer = $query_result->fetch_array(MYSQLI_BOTH);
+			$customer = $query_result->fetch_assoc();
 		}
 		
-		$query_result->free();
+		if ($query_result)
+		{
+			$query_result->free();
+		}
 		
 		$this->_closeConnection();	
 		
@@ -243,11 +247,14 @@ class DataManager
 	/*
 		request one customer, using a login.
 	*/
-	public function selectSingleCustomerByLogin(string $login)
+	public function selectSingleCustomerByLogin( $login)
 	{
 		$this->_openConnection();	
 		
-		$query_result = $this->_conn->query("Select * from SiteUser where UserType='C' and login=" . $login . ";");
+		if (!$query_result = $this->_conn->query("Select * from SiteUser where UserType='C' and login='" . $login . "';"))
+		{
+			//TODO: should stop, rollback and redirect to error page if an error occurs.
+		}
 		
 		// of cannot find such a customer, return an empty array.
 		$customer = array();
@@ -257,10 +264,13 @@ class DataManager
 			// only fetch the first customer found, if multiple customers found.
 			// as ID is PK and unique, assumed that multiple customers will never be returned.
 			
-			$customer = $query_result->fetch_array(MYSQLI_BOTH);
+			$customer = $query_result->fetch_assoc();
 		}
 		
-		$query_result->free();
+		if ($query_result)
+		{
+			$query_result->free();
+		}
 		
 		$this->_closeConnection();	
 		
@@ -270,11 +280,14 @@ class DataManager
 	/*
 		check for matching customer, using a login or email
 	*/
-	public function matchCustomerByLogin(string $login)
+	public function matchCustomerByLogin( $login)
 	{
 		$this->_openConnection();	
 		
-		$query_result = $this->_conn->query("Select * from SiteUser where UserType='C' and login=" . $login . ";");
+		if (!$query_result = $this->_conn->query("Select * from SiteUser where UserType='C' and login='" . $login . "';"))
+		{
+			//TODO: should stop, rollback and redirect to error page if an error occurs.
+		}
 		
 		// of cannot find such a customer, return an empty array.
 		$match = false;
@@ -284,7 +297,10 @@ class DataManager
 			$match = true;
 		}
 		
-		$query_result->free();
+		if ($query_result)
+		{
+			$query_result->free();
+		}
 		
 		$this->_closeConnection();	
 		
@@ -294,11 +310,14 @@ class DataManager
 	/*
 		check for matching customer, using a login or email
 	*/
-	public function matchCustomerByEmail(string $email)
+	public function matchCustomerByEmail( $email)
 	{
 		$this->_openConnection();	
 		
-		$query_result = $this->_conn->query("Select * from SiteUser where UserType='C' and email=" . $email . ";");
+		if (!$query_result = $this->_conn->query("Select * from SiteUser where UserType='C' and emailAddress='" . $email . "';"))
+		{
+			//TODO: should stop, rollback and redirect to error page if an error occurs.
+		}
 		
 		// of cannot find such a customer, return an empty array.
 		$match = false;
@@ -308,7 +327,10 @@ class DataManager
 			$match = true;
 		}
 		
-		$query_result->free();
+		if ($query_result)
+		{
+			$query_result->free();
+		}
 		
 		$this->_closeConnection();	
 		
@@ -318,11 +340,14 @@ class DataManager
 	/*
 		request one customer, using an id.
 	*/
-	public function selectSingleAdmin(int $id)
+	public function selectSingleAdmin( $id)
 	{
 		$this->_openConnection();	
 		
-		$query_result = $this->_conn->query("Select * from SiteUser where UserType='A' and id=" . $id . ";");
+		if (!$query_result = $this->_conn->query("Select * from SiteUser where UserType='A' and id=" . $id . ";"))
+		{
+			//TODO: should stop, rollback and redirect to error page if an error occurs.
+		}
 		
 		// of cannot find such a customer, return an empty array.
 		$customer = array();
@@ -332,10 +357,13 @@ class DataManager
 			// only fetch the first customer found, if multiple customers found.
 			// as ID is PK and unique, assumed that multiple customers will never be returned.
 			
-			$customer = $query_result->fetch_array(MYSQLI_BOTH);
+			$customer = $query_result->fetch_assoc();
 		}
 		
-		$query_result->free();
+		if ($query_result)
+		{
+			$query_result->free();
+		}
 		
 		$this->_closeConnection();	
 		
@@ -345,11 +373,14 @@ class DataManager
 	/*
 		request one customer, using an id.
 	*/
-	public function selectSingleAdminByLogin(string $login)
+	public function selectSingleAdminByLogin( $login)
 	{
 		$this->_openConnection();	
 		
-		$query_result = $this->_conn->query("Select * from SiteUser where UserType='A' and login=" . $login . ";");
+		if (!$query_result = $this->_conn->query("Select * from SiteUser where UserType='A' and login='" . $login . "';"))
+		{
+			//TODO: should stop, rollback and redirect to error page if an error occurs.
+		}
 		
 		// of cannot find such a customer, return an empty array.
 		$customer = array();
@@ -359,10 +390,13 @@ class DataManager
 			// only fetch the first customer found, if multiple customers found.
 			// as ID is PK and unique, assumed that multiple customers will never be returned.
 			
-			$customer = $query_result->fetch_array(MYSQLI_BOTH);
+			$customer = $query_result->fetch_assoc();
 		}
 		
-		$query_result->free();
+		if ($query_result)
+		{
+			$query_result->free();
+		}
 		
 		$this->_closeConnection();	
 		
@@ -372,11 +406,14 @@ class DataManager
 	/*
 		check for matching customer, using a login or email
 	*/
-	public function matchAdminByLogin(string $login)
+	public function matchAdminByLogin( $login)
 	{
 		$this->_openConnection();	
 		
-		$query_result = $this->_conn->query("Select * from SiteUser where UserType='A' and login=" . $login . ";");
+		if (!$query_result = $this->_conn->query("Select * from SiteUser where UserType='A' and login='" . $login . "';"))
+		{
+			//TODO: should stop, rollback and redirect to error page if an error occurs.
+		}
 		
 		// of cannot find such a customer, return an empty array.
 		$match = false;
@@ -386,7 +423,10 @@ class DataManager
 			$match = true;
 		}
 		
-		$query_result->free();
+		if ($query_result)
+		{
+			$query_result->free();
+		}
 		
 		$this->_closeConnection();	
 		
@@ -396,7 +436,7 @@ class DataManager
 	/*
 		get all categories with associated products. use LIMIT.
 	*/
-	public function selectAvailableCategoriesWithLimit(int $limit_start, int $limit_length)
+	public function selectAvailableCategoriesWithLimit( $limit_start,  $limit_length)
 	{
 		if ($limit_length < 1 ) 
 		{
@@ -409,20 +449,27 @@ class DataManager
 		
 		$this->_openConnection();	
 		
-		$query_result = $this->_conn->query("Select * from `category` WHERE id in (select distinct categoryId from cap) LIMIT "
-		. $limit_start . ", " . $limit_length . ";");
+		if (!$query_result = $this->_conn->query("Select * from `category` WHERE `id` in (select distinct `categoryId` from `cap`) order by id, name LIMIT "
+		. $limit_start . ", " . $limit_length . ";"))
+		{
+			//TODO: should stop, rollback and redirect to error page if an error occurs.
+
+		}
 		
 		$available_categories = array();
 		
 		if ($query_result->num_rows > 0)
 		{
-			while ($row = $query_result->fetch_array(MYSQLI_BOTH))
+			while ($row = $query_result->fetch_assoc())
 			{
 					$available_categories[] = $row;
 			}
 		}
 		
-		$query_result->free();
+		if ($query_result)
+		{
+			$query_result->free();
+		}
 		
 		$this->_closeConnection();	
 		
@@ -432,7 +479,7 @@ class DataManager
 	/*
 		get all products for a category, using the categoryId. use LIMIT.
 	*/
-	public function selectCapsbyCategoryIdWithLimit(int $categoryId, int $limit_start, int $limit_length)
+	public function selectCapsbyCategoryIdWithLimit( $categoryId,  $limit_start,  $limit_length)
 	{
 		if ($limit_length < 1) 
 		{
@@ -445,20 +492,26 @@ class DataManager
 		
 		$this->_openConnection();	
 		
-		$query_result = $this->_conn->query("Select * from `cap` WHERE categoryId = " . $categoryId . " LIMIT "
-		. $limit_start . ", " . $limit_length . ";");
+		if (!$query_result = $this->_conn->query("Select * from `cap` WHERE `categoryId` = " . $categoryId . " order by categoryId, id LIMIT "
+		. $limit_start . ", " . $limit_length . ";"))
+		{
+			//TODO: should stop, rollback and redirect to error page if an error occurs.
+		}
 		
 		$caps = array();
 		
 		if ($query_result->num_rows > 0)
 		{
-			while ($row = $query_result->fetch_array(MYSQLI_BOTH))
+			while ($row = $query_result->fetch_assoc())
 			{
 					$caps[] = $row;
 			}
 		}
 		
-		$query_result->free();
+		if ($query_result)
+		{
+			$query_result->free();
+		}
 		
 		$this->_closeConnection();	
 		
@@ -468,20 +521,26 @@ class DataManager
 	/*
 		get a single cap.
 	*/
-	public function selectSingleCap(int $capId)
+	public function selectSingleCap( $capId)
 	{
 		$this->_openConnection();	
 		
-		$query_result = $this->_conn->query("Select * from `cap` WHERE id = " . $capId . ";");
+		if (!$query_result = $this->_conn->query("Select * from `cap` WHERE `id` = " . $capId . ";"))
+		{
+			//TODO: should stop, rollback and redirect to error page if an error occurs.
+		}
 		
 		$cap = array();
 		
 		if ($query_result->num_rows > 0)
 		{
-			$cap = $query_result->fetch_array(MYSQLI_BOTH));
+			$cap = $query_result->fetch_assoc();
 		}
 		
-		$query_result->free();
+		if ($query_result)
+		{
+			$query_result->free();
+		}
 		
 		$this->_closeConnection();	
 		
@@ -491,27 +550,33 @@ class DataManager
 	/*
 		get all orders and orderitems for a customer. use LIMIT.
 	*/
-	public function selectOrderswithItemsBycustomer(int $customerId, int $limit_start, int $limit_length)
+	public function selectOrderswithItemsByCustomer( $customerId,  $limit_start,  $limit_length)
 	{
 		$this->_openConnection();	
 		
-		$query_result = $this->_conn->query("Select id, userId, status, datePlaced, capId, quantity from `CustomerOrder` co JOIN `OrderItem`" .
-						" oi ON oi.`OrderId`=co.`id` WHERE userId=" . $customerId . ";");
+		if (!$query_result = $this->_conn->query("Select id, userId, status, datePlaced, capId, quantity from `CustomerOrder` co JOIN `OrderItem`" .
+						" oi ON oi.`OrderId`=co.`id` WHERE userId=" . $customerId . " order by status, datePlaced, capId, quantity;"))
+		{
+			//TODO: should stop, rollback and redirect to error page if an error occurs.
+		}
 		
 		$orders = array();
 		
 		if ($query_result->num_rows > 0)
 		{
-			while ($row = $query_result->fetch_array(MYSQLI_BOTH))
+			while ($row = $query_result->fetch_assoc())
 			{
 				$orders[] = $row;			
 			}
 		}
 		
-		$query_result->free();
+		if ($query_result)
+		{
+			$query_result->free();
+		}
 		
 		$this->_closeConnection();	
 		
-		return $cap;	
+		return $orders;	
 	}
 }
