@@ -7,7 +7,7 @@
  */
  
  
-include('../Includes/Common.php');
+include_once('../Includes/Common.php');
 
 ?>
 

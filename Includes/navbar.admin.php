@@ -28,19 +28,15 @@
                 <div class="row">
                     <div class="col-sm-12 col-md-12">
                         <ul class="nav navbar-nav navbar-left">
-                            <li><a style="color: white; text-align: center" href="../Pages/contact.php">Contact Us</a></li>
-                            <li><a id="navbarProfileLink" style="color: white; text-align: center" href="../Pages/profile.php">Profile</a></li>
-                            <li><a id="navbarLogoutLink" style="color: white; text-align: center" href="../Pages/logout.php">Logout</a></li>
-
+                            <li><a style="color: white; text-align: center" href="#">File Administration</a></li>
                         </ul>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-sm-12 col-md-12">
                         <ul class="nav navbar-nav navbar-left">
-                            <li><a id="navbarCartClearLink" style="color: white; text-align: center" href="#">Clear Cart</a></li>
-                            <li><a id="navbarCheckoutLink" style="color: white; text-align: center" href="../Pages/checkout.php">Checkout</a></li>
-                            <li><a id="navbarCartTotal" style="color: white; text-align: center">$ 0.00</a></li>
+                            <li><a id="navbarLogoutLink" style="color: white; text-align: center" href="../Pages/logout.php">Logout</a></li>
+
                         </ul>
                     </div>
                 </div>

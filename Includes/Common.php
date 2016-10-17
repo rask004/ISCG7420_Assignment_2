@@ -15,27 +15,35 @@ class Security
 	public static $SessionUserLoginKey = "UserLogin";
 	public static $SessionUserIdKey = "UserId";
 	public static $SessionAuthenticationKey = "IsAuthenticated";
+	public static $SessionAdminCheckKey = "IsAdmin";
 	
 	public static $SessionCartArrayKey = "ShoppingCart";
 	
 	private static $_CryptoSaltLength = 16;
 	
 	private static $_CryptoPassMaxLength = 48;
-	private static $_CryptoPassRandomLetters = 'abcdefghijklmnopqrstuvwxyzQAZXSWEDCVFRTGBNHYUJMKILOP1234567890!@#^&_+,.' ;
+	private static $_CryptoRandomAlphaNumeric = 'abcdefghijklmnopqrstuvwxyzQAZXSWEDCVFRTGBNHYUJMKILOP1234567890!@#^&_+,.' ;
 	
 	
 	public static function getRandomSalt()
 	{
-		return bin2hex(random_bytes(self::$_CryptoSaltLength));
+		$salt = '';
+		$max = strlen(self::$_CryptoRandomAlphaNumeric) - 1;
+		for($i = 0; $i < self::$_CryptoSaltLength; $i++)
+		{
+			$salt .= self::$_CryptoRandomAlphaNumeric[rand(0, $max)];
+		}
+		
+		return $salt;
 	}
 	
 	public static function getRandomPassword()
 	{
 		$pass = '';
-		$max = strlen(self::$_CryptoPassRandomLetters) - 1;
+		$max = strlen(self::$_CryptoRandomAlphaNumeric) - 1;
 		for($i = 0; $i < self::$_CryptoPassMaxLength; $i++)
 		{
-			$pass .= self::$_CryptoPassRandomLetters[rand(0, $max)];
+			$pass .= self::$_CryptoRandomAlphaNumeric[rand(0, $max)];
 		}
 		
 		return $pass;
@@ -43,10 +51,8 @@ class Security
 	
 	public static function generatePasswordHash($password, $salt)
 	{
-		$hash = '';
-		
+		$hash = hash_hmac( 'sha256', $password, $salt);
 		return $hash;
-		
 	}
 	
 }

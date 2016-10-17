@@ -5,13 +5,15 @@
  * Date: 15/10/2016
  * Time: 14:24 PM
  */
+ 
+ namespace BusinessLayer;
+ 
 
 require_once('DataLayer.php');
+require_once('Common.php');
 
-namespace BusinessLayer;
 
-// Caps business object.
-
+// Customer management business object.
 class CustomerManager
 {
 	private $_data_manager;	
@@ -21,39 +23,133 @@ class CustomerManager
 		$this->_data_manager = new \DataLayer\DataManager;
 	}
 	
-	// TODO: add functionality for managing customers.
-	
+	/*
+		Register a new customer.
+	*/
 	function RegisterCustomer($first_name, $last_name, $login, $password, $email, $home_number, 
 									$work_number, $mobile_number, $street_address, $suburb, $city)
 	{
+		if ($this->findMatchingLogin($login) || $this->findMatchingEmail($email))
+		{
+			return false;	
+		}
 		
+		$salt = \Common\Security::getRandomSalt();
+		while ($this->_data_manager->matchesUsedSalt($salt))
+		{
+			$salt = \Common\Security::getRandomSalt();
+		}
+		
+		$hash = \Common\Security::generatePasswordHash($password, $salt);
+		
+		$this->_data_manager->insertCustomer($first_name, $last_name, $login, $salt, $hash, $email, $home_number, $work_number,
+										$mobile_number, $street_address, $suburb, $city);
+										
+		return true;
 	}
 	
+	/*
+		Update the profile of a customer.
+		The customer must exist.
+		The password hash and salt are NOT updated here. See "UpdatePassword(...)" for password changes.
+	*/
 	function UpdateProfile($first_name, $last_name, $login, $email, $home_number, 
 									$work_number, $mobile_number, $street_address, $suburb, $city, $id)
 	{
+		if ($this->findMatchingLogin($login) || $this->findMatchingEmail($email))
+		{
+			return false;	
+		}
 		
+		$this->_data_manager->updateCustomerButNotPassword($first_name, $last_name, $login, $email, $home_number, 
+									$work_number, $mobile_number, $street_address, $suburb, $city, $id);
+		
+		return true;
 	}
 	
+	/*
+		given a customer id, update the password with a new hash and randomised salt.
+	*/
+	function UpdatePassword($password, $id)
+	{
+		$salt = \Common\Security::getRandomSalt();
+		while ($this->_data_manager->matchesUsedSalt($salt))
+		{
+			$salt = \Common\Security::getRandomSalt();
+		}
+		
+		$hash = \Common\Security::generatePasswordHash($password, $salt);
+		
+		$this->_data_manager->updateCustomerPasswordOnly($salt, $hash, $id);
+	}
+	
+	/*
+		check that a supplied email matches an actual customer
+	*/
 	function findMatchingEmail($email)
 	{
+		if ($this->_data_manager->matchCustomerByEmail($email))
+		{
+			return true;
+		}
 		
+		return false;
 	}
 	
+	/*
+		check that a supplied login matches an actual customer
+	*/
 	function findMatchingLogin($login)
 	{
+		if ($this->_data_manager->matchCustomerByLogin($login))
+		{
+			return true;
+		}
 		
+		return false;
 	}
 	
+	/*
+		retrieve a customer using their id.
+		can return an empty array if customer does not exist.
+	*/
 	function findCustomer($id)
 	{
-		
+		return $this->_data_manager->selectSingleCustomer($id);
 	}
 	
+	/*
+		retrieve a customer using their login.
+		can return an empty array if customer does not exist.
+	*/
 	function findCustomerByLogin($login)
 	{
-		
+		return $this->_data_manager->selectSingleCustomerByLogin($login);
 	}
 	
+	/*
+		check that a supplied login and password matches an actual customer
+	*/
+	function checkMatchingPasswordForCustomerLogin($login, $password)
+	{
+		// there is no match if there is no customer.
+		if (!$this->findMatchingLogin($login))
+		{
+			return false;
+		}
+		
+		$data = $this->_data_manager->requestCustomerPasswordSaltAndHash($login);
+		$salt = $data['passwordsalt'];
+		$expected_hash = $data['passwordhash'];
+		
+		$comparison_hash = \Common\Security::generatePasswordHash($password, $salt);
+		
+		if ($comparison_hash === $expected_hash)
+		{
+			return true;	
+		}
+		
+		return false;
+	}	
 	
 }

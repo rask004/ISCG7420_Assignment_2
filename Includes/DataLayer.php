@@ -159,7 +159,7 @@ class DataManager
 	/*
 		generate a new customer. It is assumed the login and email are unique, but this is not constrained.
 	*/
-	public function insertCustomer($first_name, $last_name, $login, $password_hash, $email, $home_number, 
+	public function insertCustomer($first_name, $last_name, $login, $salt, $password_hash, $email, $home_number, 
 									$work_number, $mobile_number, $street_address, $suburb, $city)
 	{
 		$this->_openConnection();	
@@ -175,12 +175,14 @@ class DataManager
 		$suburb = $this->_conn->real_escape_string($suburb);	
 		$city = $this->_conn->real_escape_string($city);	
 		$password_hash = $this->_conn->real_escape_string($password_hash);	
+		$salt = $this->_conn->real_escape_string($salt);	
 		
 		$this->_conn->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
 		
-		$sql =  "insert into SiteUser (firstName, lastName, login, passwordhash, emailAddress, homenumber, worknumber, mobilenumber," .
-				" streetaddress, suburb, city) values ('".$first_name."','".$last_name."','".$login."','".$password_hash."','".$email."','" .
-				$home_number."','".$work_number."','".$mobile_number."','".$street_address."','".$suburb."','".$city."');";
+		$sql =  "insert into SiteUser (userType, firstName, lastName, login, passwordsalt, passwordhash, emailAddress," .
+				" homenumber, worknumber, mobilenumber, streetaddress, suburb, city) values " .
+				"('C', '".$first_name."','".$last_name."','".$login."','".$salt."','".$password_hash."','".$email.
+				"','" .$home_number."','".$work_number."','".$mobile_number."','".$street_address."','".$suburb."','".$city."');";
 		$this->_conn->query($sql);
 		
 		if (!$this->_conn->commit())
@@ -218,7 +220,7 @@ class DataManager
 		$sql =  "update SiteUser set firstName='".$first_name."', set lastName='".$last_name."', set login='".$login."'," .
 		" set emailAddress='".$email."', set homenumber='".$home_number."', set worknumber='".$work_number."', set mobilenumber='".$mobile_number."',". 
 		" set streetaddress='".$street_address."', set suburb='".$suburb."', set city='".$city."' " .
-		" where id=" . $id . ";";
+		" where userType='C' AND id=" . $id . ";";
 		$this->_conn->query($sql);
 		
 		if (!$this->_conn->commit())
@@ -232,16 +234,17 @@ class DataManager
 	/*
 		update an existing customer's password hash.
 	*/
-	public function updateCustomerPasswordOnly($hash, $id)
+	public function updateCustomerPasswordOnly($salt, $hash, $id)
 	{
 		$this->_openConnection();	
 		
 		$id = (integer) $id;
+		$salt = $this->_conn->real_escape_string($salt);	
 		$hash = $this->_conn->real_escape_string($hash);	
 		
 		$this->_conn->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
 		
-		$sql =  "update SiteUser set passwordhash='".$hash."' where id=" . $id . ";";
+		$sql =  "update SiteUser set passwordsalt='".$salt."', passwordhash='".$hash."' where userType='C' AND id=" . $id . ";";
 		$this->_conn->query($sql);
 		
 		if (!$this->_conn->commit())
@@ -323,7 +326,7 @@ class DataManager
 	}
 	
 	/*
-		check for matching customer, using a login or email
+		check for matching customer, using a login
 	*/
 	public function matchCustomerByLogin( $login)
 	{
@@ -336,7 +339,6 @@ class DataManager
 			//TODO: should stop, rollback and redirect to error page if an error occurs.
 		}
 		
-		// of cannot find such a customer, return an empty array.
 		$match = false;
 		
 		if ($query_result->num_rows > 0)
@@ -355,7 +357,7 @@ class DataManager
 	}
 	
 	/*
-		check for matching customer, using a login or email
+		check for matching customer, using email
 	*/
 	public function matchCustomerByEmail( $email)
 	{
@@ -368,7 +370,6 @@ class DataManager
 			//TODO: should stop, rollback and redirect to error page if an error occurs.
 		}
 		
-		// of cannot find such a customer, return an empty array.
 		$match = false;
 		
 		if ($query_result->num_rows > 0)
@@ -649,26 +650,24 @@ class DataManager
 	}
 	
 	/*
-		get all orders and orderitems for a customer. use LIMIT.
+		check a given password salt is not in use
 	*/
-	public function selectUsedSalts()
+	public function matchesUsedSalt($salt)
 	{
 		$this->_openConnection();	
 		
-		if (!$query_result = $this->_conn->query("Select id, userId, status, datePlaced, capId, quantity from `CustomerOrder` co JOIN `OrderItem`" .
-						" oi ON oi.`OrderId`=co.`id` WHERE userId=" . $customerId . " order by status, datePlaced, capId, quantity;"))
+		$salt = $this->_conn->real_escape_string($salt);
+		
+		$matches = false;	
+		
+		if (!$query_result = $this->_conn->query("Select 1 FROM `SiteUser` WHERE passwordsalt='" . $salt . "';"))
 		{
 			//TODO: should stop, rollback and redirect to error page if an error occurs.
 		}
 		
-		$salts = array();
-		
 		if ($query_result->num_rows > 0)
 		{
-			while ($row = $query_result->fetch_assoc())
-			{
-				$orders[] = $row;			
-			}
+			$matches = true;
 		}
 		
 		if ($query_result)
@@ -677,5 +676,69 @@ class DataManager
 		}
 		
 		$this->_closeConnection();	
+		
+		return $matches;
+	}
+	
+	/*
+		given a customer login, retrieve the salt and hash for this user.
+	*/
+	public function requestAdminPasswordSaltAndHash($login)
+	{
+		$this->_openConnection();
+		
+		$data = array();
+		
+		$login = $this->_conn->real_escape_string($login);
+		
+		if (!$query_result = $this->_conn->query("Select passwordsalt, passwordhash FROM `SiteUser` where UserType='A' and login='" . $login . "';"))
+		{
+			//TODO: should stop, rollback and redirect to error page if an error occurs.
+		}
+		
+		if ($query_result->num_rows > 0)
+		{
+			$data = $query_result->fetch_assoc();
+		}
+		
+		if ($query_result)
+		{
+			$query_result->free();
+		}
+		
+		$this->_closeConnection();	
+		
+		return $data;
+	}
+	
+	/*
+		given a customer login, retrieve the salt and hash for this user.
+	*/
+	public function requestCustomerPasswordSaltAndHash($login)
+	{
+		$this->_openConnection();
+		
+		$data = array();
+		
+		$login = $this->_conn->real_escape_string($login);
+		
+		if (!$query_result = $this->_conn->query("Select * FROM `siteuser` WHERE userType='C' and login='" . $login . "';"))
+		{
+			//TODO: should stop, rollback and redirect to error page if an error occurs.
+		}
+		
+		if ($query_result->num_rows > 0)
+		{
+			$data = $query_result->fetch_assoc();
+		}
+		
+		if ($query_result)
+		{
+			$query_result->free();
+		}
+		
+		$this->_closeConnection();	
+		
+		return $data;
 	}
 }

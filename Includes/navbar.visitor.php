@@ -13,7 +13,6 @@
 
 ?>
 
-<a id="navbarProfileLink" style="color: white; text-align: center" href="/Pages/profile.php">Register</a>
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
         <div class="navbar-header col-sm-4 col-md-3">
