@@ -97,7 +97,7 @@
 		echo '<div class="container-fluid">'.
 		'<table>'.
 		'<tr>';
-		foreach (array_values($test_values) as $value)
+		foreach ($test_values as $key => $value)
 		{
 			echo '<th style="border: solid black 1px">' . $value . '</th>';
 		}
@@ -118,7 +118,7 @@
     
     <?php
 		$matches = array();
-		$test_values = array("rolandjamesaskew37@gmail.com", "'; select * from siteuser; -- ", "AskewR04@myunitec.ac.nz", 7, true);
+		$test_values = array("rolandjamesaskew37@gmail.com", "'; delete from blahblah; -- ", "AskewR04@myunitec.ac.nz", 7, true);
 		foreach ($test_values as $value)
 		{
 			$matches[] = $dataManager->matchCustomerByEmail($value);
@@ -389,34 +389,42 @@
     <H4>Select Orders, customer id = 2</H4>
     
     <?php
-		$orderitems = $dataManager->selectOrderswithItemsByCustomer(2, 0, 2000);
+		$orderitems = $dataManager->selectOrdersWithItemsByCustomer(2, 0, 2000);
 		$headers = array();
-		foreach (array_keys($orderitems[0]) as $key)
+		if (count($orderitems) == 0)
 		{
-			$headers[] = $key;
+			echo '<div class="container-fluid"><p>There are no order items to show.</p></div>';
 		}
-		
-		echo '<div class="container-fluid">'.
-			'<table>';
-			
-		echo '<tr>';
-		foreach (array_values($headers) as $key)
+		else
 		{
-			echo '<th style="border: solid black 1px">' . $key . '</th>';
-		}
-		echo '</tr>';
-			
-		foreach($orderitems as $item)
-		{
-			echo '<tr>';
-			foreach (array_values($item) as $value)
+			foreach (array_keys($orderitems[0]) as $key)
 			{
-				echo '<td style="border: solid black 1px">' . $value . '</td>';
+				$headers[] = $key;
+			}
+			
+			echo '<div class="container-fluid">'.
+				'<table>';
+				
+			echo '<tr>';
+			foreach (array_values($headers) as $key)
+			{
+				echo '<th style="border: solid black 1px">' . $key . '</th>';
 			}
 			echo '</tr>';
+				
+			foreach($orderitems as $item)
+			{
+				echo '<tr>';
+				foreach (array_values($item) as $value)
+				{
+					echo '<td style="border: solid black 1px">' . $value . '</td>';
+				}
+				echo '</tr>';
+			}
+			
+			echo '</table></div>';
 		}
 		
-		echo '</table></div>';
 	?>
     
     <br/>

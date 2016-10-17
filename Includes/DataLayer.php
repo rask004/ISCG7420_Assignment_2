@@ -98,8 +98,10 @@ class DataManager
 	{		
 		// there must be caps to generate orderitems from. if not, do nothing.
 		if ( count( $cap_quantity_list) > 0 ) 
-		{
+		{		
 			$this->_openConnection();
+			
+			$id = (integer) $id;
 			
 			// need to know the orderid. request a new order id first.
 			$result = $this->_conn->query("SHOW TABLE STATUS LIKE 'CustomerOrder'");
@@ -127,6 +129,9 @@ class DataManager
 				{
 					$sql .= ",(";
 				}
+					
+				$cap_item["capId"] = (integer) $cap_item["capId"];	
+				$cap_item["quantity"] = (integer) $cap_item["quantity"];	
 				
 				$sql .= $next_order_id . "," . $cap_item["capId"] . "," . $cap_item["quantity"] . ")";
 			}
@@ -152,6 +157,19 @@ class DataManager
 									$work_number, $mobile_number, $street_address, $suburb, $city)
 	{
 		$this->_openConnection();	
+		
+		$first_name = $this->_conn->real_escape_string($first_name);	
+		$last_name = $this->_conn->real_escape_string($last_name);	
+		$login = $this->_conn->real_escape_string($login);	
+		$email = $this->_conn->real_escape_string($email);	
+		$home_number = $this->_conn->real_escape_string($home_number);	
+		$work_number = $this->_conn->real_escape_string($work_number);	
+		$mobile_number = $this->_conn->real_escape_string($mobile_number);	
+		$street_address = $this->_conn->real_escape_string($street_address);	
+		$suburb = $this->_conn->real_escape_string($suburb);	
+		$city = $this->_conn->real_escape_string($city);	
+		$password_hash = $this->_conn->real_escape_string($password_hash);	
+		
 		$this->_conn->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
 		
 		$sql =  "insert into SiteUser (firstName, lastName, login, passwordhash, emailAddress, homenumber, worknumber, mobilenumber," .
@@ -175,7 +193,20 @@ class DataManager
 	public function updateCustomerButNotPassword($first_name, $last_name, $login, $email, $home_number, 
 									$work_number, $mobile_number, $street_address, $suburb, $city, $id)
 	{
-		$this->_openConnection();	
+		$this->_openConnection();
+		
+		$first_name = $this->_conn->real_escape_string($first_name);	
+		$last_name = $this->_conn->real_escape_string($last_name);	
+		$login = $this->_conn->real_escape_string($login);	
+		$email = $this->_conn->real_escape_string($email);	
+		$home_number = $this->_conn->real_escape_string($home_number);	
+		$work_number = $this->_conn->real_escape_string($work_number);	
+		$mobile_number = $this->_conn->real_escape_string($mobile_number);	
+		$street_address = $this->_conn->real_escape_string($street_address);	
+		$suburb = $this->_conn->real_escape_string($suburb);	
+		$city = $this->_conn->real_escape_string($city);	
+		$id = (integer) $id;
+			
 		$this->_conn->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
 		
 		$sql =  "update SiteUser set firstName='".$first_name."', set lastName='".$last_name."', set login='".$login."'," .
@@ -198,6 +229,10 @@ class DataManager
 	public function updateCustomerPasswordOnly($hash, $id)
 	{
 		$this->_openConnection();	
+		
+		$id = (integer) $id;
+		$hash = $this->_conn->real_escape_string($hash);	
+		
 		$this->_conn->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
 		
 		$sql =  "update SiteUser set passwordhash='".$hash."' where id=" . $id . ";";
@@ -217,6 +252,8 @@ class DataManager
 	public function selectSingleCustomer( $id)
 	{
 		$this->_openConnection();	
+		
+		$id = (integer) $id;
 		
 		if (!$query_result = $this->_conn->query("Select * from SiteUser where UserType='C' and id=" . $id . ";"))
 		{
@@ -251,6 +288,8 @@ class DataManager
 	{
 		$this->_openConnection();	
 		
+		$login = $this->_conn->real_escape_string($login);	
+		
 		if (!$query_result = $this->_conn->query("Select * from SiteUser where UserType='C' and login='" . $login . "';"))
 		{
 			//TODO: should stop, rollback and redirect to error page if an error occurs.
@@ -282,7 +321,9 @@ class DataManager
 	*/
 	public function matchCustomerByLogin( $login)
 	{
-		$this->_openConnection();	
+		$this->_openConnection();
+		
+		$login = $this->_conn->real_escape_string($login);		
 		
 		if (!$query_result = $this->_conn->query("Select * from SiteUser where UserType='C' and login='" . $login . "';"))
 		{
@@ -312,7 +353,9 @@ class DataManager
 	*/
 	public function matchCustomerByEmail( $email)
 	{
-		$this->_openConnection();	
+		$this->_openConnection();
+		
+		$email = $this->_conn->real_escape_string($email);	
 		
 		if (!$query_result = $this->_conn->query("Select * from SiteUser where UserType='C' and emailAddress='" . $email . "';"))
 		{
@@ -343,6 +386,8 @@ class DataManager
 	public function selectSingleAdmin( $id)
 	{
 		$this->_openConnection();	
+		
+		$id = (integer) $id;
 		
 		if (!$query_result = $this->_conn->query("Select * from SiteUser where UserType='A' and id=" . $id . ";"))
 		{
@@ -377,6 +422,8 @@ class DataManager
 	{
 		$this->_openConnection();	
 		
+		$login = $this->_conn->real_escape_string($login);	
+		
 		if (!$query_result = $this->_conn->query("Select * from SiteUser where UserType='A' and login='" . $login . "';"))
 		{
 			//TODO: should stop, rollback and redirect to error page if an error occurs.
@@ -410,6 +457,8 @@ class DataManager
 	{
 		$this->_openConnection();	
 		
+		$login = $this->_conn->real_escape_string($login);	
+		
 		if (!$query_result = $this->_conn->query("Select * from SiteUser where UserType='A' and login='" . $login . "';"))
 		{
 			//TODO: should stop, rollback and redirect to error page if an error occurs.
@@ -438,6 +487,9 @@ class DataManager
 	*/
 	public function selectAvailableCategoriesWithLimit( $limit_start,  $limit_length)
 	{
+		$limit_start = (integer) $limit_start;
+		$limit_length = (integer) $limit_length;
+		
 		if ($limit_length < 1 ) 
 		{
 			$limit_length = 1;
@@ -449,8 +501,8 @@ class DataManager
 		
 		$this->_openConnection();	
 		
-		if (!$query_result = $this->_conn->query("Select * from `category` WHERE `id` in (select distinct `categoryId` from `cap`) order by id, name LIMIT "
-		. $limit_start . ", " . $limit_length . ";"))
+		if (!$query_result = $this->_conn->query("Select * from `category` WHERE `id` in (select distinct `categoryId` from `cap`) order by id," .
+		" name LIMIT " . $limit_start . ", " . $limit_length . ";"))
 		{
 			//TODO: should stop, rollback and redirect to error page if an error occurs.
 
@@ -481,6 +533,10 @@ class DataManager
 	*/
 	public function selectCapsbyCategoryIdWithLimit( $categoryId,  $limit_start,  $limit_length)
 	{
+		$limit_start = (integer) $limit_start;
+		$limit_length = (integer) $limit_length;
+		$categoryId = (integer) $categoryId;
+		
 		if ($limit_length < 1) 
 		{
 			$limit_length = 1;
@@ -523,6 +579,8 @@ class DataManager
 	*/
 	public function selectSingleCap( $capId)
 	{
+		$capId = (integer) $capId;
+		
 		$this->_openConnection();	
 		
 		if (!$query_result = $this->_conn->query("Select * from `cap` WHERE `id` = " . $capId . ";"))
@@ -550,8 +608,12 @@ class DataManager
 	/*
 		get all orders and orderitems for a customer. use LIMIT.
 	*/
-	public function selectOrderswithItemsByCustomer( $customerId,  $limit_start,  $limit_length)
+	public function selectOrdersWithItemsByCustomer( $customerId,  $limit_start,  $limit_length)
 	{
+		$limit_start = (integer) $limit_start;
+		$limit_length = (integer) $limit_length;
+		$customerId = (integer) $customerId;
+		
 		$this->_openConnection();	
 		
 		if (!$query_result = $this->_conn->query("Select id, userId, status, datePlaced, capId, quantity from `CustomerOrder` co JOIN `OrderItem`" .
