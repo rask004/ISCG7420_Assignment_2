@@ -7,6 +7,7 @@
  */
 
 include_once('../Includes/Session.php');
+include('../Includes/Common.php');
 
 ?>
 
@@ -25,7 +26,7 @@ include_once('../Includes/Session.php');
 
 <body>
     <?php
-    if (isset($_SESSION['IsAuthenticated']) && $_SESSION['IsAuthenticated'] == 1)
+    if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
     {
         include_once("../Includes/navbar.member.php");
     }

@@ -7,18 +7,19 @@
  */
 
 include_once('../Includes/Session.php');
+include('../Includes/Common.php');
 
 // process postback - for testing, currently expect a particular user and pass (not real user).
 if (isset($_POST['inputLogin']) && isset($_POST['inputPassword'])
     && $_POST['inputLogin'] == 'test__login' && $_POST['inputPassword'] == 'test__password')
 {
-    $_SESSION['IsAuthenticated'] = 1;
-    $_SESSION['CustomerLogin']  = 'test__login';
-    $_SESSION['CustomerID'] = 1;
+    $_SESSION[\Common\Security::$SessionAuthenticationKey] = 1;
+    $_SESSION[\Common\Security::$SessionUserLoginKey]  = 'test__login';
+    $_SESSION[\Common\Security::$SessionUserIdKey] = 3;
 }
 
 //  redirect already authenticated users - redirect to home.
-if (isset($_SESSION['IsAuthenticated']) && $_SESSION['IsAuthenticated'] == 1)
+if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
 {
     header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/home.php");
     exit;
@@ -46,7 +47,7 @@ if (isset($_SESSION['IsAuthenticated']) && $_SESSION['IsAuthenticated'] == 1)
 
         <div class="row">
             <div id="divLeftSidebar" class="col-md-3">
-
+				<?php print_r(hash_algos()); ?>
             </div>
             <div id="divCentreSpace" class="col-md-6">
 
@@ -131,9 +132,9 @@ if (isset($_SESSION['IsAuthenticated']) && $_SESSION['IsAuthenticated'] == 1)
 
             </div>
             <div id="divRightsidebar" class="col-md-3">
-                <br/>
-                <br/>
-                <p><?php print_r($_SESSION); ?></p>
+            	<?php 
+					var_dump(bin2hex(random_bytes(16)));
+				?>
             </div>
         </div>
     </div>
