@@ -7,8 +7,9 @@
  */
 
 include_once('../Includes/Session.php');
+include('../Includes/Common.php');
 
-if (isset($_SESSION['IsAuthenticated']) && $_SESSION['IsAuthenticated'] == 1)
+if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
 {
     $isDisabled = 'disabled';
 }
@@ -25,7 +26,7 @@ else
     <meta charset="utf-8">
     <title>Quality Caps -
         <?php
-        if (isset($_SESSION['IsAuthenticated']) && $_SESSION['IsAuthenticated'] == 1)
+        if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
         {
             echo 'Profile';
         }
@@ -83,7 +84,7 @@ else
 
 <body>
     <?php
-    if (isset($_SESSION['IsAuthenticated']) && $_SESSION['IsAuthenticated'] == 1)
+    if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
     {
         include_once("../Includes/navbar.member.php");
     }
@@ -111,7 +112,7 @@ else
                             <div class="col-xs-12 col-sm-4 col-md-6 DecoHeader">
                                 <H3>
                                     <?php
-                                        if (isset($_SESSION['IsAuthenticated']) && $_SESSION['IsAuthenticated'] == 1)
+                                        if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
                                         {
                                             echo 'Profile';
                                         }
@@ -137,7 +138,7 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <?php
-                                if (isset($_SESSION['IsAuthenticated']) && $_SESSION['IsAuthenticated'] == 1)
+                                if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
                                 {
                                     $memberFirstName = 'MyFirstName';
                                 }
@@ -291,7 +292,7 @@ else
 
                             </div>
                             <?php
-                            if (isset($_SESSION['IsAuthenticated']) && $_SESSION['IsAuthenticated'] == 1)
+                            if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
                             {
                                 $submitValue = 'Save';
 

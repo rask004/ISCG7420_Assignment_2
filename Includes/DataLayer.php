@@ -8,8 +8,12 @@
 
 namespace DataLayer;
 
-// Database interaction object.
-
+/*
+ *	Database interaction object.
+ *  User: Roland
+ 
+ *  Completed: 17/10/2016 14:24 PM
+ */
 class DataManager
 {
 	private $_conn;
@@ -93,6 +97,8 @@ class DataManager
 	
 	/*
 		given a customer id and a list of caps with quantities, insert a new order.
+		Only the cap Id and quantity is required for each order item. thus for simplicity, treat 
+			capIds as array keys and quantities as array values.
 	*/
 	public function insertOrder( $customer_id, array $cap_quantity_list) 
 	{		
@@ -118,7 +124,7 @@ class DataManager
 			// create each new order item, using the order id.
 			$sql = "insert into OrderItem (orderId, capId, quantity ) values ";			
 			$first_item = true;
-			foreach ($cap_quantity_list as $cap_item)
+			foreach ($cap_quantity_list as $capId => $quantity)
 			{
 				if ($first_item) 
 				{
@@ -130,10 +136,10 @@ class DataManager
 					$sql .= ",(";
 				}
 					
-				$cap_item["capId"] = (integer) $cap_item["capId"];	
-				$cap_item["quantity"] = (integer) $cap_item["quantity"];	
+				$capId = (integer) $capId;	
+				$quantity = (integer) $quantity;	
 				
-				$sql .= $next_order_id . "," . $cap_item["capId"] . "," . $cap_item["quantity"] . ")";
+				$sql .= $next_order_id . "," . $capId . "," . $quantity . ")";
 			}
 			
 			$sql .= ";";
@@ -640,5 +646,36 @@ class DataManager
 		$this->_closeConnection();	
 		
 		return $orders;	
+	}
+	
+	/*
+		get all orders and orderitems for a customer. use LIMIT.
+	*/
+	public function selectUsedSalts()
+	{
+		$this->_openConnection();	
+		
+		if (!$query_result = $this->_conn->query("Select id, userId, status, datePlaced, capId, quantity from `CustomerOrder` co JOIN `OrderItem`" .
+						" oi ON oi.`OrderId`=co.`id` WHERE userId=" . $customerId . " order by status, datePlaced, capId, quantity;"))
+		{
+			//TODO: should stop, rollback and redirect to error page if an error occurs.
+		}
+		
+		$salts = array();
+		
+		if ($query_result->num_rows > 0)
+		{
+			while ($row = $query_result->fetch_assoc())
+			{
+				$orders[] = $row;			
+			}
+		}
+		
+		if ($query_result)
+		{
+			$query_result->free();
+		}
+		
+		$this->_closeConnection();	
 	}
 }

@@ -1,24 +1,16 @@
-<?php  
+<?php  	
+	ini_set('display_errors', '1');
+	
 	include_once( '../Includes/DataLayer.php');  
 	
-	ini_set('display_errors', '1');
+	include_once( '../Includes/Common.php');
 ?>
 	
 <!doctype html>
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Quality Caps -
-        <?php
-			if (isset($_SESSION['IsAuthenticated']) && $_SESSION['IsAuthenticated'] == 1)
-			{
-				echo 'Profile';
-			}
-			else
-			{
-				echo 'Register';
-			}
-        ?>
+    <title>Quality Caps - TESTING
     </title>
     <link rel="stylesheet" type="text/css" href="../css/jquery-ui.css">
     <link rel="stylesheet" type="text/css" href="../css/jquery-ui.structure.css">

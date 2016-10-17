@@ -5,6 +5,9 @@
  * Date: 11/10/2016
  * Time: 10:50 PM
  */
+ 
+ 
+include('../Includes/Common.php');
 
 ?>
 
@@ -30,7 +33,7 @@
     <div class="col-xs-12 col-sm-4 col-md-4" style="color: white; text-align: center">
         <span id="loginGreeting">
                 <?php
-                if (isset($_SESSION['IsAuthenticated']) && $_SESSION['IsAuthenticated'] == 1)
+                if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
                 {
                     echo 'Welcome back!';
                 }
