@@ -1,0 +1,38 @@
+﻿body {
+    width: 100%;
+    height: 100%;
+    background-color: #ffffe0
+}
+
+#imgLogo {
+    border: black solid 2px;
+}
+
+.DecoSubHeader {
+    border-top: 1px black solid;
+    border-bottom: 1px black solid;
+    font-family: "Arial", sans-serif, monospace;
+    font-size:1.0em;
+    text-align: center;
+}
+
+.DecoHeader {
+    border-top: 2px black solid;
+    border-bottom: 2px black solid;
+    font-family: "Arial", sans-serif, monospace;
+    font-size:1.2em;
+    text-align: center;
+}
+
+.PageContainer {
+    margin-top: 80px;
+}
+
+.PageSection {
+    background-color: #ffffff;
+    border: black solid 1px;
+    margin: 4px;
+    padding: 4px;
+    color:black;
+}
+
