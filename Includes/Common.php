@@ -57,3 +57,7 @@ class Security
 	
 }
 
+class Constants
+{
+	public static $RegistrationSubmitKeyword= "Register";	
+}

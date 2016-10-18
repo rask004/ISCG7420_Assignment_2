@@ -22,7 +22,12 @@
 <body>
 	<div style="overflow-x:scroll">
 
-	<?php $dataManager = new \DataLayer\DataManager; ?>
+	<?php 
+		$dataManager = new \DataLayer\DataManager; 
+	
+		echo		'<br/>';
+		print_r(preg_grep ("/^[a-zA-Z0-9.,']*/", str_split("abcdef051&.'#D%HU+")));
+	?>
     
     <H4>Select Single Customer, ID: 2</H4>
     

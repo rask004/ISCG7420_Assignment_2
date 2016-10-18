@@ -9,6 +9,42 @@
 include_once('../Includes/Session.php');
 include('../Includes/Common.php');
 
+$PostRegisterKey = \Common\Constants::$RegistrationSubmitKeyword;
+
+if (isset($_POST["submit"]) && $_POST["submit"] == $PostRegisterKey)
+{
+	foreach( $_POST as $key => $value)
+	{
+		// prevent any sql injection by removing key symbols.
+		if ($key != "txtPassword")
+		{
+			$_POST[$key] = str_replace(array("(", ")", ";", "%", "=", "<", ">"), "", $value);	
+		}
+	}
+	
+	$isValid = false;
+	
+	if ($isValid)
+	{
+		include_once("../Includes/BusinessLayer.php");
+	
+		$customerManager = new \BusinessLayer\CustomerManager;
+		
+		if($customerManager->RegisterCustomer($_POST["txtFirstName"], $_POST["txtLastName"], $_POST["txtLogin"], $_POST["txtPassword"],
+			$_POST["txtEmail"], $_POST["txtHomePhone"], $_POST["txtWorkPhone"], $_POST["txtMobilePhone"], $_POST["txtAddress"],
+			$_POST["txtSuburb"], $_POST["txtCity"]))	
+		{
+				
+		}
+		else
+		{
+			
+		}
+	}
+	
+	
+}
+
 if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && isset($_SESSION[\Common\Security::$SessionAdminCheckKey]))
 {
     header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/AdminFiles.php");
@@ -145,16 +181,11 @@ else
                                 <label style="float: left" for="txtFirstName">First Name:</label>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
-                                <?php
-                                if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
-                                {
-                                    $memberFirstName = 'MyFirstName';
-                                }
-                                ?>
+                                
                                 <input style="float: left; width:100%" id="txtFirstName"
                                        name="txtFirstName"
                                        <?= $isDisabled ?>
-                                       required value="<?= $memberFirstName ?>" type="text" />
+                                       required maxlength="32" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -168,7 +199,21 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtLastName"
-                                       name="txtLastName" <?= $isDisabled ?> required type="text" />
+                                       name="txtLastName" <?= $isDisabled ?> required maxlength="32" type="text" />
+                            </div>
+                            <div class="col-xs-0 col-sm-1 col-md-2">
+                            </div>
+                        </div>
+                        
+                        <div class="row" style="margin-top: 4px">
+                            <div class="col-xs-0 col-sm-1 col-md-2">
+                            </div>
+                            <div class="col-xs-12 col-sm-4 col-md-4">
+                                <label style="float: left" for="txtEmail">Email:</label>
+                            </div>
+                            <div class="col-xs-12 col-sm-6 col-md-4">
+                                <input style="float: left; width:100%" id="txtEmail"
+                                       name="txtEmail" <?= $isDisabled ?> required minlength="5" maxlength="100" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -184,7 +229,7 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtLogin"
-                                       name="txtLogin" <?= $isDisabled ?> required minlength="8" type="text" />
+                                       name="txtLogin" <?= $isDisabled ?> required minlength="8" maxlength="32" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -214,7 +259,7 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtHomePhone"
-                                       name="txtHomePhone" <?= $isDisabled ?> required type="text" />
+                                       name="txtHomePhone" <?= $isDisabled ?> required minlength="8" maxlength="10"  type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -228,7 +273,7 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtWorkPhone"
-                                       name="txtWorkPhone" <?= $isDisabled ?> required type="text" />
+                                       name="txtWorkPhone" <?= $isDisabled ?> required minlength="8" maxlength="10" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -242,7 +287,7 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtMobilePhone"
-                                       name="txtMobilePhone" <?= $isDisabled ?> required type="text" />
+                                       name="txtMobilePhone" <?= $isDisabled ?> required minlength="9" maxlength="11" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -258,7 +303,7 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtAddress"
-                                       name="txtAddress" <?= $isDisabled ?> required type="text" />
+                                       name="txtAddress" <?= $isDisabled ?> required  minlength="3" maxlength="48" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -272,7 +317,7 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtSuburb"
-                                       name="txtSuburb" <?= $isDisabled ?> required type="text" />
+                                       name="txtSuburb" <?= $isDisabled ?> required maxlength="24" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -286,7 +331,7 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtCity"
-                                       name="txtCity" <?= $isDisabled ?> required type="text" />
+                                       name="txtCity" <?= $isDisabled ?> required maxlength="24" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -338,7 +383,11 @@ else
                     <br/>
                     <?php print_r($_SESSION) ?>
                     <br/>
-                    <?php print_r($_REQUEST) ?>
+                    <?php print_r($_POST) ?>
+                    <br/>
+					<?php print_r(preg_grep ('^[a-zA-Z0-9_.-]*$', str_split($_POST["txtFirstName"]), PREG_GREP_INVERT)); ?>
+					<br/>
+	
                 </div>
             </div>
 
