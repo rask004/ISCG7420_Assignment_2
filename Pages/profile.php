@@ -5,14 +5,23 @@
  * Date: 11/10/2016
  * Time: 10:13 PM
  */
+ 
+ ini_set('display_errors','1');
 
 include_once('../Includes/Session.php');
 include('../Includes/Common.php');
 
 $PostRegisterKey = \Common\Constants::$RegistrationSubmitKeyword;
+$PostUpdateProfileKey = \Common\Constants::$ProfileUpdateKeyword;
 
-if (isset($_POST["submit"]) && $_POST["submit"] == $PostRegisterKey)
+//TODO: check for available login or email, and if either is not, ErrorMsg and !$IsValid.
+//TODO: successful registration, redirect to login, show mail error msg if mail error.
+//TODO: successful profile update, disable all fields, show mail error msg if mail error.
+
+// postback, when submitting new customer or updating profile.
+if (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey || $_POST["submit"] == $PostUpdateProfileKey))
 {
+	
 	foreach( $_POST as $key => $value)
 	{
 		// prevent any sql injection by removing key symbols.
@@ -22,24 +31,140 @@ if (isset($_POST["submit"]) && $_POST["submit"] == $PostRegisterKey)
 		}
 	}
 	
-	$isValid = false;
+	// new customer validation, server side
+	$isValid = true;
 	
-	if ($isValid)
+	// use regex for identifying valid entries, and if contact numbers are missing.
+	if (empty($_POST["txtHomePhone"]) && empty($_POST["txtWorkPhone"]) && empty($_POST["txtMobilePhone"]) )
+	{
+		$isValid = false;
+		$ErrorMsg = "At least one phone number must be given.";
+	}
+	$regex_output = array();
+	preg_match(\Common\Constants::$ValidationCharsGenericNameRegex, $_POST["txtFirstName"], $regex_output);
+	if (!($regex_output[0] === $_POST["txtFirstName"]) )
+	{
+		$isValid = false;
+		$ErrorMsg = "Invalid first Name. Use letters, full stops, commas, or apostrophes only.";
+	}
+	preg_match(\Common\Constants::$ValidationCharsGenericNameRegex, $_POST["txtLastName"], $regex_output);
+	if (!($regex_output[0] === $_POST["txtLastName"]) )
+	{
+		$isValid = false;	
+		$ErrorMsg = "Invalid last Name. Use letters, full stops, commas, or apostrophes only.";
+	}
+	preg_match(\Common\Constants::$ValidationCharsLoginRegex, $_POST["txtLogin"], $regex_output);
+	if (!($regex_output[0] === $_POST["txtLogin"]) )
+	{
+		$isValid = false;	
+		$ErrorMsg = "Invalid login. Use letters, numbers and underscores only.";
+	}
+	preg_match(\Common\Constants::$ValidationLandlineRegex, $_POST["txtHomePhone"], $regex_output);
+	if (!empty($_POST["txtHomePhone"]) && !($regex_output[0] === $_POST["txtHomePhone"]) )
+	{
+		$isValid = false;	
+		$ErrorMsg = "Invalid home phone. Try a number in the form '0N-NNN-NNNN' or similar pattern. first digit must be a zero.";
+	}
+	preg_match(\Common\Constants::$ValidationLandlineRegex, $_POST["txtWorkPhone"], $regex_output);
+	if (!empty($_POST["txtWorkPhone"]) && !($regex_output[0] === $_POST["txtWorkPhone"]) )
+	{
+		$isValid = false;	
+		$ErrorMsg = "Invalid work phone. Try a number in the form '0N-NNN-NNNN' or similar pattern. first digit must be a zero.";
+	}
+	preg_match(\Common\Constants::$ValidationCellPhoneRegex, $_POST["txtMobilePhone"], $regex_output);
+	if (!empty($_POST["txtMobilePhone"]) && !($regex_output[0] === $_POST["txtMobilePhone"]) )
+	{
+		$isValid = false;
+		$ErrorMsg = "Invalid mobile phone. Try a number in the form '0NN-NNN-NNNN' or similar pattern. first digit must be a zero.";	
+	}
+	preg_match(\Common\Constants::$ValidationCharsGenericNameRegex, $_POST["txtSuburb"], $regex_output);
+	if (!($regex_output[0] === $_POST["txtSuburb"]) )
+	{
+		$isValid = false;		
+		$ErrorMsg = "Invalid last Name. Use letters, full stops, commas, or apostrophes only.";
+	}
+	preg_match(\Common\Constants::$ValidationCharsGenericNameRegex, $_POST["txtCity"], $regex_output);
+	if (!($regex_output[0] === $_POST["txtCity"]) )
+	{
+		$isValid = false;		
+		$ErrorMsg = "Invalid last Name. Use letters, full stops, commas, or apostrophes only.";
+	}
+	preg_match(\Common\Constants::$ValidationStreetAddressRegex, $_POST["txtAddress"], $regex_output);
+	if (!($regex_output[0] === $_POST["txtAddress"]) )
+	{
+		$isValid = false;		
+		$ErrorMsg = "Invalid address. Must be in form 'numbers[letter] name suffix' first number cannot be zero.";
+	}
+	if (!filter_var($_POST["txtEmail"], FILTER_VALIDATE_EMAIL))
+	{
+		$isValid = false;
+		$ErrorMsg = "Invalid email. Must be in form 'name@site.domain', e.g. 'xli@yourunitec.ac.nz' or 'jnx@yourunitec.com'.";
+	}
+	
+	// if valid, do registration / update profile and send email.
+	if (false)
 	{
 		include_once("../Includes/BusinessLayer.php");
 	
 		$customerManager = new \BusinessLayer\CustomerManager;
-		
-		if($customerManager->RegisterCustomer($_POST["txtFirstName"], $_POST["txtLastName"], $_POST["txtLogin"], $_POST["txtPassword"],
-			$_POST["txtEmail"], $_POST["txtHomePhone"], $_POST["txtWorkPhone"], $_POST["txtMobilePhone"], $_POST["txtAddress"],
-			$_POST["txtSuburb"], $_POST["txtCity"]))	
+	
+		if ($_POST["submit"] == $PostRegisterKey)
 		{
+			if($customerManager->RegisterCustomer($_POST["txtFirstName"], $_POST["txtLastName"], $_POST["txtLogin"], $_POST["txtPassword"],
+				$_POST["txtEmail"], $_POST["txtHomePhone"], $_POST["txtWorkPhone"], $_POST["txtMobilePhone"], $_POST["txtAddress"],
+				$_POST["txtSuburb"], $_POST["txtCity"]))	
+			{
+				// request first available admin, obtain email
 				
+				$senderEmail = \Common\Constants::$EmailAdminDefault;
+				$receiverEmail = $_POST["txtEmail"];
+				$subject = "Quality Caps, Registered Customer";
+				$body = "Dear Customer,\r\n\r\n\r\nWelcome to Quality Caps!\r\n\r\nYour Details are:\r\n\tLogin\t\t\t".$_POST["txtLogin"]."\r\n\tPassword\t\t".$_POST["txtPassword"]."\r\n\r\nYoursSincerely,\r\n\r\nThe QualityCapsTeam\r\n";
+				$headers = 'From: '. $senderEmail. '\r\nReply-To: '. $senderEmail. '\r\nX-Mailer: PHP/'. phpversion();
+				
+				if (!mail($receiverEmail, $subject, $body, $headers))
+				{
+					$ErrorMsg = "Customer was registered but could not send confirmation email. Please contact admin at ". $senderEmail ." immediately.";
+				}
+			}
+			else
+			{
+				$ErrorMsg = "ERROR: could not register new customer. Please contact admin at ". $senderEmail ." immediately.";
+			}
 		}
-		else
+		elseif ($_POST["submit"] == $PostUpdateProfileKey)
 		{
-			
+			if($customerManager->UpdateProfile($_POST["txtFirstName"], $_POST["txtLastName"], $_POST["txtLogin"],
+				$_POST["txtEmail"], $_POST["txtHomePhone"], $_POST["txtWorkPhone"], $_POST["txtMobilePhone"], $_POST["txtAddress"],
+				$_POST["txtSuburb"], $_POST["txtCity"], $_SESSION[\Common\Security::$SessionUserIdKey] )
+				|| )
+			{
+				if(!$customerManager->UpdatePassword($_POST["txtPassword"], $_SESSION[\Common\Security::$SessionUserIdKey]))
+				{
+					$ErrorMsg = "ERROR: Updated profile but could not change password. Please contact admin at ". $senderEmail ." immediately.";
+				}
+				else
+				{
+					// request first available admin, obtain email
+				
+					$senderEmail = \Common\Constants::$EmailAdminDefault;
+					$receiverEmail = $_POST["txtEmail"];
+					$subject = "Quality Caps, Registered Customer";
+					$body = "Dear Customer,\r\n\r\n\r\nWelcome to Quality Caps!\r\n\r\nYour Details are:\r\n\tLogin\t\t\t".$_POST["txtLogin"]."\r\n\tPassword\t\t".$_POST["txtPassword"]."\r\n\r\nYoursSincerely,\r\n\r\nThe QualityCapsTeam\r\n";
+					$headers = 'From: '. $senderEmail. '\r\nReply-To: '. $senderEmail. '\r\nX-Mailer: PHP/'. phpversion();
+					
+					if (!mail($receiverEmail, $subject, $body, $headers))
+					{
+						$ErrorMsg = "Customer was registered but could not send confirmation email. Please contact admin at ". $senderEmail ." immediately.";
+					}
+				}
+			}
+			else
+			{
+				$ErrorMsg = "ERROR: could not register new customer. Please contact admin at ". $senderEmail ." immediately.";
+			}
 		}
+		
 	}
 	
 	
@@ -259,7 +384,7 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtHomePhone"
-                                       name="txtHomePhone" <?= $isDisabled ?> required minlength="8" maxlength="10"  type="text" />
+                                       name="txtHomePhone" <?= $isDisabled ?> minlength="8" maxlength="10"  type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -273,7 +398,7 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtWorkPhone"
-                                       name="txtWorkPhone" <?= $isDisabled ?> required minlength="8" maxlength="10" type="text" />
+                                       name="txtWorkPhone" <?= $isDisabled ?> minlength="8" maxlength="10" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -287,7 +412,7 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtMobilePhone"
-                                       name="txtMobilePhone" <?= $isDisabled ?> required minlength="9" maxlength="11" type="text" />
+                                       name="txtMobilePhone" <?= $isDisabled ?> minlength="9" maxlength="11" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -378,14 +503,33 @@ else
                         </div>
                         <br/>
                     </div>
+                    <br/>
+                    <div id="divErrorMessage">
+	                    <p>
+							<?php 
+								// only show errors if a message is given.
+								if (isset($ErrorMsg))
+								{
+									echo $ErrorMsg;	
+								}
+							?>
+                        </p>
+                    </div>
                 </div>
                 <div id="divLeftSidebar" class="col-md-3">
                     <br/>
-                    <?php print_r($_SESSION) ?>
-                    <br/>
                     <?php print_r($_POST) ?>
                     <br/>
-					<?php print_r(preg_grep ('^[a-zA-Z0-9_.-]*$', str_split($_POST["txtFirstName"]), PREG_GREP_INVERT)); ?>
+					<?php 
+						if (isset($isValid) && !$isValid)
+						{
+							echo '<p>$IsValid == FALSE</p>';
+						}
+						else
+						{
+							echo '<p>$IsValid == TRUE</p>';
+						}
+					?>
 					<br/>
 	
                 </div>
@@ -397,5 +541,15 @@ else
     </form>
 
     <?php include_once("../Includes/footer.php"); ?>
+    <?php 
+		// make div for error message more visible
+		if (isset($ErrorMsg))
+		{
+			echo '<script type="text/javascript">'.
+				'$("#divErrorMessage").prop'."('border', 'solid black 2px');".
+				'$("#divErrorMessage").prop'."('background-color', 'red');".
+				'</script>';
+		}
+	?>
 </body>
 </html>

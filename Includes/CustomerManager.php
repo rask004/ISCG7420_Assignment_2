@@ -80,7 +80,12 @@ class CustomerManager
 		
 		$hash = \Common\Security::generatePasswordHash($password, $salt);
 		
-		$this->_data_manager->updateCustomerPasswordOnly($salt, $hash, $id);
+		if (!$this->_data_manager->updateCustomerPasswordOnly($salt, $hash, $id))
+		{
+			return false;	
+		}
+		
+		return true;
 	}
 	
 	/*

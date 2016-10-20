@@ -50,10 +50,6 @@ if (isset($_POST['inputLogin']) && isset($_POST['inputPassword']))
 		$bad_login_message = "Login failed. Please check your you entered your login and password correctly.";	
 	}
 	
-	
-    //$_SESSION[\Common\Security::$SessionAuthenticationKey] = 1;
-    //$_SESSION[\Common\Security::$SessionUserLoginKey]  = 'test__login';
-    //$_SESSION[\Common\Security::$SessionUserIdKey] = 3;
 }
 
 //  redirect already authenticated users - redirect to home or admin as appropriate.

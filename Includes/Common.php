@@ -59,5 +59,18 @@ class Security
 
 class Constants
 {
-	public static $RegistrationSubmitKeyword= "Register";	
+	public static $RegistrationSubmitKeyword = "Register";
+	public static $ProfileUpdateKeyword = "ProfileUpdate";
+	
+	public static $ValidationCharsGenericNameRegex = "/^[a-zA-Z',.]*/";
+	
+	public static $ValidationCharsLoginRegex = "/^[a-zA-Z0-9_]*/";
+	
+	public static $ValidationLandlineRegex = "/^0[1-9][-\s]?[1-9]{1}[0-9]{2,3}[-\s]?[0-9]{3,4}/";
+	
+	public static $ValidationCellPhoneRegex = "/^0[1-9]{2}[-\s]?[0-9]{3,4}[-\s]?[0-9]{3,4}/";
+	
+	public static $ValidationStreetAddressRegex = "/^(?:[0-9]+/)?[0-9]+\s[A-Za-z']+(?:\s[A-Za-z']+)+/";
+	
+	public static $EmailAdminDefault = "AskewR04@myunitec.ac.nz";
 }
