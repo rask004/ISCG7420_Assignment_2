@@ -40,74 +40,74 @@ if (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey || $_POST["
 		$ErrorMsg = "Supplied login, or email, is already in use. Try a different login name, or email.";
 	}	
 	// use regex for identifying valid entries, and if contact numbers are missing.
-	if (empty($_POST["txtHomePhone"]) && empty($_POST["txtWorkPhone"]) && empty($_POST["txtMobilePhone"]) )
+	if ($isValid && empty($_POST["txtHomePhone"]) && empty($_POST["txtWorkPhone"]) && empty($_POST["txtMobilePhone"]) )
 	{
 		$isValid = false;
 		$ErrorMsg = "At least one phone number must be given.";
 	}
 	$regex_output = array();
 	preg_match(\Common\Constants::$ValidationCharsGenericNameRegex, $_POST["txtFirstName"], $regex_output);
-	if (!($regex_output[0] === $_POST["txtFirstName"]) )
+	if ($isValid && (empty($regex_output) || !($regex_output[0] === $_POST["txtFirstName"])) )
 	{
 		$isValid = false;
 		$ErrorMsg = "Invalid first Name. Use letters, full stops, commas, or apostrophes only.";
 	}
 	preg_match(\Common\Constants::$ValidationCharsGenericNameRegex, $_POST["txtLastName"], $regex_output);
-	if (!($regex_output[0] === $_POST["txtLastName"]) )
+	if ($isValid && (empty($regex_output) || !($regex_output[0] === $_POST["txtLastName"])) )
 	{
 		$isValid = false;	
 		$ErrorMsg = "Invalid last Name. Use letters, full stops, commas, or apostrophes only.";
 	}
 	preg_match(\Common\Constants::$ValidationCharsLoginRegex, $_POST["txtLogin"], $regex_output);
-	if (!($regex_output[0] === $_POST["txtLogin"]) )
+	if ($isValid && (empty($regex_output) || !($regex_output[0] === $_POST["txtLogin"])) )
 	{
 		$isValid = false;	
 		$ErrorMsg = "Invalid login. Use letters, numbers and underscores only.";
 	}
 	preg_match(\Common\Constants::$ValidationLandlineRegex, $_POST["txtHomePhone"], $regex_output);
-	if (!empty($_POST["txtHomePhone"]) && !($regex_output[0] === $_POST["txtHomePhone"]) )
+	if ($isValid && !empty($_POST["txtHomePhone"]) && (empty($regex_output) || !($regex_output[0] === $_POST["txtHomePhone"])) )
 	{
 		$isValid = false;	
 		$ErrorMsg = "Invalid home phone. Try a number in the form '0N-NNN-NNNN' or similar pattern. first digit must be a zero.";
 	}
 	preg_match(\Common\Constants::$ValidationLandlineRegex, $_POST["txtWorkPhone"], $regex_output);
-	if (!empty($_POST["txtWorkPhone"]) && !($regex_output[0] === $_POST["txtWorkPhone"]) )
+	if ($isValid && !empty($_POST["txtWorkPhone"]) && (empty($regex_output) || !($regex_output[0] === $_POST["txtWorkPhone"])) )
 	{
 		$isValid = false;	
 		$ErrorMsg = "Invalid work phone. Try a number in the form '0N-NNN-NNNN' or similar pattern. first digit must be a zero.";
 	}
 	preg_match(\Common\Constants::$ValidationCellPhoneRegex, $_POST["txtMobilePhone"], $regex_output);
-	if (!empty($_POST["txtMobilePhone"]) && !($regex_output[0] === $_POST["txtMobilePhone"]) )
+	if ($isValid && !empty($_POST["txtMobilePhone"]) && (empty($regex_output) || !($regex_output[0] === $_POST["txtMobilePhone"])) )
 	{
 		$isValid = false;
 		$ErrorMsg = "Invalid mobile phone. Try a number in the form '0NN-NNN-NNNN' or similar pattern. first digit must be a zero.";	
 	}
 	preg_match(\Common\Constants::$ValidationCharsGenericNameRegex, $_POST["txtSuburb"], $regex_output);
-	if (!($regex_output[0] === $_POST["txtSuburb"]) )
+	if ($isValid && (empty($regex_output) || !($regex_output[0] === $_POST["txtSuburb"]) ))
 	{
 		$isValid = false;		
-		$ErrorMsg = "Invalid last Name. Use letters, full stops, commas, or apostrophes only.";
+		$ErrorMsg = "Invalid suburb. Use letters, full stops, commas, or apostrophes only.";
 	}
 	preg_match(\Common\Constants::$ValidationCharsGenericNameRegex, $_POST["txtCity"], $regex_output);
-	if (!($regex_output[0] === $_POST["txtCity"]) )
+	if ($isValid && (empty($regex_output) || !($regex_output[0] === $_POST["txtCity"]) ))
 	{
 		$isValid = false;		
-		$ErrorMsg = "Invalid last Name. Use letters, full stops, commas, or apostrophes only.";
+		$ErrorMsg = "Invalid city. Use letters, full stops, commas, or apostrophes only.";
 	}
 	preg_match(\Common\Constants::$ValidationStreetAddressRegex, $_POST["txtAddress"], $regex_output);
-	if (!($regex_output[0] === $_POST["txtAddress"]) )
+	if ($isValid && (empty($regex_output) || !($regex_output[0] === $_POST["txtAddress"]) ))
 	{
 		$isValid = false;		
-		$ErrorMsg = "Invalid address. Must be in form 'numbers[letter] name suffix' first number cannot be zero.";
+		$ErrorMsg = "Invalid address. Must be in form '[flat number/]numbers[letter] name suffix' first number cannot be zero.";
 	}
-	if (!filter_var($_POST["txtEmail"], FILTER_VALIDATE_EMAIL))
+	if ($isValid && !filter_var($_POST["txtEmail"], FILTER_VALIDATE_EMAIL))
 	{
 		$isValid = false;
 		$ErrorMsg = "Invalid email. Must be in form 'name@site.domain', e.g. 'xli@yourunitec.ac.nz' or 'jnx@yourunitec.com'.";
 	}
 	
 	// if valid, do registration / update profile and send email.
-	if (false)
+	if ($isValid)
 	{
 		include_once("../Includes/BusinessLayer.php");
 	
@@ -131,7 +131,7 @@ if (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey || $_POST["
 				
 				$queryString = "";
 				//redirect to login page. present message about mail failure if mail not sent.
-				if ($mailSuccess)
+				if (!$mailSuccess)
 				{
 					$queryString .= "?". \Common\Constants::$QueryStringEmailErrorKey . "=1";
 				}
@@ -308,7 +308,7 @@ else
 
             <div class="row">
                 <div id="divLeftSidebar" class="col-md-3">
-					<?php print_r($customer) ?>
+					<?php if (isset($customer)) { print_r($customer); } ?>
                 </div>
                 <div id="divCentreSpace" class="col-md-6">
                     <div class="container-fluid PageSection">
@@ -347,7 +347,17 @@ else
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 
                                 <input style="float: left; width:100%" id="txtFirstName"
-                                       name="txtFirstName" value="<?php if(isset($customer)) { echo $customer["firstName"]; } ?>"
+                                       name="txtFirstName" 
+									   	<?php 
+											if(isset($customer)) 
+											{ 
+												echo 'value="' . $customer["firstName"] . '"';
+											} 
+											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey))
+											{
+												echo 'value="' .$_POST["txtFirstName"]. '"';
+											}
+										?>
                                        <?= $isDisabled ?>
                                        required maxlength="32" type="text" />
                             </div>
@@ -363,7 +373,17 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtLastName"
-                                       name="txtLastName" value="<?php if (isset($customer)) { echo $customer["lastName"]; } ?>"
+                                       name="txtLastName"
+									   <?php 
+											if(isset($customer)) 
+											{ 
+												echo 'value="' . $customer["lastName"] . '"';
+											} 
+											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey))
+											{
+												echo 'value="' . $_POST["txtLastName"] . '"';
+											}
+										?>
                                        <?= $isDisabled ?> required maxlength="32" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
@@ -378,7 +398,17 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtEmail"
-                                       name="txtEmail" value="<?php if (isset($customer)) { echo $customer["emailAddress"]; } ?>" 
+                                       name="txtEmail" 
+									   <?php 
+									   		if(isset($customer)) 
+											{ 
+												echo 'value="' . $customer["emailAddress"] . '"';
+											} 
+											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey))
+											{
+												echo 'value="' . $_POST["txtEmail"] . '"';
+											}
+										?>
 									   <?= $isDisabled ?> required minlength="5" maxlength="100" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
@@ -395,7 +425,17 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtLogin"
-                                       name="txtLogin" value="<?php if (isset($customer)) { echo $customer["login"]; } ?>" 
+                                       name="txtLogin" 
+									   <?php 
+									   		if (isset($customer)) 
+											{ 
+												echo 'value="' . $customer["login"] . '"';
+											} 											 
+											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey))
+											{
+												echo 'value="' . $_POST["txtLogin"] . '"';
+											}
+										?>
 									   <?= $isDisabled ?> required minlength="8" maxlength="32" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
@@ -420,12 +460,19 @@ else
 							}
 							else
 							{
+								$password = "";
+								if (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey))
+								{
+									$password .= $_POST["txtPassword"];
+								}
 								echo '<div class="col-xs-12 col-sm-4 col-md-4">' .
 									 '<label style="float: left" for="txtPassword">Password:</label>' .
 									 '</div>' .
-									 '<div class="col-xs-12 col-sm-6 col-md-4">'.
+									 '<div class="col-xs-12 col-sm-6 col-md-4">' .
 										 '<input style="float: left; width:100%" id="txtPassword"' .
-											    ' name="txtPassword"  value="" ' .
+											    ' name="txtPassword"  value="' .
+													$password .
+												'" ' .
 											    $isDisabled . ' required minlength="10" type="text" />' .
 									 '</div>';
 							}
@@ -445,8 +492,18 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtHomePhone"
-                                       name="txtHomePhone"  value="<?php if (isset($customer)) { echo $customer["homeNumber"]; } ?>"
-									   <?= $isDisabled ?> minlength="8" maxlength="10"  type="text" />
+                                       name="txtHomePhone"
+									   <?php 
+									   		if (isset($customer)) 
+											{ 
+												echo 'value="' . $customer["homeNumber"] . '"';
+											} 											 
+											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey))
+											{
+												echo 'value="' . $_POST["txtHomePhone"] . '"';
+											}
+										?>
+									   <?= $isDisabled ?> minlength="8" maxlength="13"  type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -460,8 +517,18 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtWorkPhone"
-                                       name="txtWorkPhone"  value="<?php if (isset($customer)) { echo $customer["workNumber"]; } ?>"
-									   <?= $isDisabled ?> minlength="8" maxlength="10" type="text" />
+                                       name="txtWorkPhone" 
+									   <?php 
+									   		if (isset($customer)) 
+											{ 
+												echo 'value="' . $customer["workNumber"] . '"';
+											} 											 
+											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey))
+											{
+												echo 'value="' . $_POST["txtWorkPhone"] . '"';
+											}
+										?>
+									   <?= $isDisabled ?> minlength="8" maxlength="13" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -475,8 +542,18 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtMobilePhone"
-                                       name="txtMobilePhone"  value="<?php if (isset($customer)) { echo $customer["mobileNumber"]; } ?>"
-									   <?= $isDisabled ?> minlength="9" maxlength="11" type="text" />
+                                       name="txtMobilePhone" 
+									   <?php 
+									   		if (isset($customer)) 
+											{ 
+												echo 'value="' . $customer["mobileNumber"] . '"';
+											} 											 
+											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey))
+											{
+												echo 'value="' . $_POST["txtMobilePhone"] . '"';
+											}
+										?>
+									   <?= $isDisabled ?> minlength="9" maxlength="14" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -492,7 +569,17 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtAddress"
-                                       name="txtAddress"  value="<?php if (isset($customer)) { echo $customer["streetAddress"]; } ?>"
+                                       name="txtAddress" 
+									   <?php 
+									   		if (isset($customer)) 
+											{ 
+												echo 'value="' . $customer["streetAddress"] . '"';
+											} 											 
+											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey))
+											{
+												echo 'value="' . $_POST["txtAddress"] . '"';
+											}
+										?>
 									   <?= $isDisabled ?> required  minlength="3" maxlength="48" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
@@ -507,7 +594,17 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtSuburb"
-                                       name="txtSuburb"  value="<?php if (isset($customer)) { echo $customer["suburb"]; } ?>"
+                                       name="txtSuburb"
+									   <?php 
+									   		if (isset($customer)) 
+											{ 
+												echo 'value="' . $customer["suburb"] . '"';
+											} 											 
+											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey))
+											{
+												echo 'value="' . $_POST["txtSuburb"] . '"';
+											}
+										?>
 									   <?= $isDisabled ?> required maxlength="24" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
@@ -522,7 +619,17 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtCity"
-                                       name="txtCity"  value="<?php if (isset($customer)) { echo $customer["city"]; } ?>"
+                                       name="txtCity"
+									   <?php 
+									   		if (isset($customer)) 
+											{ 
+												echo 'value="' . $customer["city"] . '"';
+											} 											 
+											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey))
+											{
+												echo 'value="' . $_POST["txtCity"] . '"';
+											}
+										?>
 									   <?= $isDisabled ?> required maxlength="24" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
@@ -595,6 +702,10 @@ else
 						else
 						{
 							echo '<p>$IsValid == TRUE</p>';
+						}
+						if(isset($regex_output))
+						{
+							echo '<br/><p>'. print_r($regex_output) .'</p>';
 						}
 					?>	
                 </div>

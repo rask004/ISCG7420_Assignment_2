@@ -26,7 +26,17 @@
 		$dataManager = new \DataLayer\DataManager; 
 	
 		echo		'<br/>';
-		print_r(preg_grep ("/^[a-zA-Z0-9.,']*/", str_split("abcdef051&.'#D%HU+")));
+		$senderEmail = 'AskewR04@myunitec.ac.nz';
+		$receiverEmail = "rolandjamesaskew37@gmail.com";
+		$subject = "Quality Caps, Registered Customer";
+		$body = "Dear Customer,\r\n\r\n\r\nWelcome to Quality Caps!\r\n\r\nYour Details are:\r\n\tLogin\t\t\t".'AAAAAA'."\r\n\tPassword\t\t".'BBBBBB'."\r\n\r\nYoursSincerely,\r\n\r\nThe QualityCapsTeam\r\n";
+		$headers = 'From: '. $senderEmail. '\r\nReply-To: '. $senderEmail. '\r\nX-Mailer: PHP/'. phpversion();
+		
+		if(!mail($receiverEmail, $subject, $body, $headers))
+		{
+			echo "ERROR SENDING EMAIL";
+		}
+		echo "<br/>";
 	?>
     
     <H4>Select Single Customer, ID: 2</H4>
