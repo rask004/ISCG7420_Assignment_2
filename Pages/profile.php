@@ -191,10 +191,17 @@ if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && isset($_SES
 }
 
 
-
+// setup page for logged in user (Profile) or visitor (Registration)
 if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
 {
     $isDisabled = 'disabled';
+	
+	$customer = $customerManager->findCustomer($_SESSION[\Common\Security::$SessionUserIdKey]);
+	if (empty($customer))
+	{
+		$ErrorMsg = "ERROR: could not retrieve logged in customer information. Try logging out and back in. If problem persists, contact admin at " .
+			\Common\Constants::$EmailAdminDefault . " Immediately";	
+	}
 }
 else
 {
@@ -232,7 +239,7 @@ else
 				$("#txtFirstName").prop( 'disabled', false);
 				$("#txtLastName").prop( 'disabled', false);
 				$("#txtLogin").prop( 'disabled', false);
-				$("#txtPassword").prop( 'disabled', false);
+				$("#btnChangeProfilePassword").prop( 'disabled', false);
 				$("#txtHomePhone").prop( 'disabled', false);
 				$("#txtWorkPhone").prop( 'disabled', false);
 				$("#txtMobilePhone").prop( 'disabled', false);
@@ -250,7 +257,10 @@ else
 				$("#txtFirstName").prop( 'disabled', true);
 				$("#txtLastName").prop( 'disabled', true);
 				$("#txtLogin").prop( 'disabled', true);
+				$("#btnChangeProfilePassword").prop( 'disabled', true);
+				$("#btnChangeProfilePassword").val("Change Password" );
 				$("#txtPassword").prop( 'disabled', true);
+				$("#txtPassword").val('');
 				$("#txtHomePhone").prop( 'disabled', true);
 				$("#txtWorkPhone").prop( 'disabled', true);
 				$("#txtMobilePhone").prop( 'disabled', true);
@@ -260,6 +270,21 @@ else
 				$("#submit").prop( 'disabled', true);
 				$("#resetForm").prop( 'hidden', true);
 				$("#btnEditForm").prop( 'hidden', false);
+		}
+		
+		function profile_password_toggle() 
+		{
+				if($("#btnChangeProfilePassword").val() == "Change Password")
+				{
+					$("#btnChangeProfilePassword").val("Reset Password" );
+					$("#txtPassword").prop( 'disabled', false);
+				}
+				else
+				{
+					$("#btnChangeProfilePassword").val("Change Password" );
+					$("#txtPassword").prop( 'disabled', true);
+					$("#txtPassword").val('');
+				}
 		}
 			
     </script>
@@ -283,7 +308,7 @@ else
 
             <div class="row">
                 <div id="divLeftSidebar" class="col-md-3">
-
+					<?php print_r($customer) ?>
                 </div>
                 <div id="divCentreSpace" class="col-md-6">
                     <div class="container-fluid PageSection">
@@ -322,7 +347,7 @@ else
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 
                                 <input style="float: left; width:100%" id="txtFirstName"
-                                       name="txtFirstName"
+                                       name="txtFirstName" value="<?php if(isset($customer)) { echo $customer["firstName"]; } ?>"
                                        <?= $isDisabled ?>
                                        required maxlength="32" type="text" />
                             </div>
@@ -338,7 +363,8 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtLastName"
-                                       name="txtLastName" <?= $isDisabled ?> required maxlength="32" type="text" />
+                                       name="txtLastName" value="<?php if (isset($customer)) { echo $customer["lastName"]; } ?>"
+                                       <?= $isDisabled ?> required maxlength="32" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -352,7 +378,8 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtEmail"
-                                       name="txtEmail" <?= $isDisabled ?> required minlength="5" maxlength="100" type="text" />
+                                       name="txtEmail" value="<?php if (isset($customer)) { echo $customer["emailAddress"]; } ?>" 
+									   <?= $isDisabled ?> required minlength="5" maxlength="100" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -368,7 +395,8 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtLogin"
-                                       name="txtLogin" <?= $isDisabled ?> required minlength="8" maxlength="32" type="text" />
+                                       name="txtLogin" value="<?php if (isset($customer)) { echo $customer["login"]; } ?>" 
+									   <?= $isDisabled ?> required minlength="8" maxlength="32" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -377,13 +405,32 @@ else
                         <div class="row" style="margin-top: 4px">
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
-                            <div class="col-xs-12 col-sm-4 col-md-4">
-                                <label style="float: left" for="txtPassword">Password:</label>
-                            </div>
-                            <div class="col-xs-12 col-sm-6 col-md-4">
-                                <input style="float: left; width:100%" id="txtPassword"
-                                       name="txtPassword" <?= $isDisabled ?> required minlength="10" type="text" />
-                            </div>
+                            <?php
+                            if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
+                            {
+								echo '<div class="col-xs-12 col-sm-4 col-md-4">' .
+									 '<input type="button" id="btnChangeProfilePassword" '.
+									 ' disabled onclick="profile_password_toggle();" style="float: left; width:80%" value="Change Password" />' .
+									 '</div>' .
+									 '<div class="col-xs-12 col-sm-6 col-md-4">'.
+										 '<input style="float: left; width:100%" id="txtPassword"' .
+											    ' name="txtPassword"  value="" ' .
+											    ' disabled required minlength="10" type="text" />' .
+									 '</div>';
+							}
+							else
+							{
+								echo '<div class="col-xs-12 col-sm-4 col-md-4">' .
+									 '<label style="float: left" for="txtPassword">Password:</label>' .
+									 '</div>' .
+									 '<div class="col-xs-12 col-sm-6 col-md-4">'.
+										 '<input style="float: left; width:100%" id="txtPassword"' .
+											    ' name="txtPassword"  value="" ' .
+											    $isDisabled . ' required minlength="10" type="text" />' .
+									 '</div>';
+							}
+							?>
+                            
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
                         </div>
@@ -398,7 +445,8 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtHomePhone"
-                                       name="txtHomePhone" <?= $isDisabled ?> minlength="8" maxlength="10"  type="text" />
+                                       name="txtHomePhone"  value="<?php if (isset($customer)) { echo $customer["homeNumber"]; } ?>"
+									   <?= $isDisabled ?> minlength="8" maxlength="10"  type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -412,7 +460,8 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtWorkPhone"
-                                       name="txtWorkPhone" <?= $isDisabled ?> minlength="8" maxlength="10" type="text" />
+                                       name="txtWorkPhone"  value="<?php if (isset($customer)) { echo $customer["workNumber"]; } ?>"
+									   <?= $isDisabled ?> minlength="8" maxlength="10" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -426,7 +475,8 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtMobilePhone"
-                                       name="txtMobilePhone" <?= $isDisabled ?> minlength="9" maxlength="11" type="text" />
+                                       name="txtMobilePhone"  value="<?php if (isset($customer)) { echo $customer["mobileNumber"]; } ?>"
+									   <?= $isDisabled ?> minlength="9" maxlength="11" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -442,7 +492,8 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtAddress"
-                                       name="txtAddress" <?= $isDisabled ?> required  minlength="3" maxlength="48" type="text" />
+                                       name="txtAddress"  value="<?php if (isset($customer)) { echo $customer["streetAddress"]; } ?>"
+									   <?= $isDisabled ?> required  minlength="3" maxlength="48" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -456,7 +507,8 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtSuburb"
-                                       name="txtSuburb" <?= $isDisabled ?> required maxlength="24" type="text" />
+                                       name="txtSuburb"  value="<?php if (isset($customer)) { echo $customer["suburb"]; } ?>"
+									   <?= $isDisabled ?> required maxlength="24" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -470,7 +522,8 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtCity"
-                                       name="txtCity" <?= $isDisabled ?> required maxlength="24" type="text" />
+                                       name="txtCity"  value="<?php if (isset($customer)) { echo $customer["city"]; } ?>"
+									   <?= $isDisabled ?> required maxlength="24" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
