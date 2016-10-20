@@ -15,6 +15,12 @@ include('../Includes/AdminManager.php');
 
 $bad_login_message = "";
 
+// TODO: check query string for email error message.
+if(isset($_SERVER["QUERY_STRING"][\Common\Constants::$QueryStringEmailErrorKey]))
+{
+	$ErrorMsg = "Customer was registered but could not send confirmation email. Please contact admin at ". $senderEmail ." immediately.";
+}
+
 // process postback - for testing, currently expect a particular user and pass (not real user).
 if (isset($_POST['inputLogin']) && isset($_POST['inputPassword']))
 {	
@@ -173,17 +179,27 @@ if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\
                     
                     <br/>
                     <br/>
+                    <div>
                     <p style="text-align:center">
                     	<?= $bad_login_message ?>
                     </p>
+                    </div>
+                    <br/>
+                    <div id="divErrorMessage">
+	                    <p>
+							<?php 
+								// only show errors if a message is given.
+								if (isset($ErrorMsg))
+								{
+									echo $ErrorMsg;	
+								}
+							?>
+                        </p>
+                    </div>
                 </form>
 
             </div>
             <div id="divRightsidebar" class="col-md-3">
-            	<?php
-					$hash = \Common\Security::generatePasswordHash('test__password', 'qEn@wewe@+QeER_k');
-					echo '<p>' . $hash . '</p>';
-				?>
             </div>
         </div>
     </div>

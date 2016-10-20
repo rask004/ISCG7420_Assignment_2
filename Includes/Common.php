@@ -73,4 +73,8 @@ class Constants
 	public static $ValidationStreetAddressRegex = "/^(?:[0-9]+/)?[0-9]+\s[A-Za-z']+(?:\s[A-Za-z']+)+/";
 	
 	public static $EmailAdminDefault = "AskewR04@myunitec.ac.nz";
+	
+	public static $QueryStringEmailErrorKey = "EmailError";
+	
+	
 }

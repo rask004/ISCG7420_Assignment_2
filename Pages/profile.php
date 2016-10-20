@@ -10,13 +10,12 @@
 
 include_once('../Includes/Session.php');
 include('../Includes/Common.php');
+include_once("../Includes/CustomerManager.php");
+	
+$customerManager = new \BusinessLayer\CustomerManager;
 
 $PostRegisterKey = \Common\Constants::$RegistrationSubmitKeyword;
 $PostUpdateProfileKey = \Common\Constants::$ProfileUpdateKeyword;
-
-//TODO: check for available login or email, and if either is not, ErrorMsg and !$IsValid.
-//TODO: successful registration, redirect to login, show mail error msg if mail error.
-//TODO: successful profile update, disable all fields, show mail error msg if mail error.
 
 // postback, when submitting new customer or updating profile.
 if (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey || $_POST["submit"] == $PostUpdateProfileKey))
@@ -34,6 +33,12 @@ if (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey || $_POST["
 	// new customer validation, server side
 	$isValid = true;
 	
+	// check if email or login is in use.
+	if ($customerManager->findMatchingEmail($_POST["txtEmail"]) || $customerManager->findMatchingLogin($_POST["txtLogin"]))
+	{
+		$isValid = false;
+		$ErrorMsg = "Supplied login, or email, is already in use. Try a different login name, or email.";
+	}	
 	// use regex for identifying valid entries, and if contact numbers are missing.
 	if (empty($_POST["txtHomePhone"]) && empty($_POST["txtWorkPhone"]) && empty($_POST["txtMobilePhone"]) )
 	{
@@ -122,10 +127,17 @@ if (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey || $_POST["
 				$body = "Dear Customer,\r\n\r\n\r\nWelcome to Quality Caps!\r\n\r\nYour Details are:\r\n\tLogin\t\t\t".$_POST["txtLogin"]."\r\n\tPassword\t\t".$_POST["txtPassword"]."\r\n\r\nYoursSincerely,\r\n\r\nThe QualityCapsTeam\r\n";
 				$headers = 'From: '. $senderEmail. '\r\nReply-To: '. $senderEmail. '\r\nX-Mailer: PHP/'. phpversion();
 				
-				if (!mail($receiverEmail, $subject, $body, $headers))
+				$mailSuccess = mail($receiverEmail, $subject, $body, $headers);
+				
+				$queryString = "";
+				//redirect to login page. present message about mail failure if mail not sent.
+				if ($mailSuccess)
 				{
-					$ErrorMsg = "Customer was registered but could not send confirmation email. Please contact admin at ". $senderEmail ." immediately.";
+					$queryString .= "?". \Common\Constants::$QueryStringEmailErrorKey . "=1";
 				}
+				
+				header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/login.php". $queryString);
+				exit;
 			}
 			else
 			{
@@ -136,16 +148,18 @@ if (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey || $_POST["
 		{
 			if($customerManager->UpdateProfile($_POST["txtFirstName"], $_POST["txtLastName"], $_POST["txtLogin"],
 				$_POST["txtEmail"], $_POST["txtHomePhone"], $_POST["txtWorkPhone"], $_POST["txtMobilePhone"], $_POST["txtAddress"],
-				$_POST["txtSuburb"], $_POST["txtCity"], $_SESSION[\Common\Security::$SessionUserIdKey] )
-				|| )
+				$_POST["txtSuburb"], $_POST["txtCity"], $_SESSION[\Common\Security::$SessionUserIdKey] ))
 			{
+				// indicate primary update of profile worked.
+				$successfulProfileUpdate = true;
+				
 				if(!$customerManager->UpdatePassword($_POST["txtPassword"], $_SESSION[\Common\Security::$SessionUserIdKey]))
 				{
 					$ErrorMsg = "ERROR: Updated profile but could not change password. Please contact admin at ". $senderEmail ." immediately.";
 				}
 				else
 				{
-					// request first available admin, obtain email
+					// request first available admin, obtain email.
 				
 					$senderEmail = \Common\Constants::$EmailAdminDefault;
 					$receiverEmail = $_POST["txtEmail"];
@@ -161,7 +175,7 @@ if (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey || $_POST["
 			}
 			else
 			{
-				$ErrorMsg = "ERROR: could not register new customer. Please contact admin at ". $senderEmail ." immediately.";
+				$ErrorMsg = "ERROR: could not update profile. Please contact admin at ". $senderEmail ." immediately.";
 			}
 		}
 		
@@ -498,7 +512,7 @@ else
                                     <?= $isDisabled ?> value="<?= $submitValue ?>" type="submit" />
                             </div>
                             <div class="col-xs-0 col-sm-2 col-md-2">
-
+								
                             </div>
                         </div>
                         <br/>
@@ -529,9 +543,7 @@ else
 						{
 							echo '<p>$IsValid == TRUE</p>';
 						}
-					?>
-					<br/>
-	
+					?>	
                 </div>
             </div>
 
@@ -548,6 +560,12 @@ else
 			echo '<script type="text/javascript">'.
 				'$("#divErrorMessage").prop'."('border', 'solid black 2px');".
 				'$("#divErrorMessage").prop'."('background-color', 'red');".
+				'</script>';
+		}
+		if (isset($successfulProfileUpdate))
+		{
+			echo '<script type="text/javascript">'.
+				'reset_form();'.
 				'</script>';
 		}
 	?>
