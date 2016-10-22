@@ -125,13 +125,15 @@ if (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey || $_POST["
 				$receiverEmail = $_POST["txtEmail"];
 				$subject = "Quality Caps, Registered Customer";
 				$body = "Dear Customer,\r\n\r\n\r\nWelcome to Quality Caps!\r\n\r\nYour Details are:\r\n\tLogin\t\t\t".$_POST["txtLogin"]."\r\n\tPassword\t\t".$_POST["txtPassword"]."\r\n\r\nYoursSincerely,\r\n\r\nThe QualityCapsTeam\r\n";
-				$headers = 'From: '. $senderEmail. '\r\nReply-To: '. $senderEmail. '\r\nX-Mailer: PHP/'. phpversion();
 				
-				$mailSuccess = mail($receiverEmail, $subject, $body, $headers);
+				$headers = "From: ". $senderEmail. "\r\n";
+				$headers .= "Reply-To: ". $senderEmail. "\r\n";
+				$headers .= "Content-Type: text/html; charset=TIS-620 \n";
+				$headers .= "MIME-Version: 1.0 \r\n";
 				
 				$queryString = "";
 				//redirect to login page. present message about mail failure if mail not sent.
-				if (!$mailSuccess)
+				if (!mail($receiverEmail, $subject, $body, $headers))
 				{
 					$queryString .= "?". \Common\Constants::$QueryStringEmailErrorKey . "=1";
 				}
@@ -165,7 +167,11 @@ if (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey || $_POST["
 					$receiverEmail = $_POST["txtEmail"];
 					$subject = "Quality Caps, Registered Customer";
 					$body = "Dear Customer,\r\n\r\n\r\nWelcome to Quality Caps!\r\n\r\nYour Details are:\r\n\tLogin\t\t\t".$_POST["txtLogin"]."\r\n\tPassword\t\t".$_POST["txtPassword"]."\r\n\r\nYoursSincerely,\r\n\r\nThe QualityCapsTeam\r\n";
-					$headers = 'From: '. $senderEmail. '\r\nReply-To: '. $senderEmail. '\r\nX-Mailer: PHP/'. phpversion();
+					
+					$headers = "From: ". $senderEmail. "\r\n";
+					$headers .= "Reply-To: ". $senderEmail. "\r\n";
+					$headers .= "Content-Type: text/html; charset=TIS-620 \n";
+					$headers .= "MIME-Version: 1.0 \r\n";
 					
 					if (!mail($receiverEmail, $subject, $body, $headers))
 					{
@@ -178,10 +184,7 @@ if (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey || $_POST["
 				$ErrorMsg = "ERROR: could not update profile. Please contact admin at ". $senderEmail ." immediately.";
 			}
 		}
-		
-	}
-	
-	
+	}	
 }
 
 if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && isset($_SESSION[\Common\Security::$SessionAdminCheckKey]))

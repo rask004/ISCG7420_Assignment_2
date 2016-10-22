@@ -76,5 +76,13 @@ class Constants
 	
 	public static $QueryStringEmailErrorKey = "EmailError";
 	
+	public static  $AdminMessageSuccessfulUpload = "Success, file uploaded";
 	
+	public static  $AdminMessageFailedUpload = "Error, cannot upload file";
+	
+	public static  $AdminMessageSuccessfulDelete = "Success, file deleted";
+	
+	public static  $AdminFileuploadFolder = "uploaded_pictures";
+	
+	public static  $AdminPermittedFileuploadExtensions = array("png","jpeg","jpg");
 }
