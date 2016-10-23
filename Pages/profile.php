@@ -6,8 +6,6 @@
  * Time: 10:13 PM
  */
  
- ini_set('display_errors','1');
-
 include_once('../Includes/Session.php');
 include('../Includes/Common.php');
 include_once("../Includes/CustomerManager.php");
@@ -311,7 +309,6 @@ else
 
             <div class="row">
                 <div id="divLeftSidebar" class="col-md-3">
-					<?php if (isset($customer)) { print_r($customer); } ?>
                 </div>
                 <div id="divCentreSpace" class="col-md-6">
                     <div class="container-fluid PageSection">
@@ -694,23 +691,6 @@ else
                     </div>
                 </div>
                 <div id="divLeftSidebar" class="col-md-3">
-                    <br/>
-                    <?php print_r($_POST) ?>
-                    <br/>
-					<?php 
-						if (isset($isValid) && !$isValid)
-						{
-							echo '<p>$IsValid == FALSE</p>';
-						}
-						else
-						{
-							echo '<p>$IsValid == TRUE</p>';
-						}
-						if(isset($regex_output))
-						{
-							echo '<br/><p>'. print_r($regex_output) .'</p>';
-						}
-					?>	
                 </div>
             </div>
 

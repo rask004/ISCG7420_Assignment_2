@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <dwsync>
-<file name="DataLayer.php" server="dochyper.unitec.ac.nz//PHP_assignment/" local="131215580044912282" remote="131215597800000000" Dst="2" />
-<file name="OrderManager.php" server="dochyper.unitec.ac.nz//PHP_assignment/" local="131209736337008703" remote="131209735800000000" Dst="2" />
+<file name="DataLayer.php" server="dochyper.unitec.ac.nz//PHP_assignment/" local="131216669540304233" remote="131216669400000000" Dst="2" />
+<file name="OrderManager.php" server="dochyper.unitec.ac.nz//PHP_assignment/" local="131216670108352233" remote="131216670000000000" Dst="2" />
 <file name="CategoryManager.php" server="dochyper.unitec.ac.nz//PHP_assignment/" local="131209736987567223" remote="131209736400000000" Dst="2" />
 <file name="CartManager.php" server="dochyper.unitec.ac.nz//PHP_assignment/" local="131209740413894300" remote="131209740000000000" Dst="2" />
-<file name="CapManager.php" server="dochyper.unitec.ac.nz//PHP_assignment/" local="131209740915397306" remote="131209740600000000" Dst="2" />
-<file name="CustomerManager.php" server="dochyper.unitec.ac.nz//PHP_assignment/" local="131215580044902282" remote="131215605000000000" Dst="2" />
+<file name="CapManager.php" server="dochyper.unitec.ac.nz//PHP_assignment/" local="131216653241829233" remote="131216653200000000" Dst="2" />
+<file name="CustomerManager.php" server="dochyper.unitec.ac.nz//PHP_assignment/" local="131216644414318010" remote="131216644200000000" Dst="2" />
 <file name="AdminManager.php" server="dochyper.unitec.ac.nz//PHP_assignment/" local="131213892707596717" remote="131213974800000000" Dst="2" />
 <file name="Session.php" server="dochyper.unitec.ac.nz//PHP_assignment/" local="131216592988325608" remote="131216595600000000" Dst="2" />
-<file name="navbar.visitor.php" server="dochyper.unitec.ac.nz//PHP_assignment/" local="131215580044972282" remote="131215605000000000" Dst="2" />
+<file name="navbar.visitor.php" server="dochyper.unitec.ac.nz//PHP_assignment/" local="131216592988325608" remote="131216630400000000" Dst="2" />
 <file name="footer.php" server="dochyper.unitec.ac.nz//PHP_assignment/" local="131216592988325608" remote="131216595600000000" Dst="2" />
 <file name="Common.php" server="dochyper.unitec.ac.nz//PHP_assignment/" local="131216623175110185" remote="131216623200000000" Dst="2" />
-<file name="navbar.member.php" server="dochyper.unitec.ac.nz//PHP_assignment/" local="131215580044962282" remote="131215605000000000" Dst="2" />
+<file name="navbar.member.php" server="dochyper.unitec.ac.nz//PHP_assignment/" local="131216592988325608" remote="131216630400000000" Dst="2" />
 <file name="navbar.admin.php" server="dochyper.unitec.ac.nz//PHP_assignment/" local="131216592988325608" remote="131216595600000000" Dst="2" />
 </dwsync>

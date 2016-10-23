@@ -5,13 +5,12 @@
  * Date: 15/10/2016
  * Time: 14:24 PM
  */
+ 
+ namespace BusinessLayer;
 
 require_once('DataLayer.php');
 
-namespace BusinessLayer;
-
 // Caps business object.
-
 class CapManager
 {
 	private $_data_manager;	
@@ -22,4 +21,12 @@ class CapManager
 	}
 	
 	// TODO: add functionality for managing retrieving cap records and single caps.
+	
+	/*
+		Retrieve a single cap.
+	*/
+	function GetSingleCap($capId)
+	{
+		return $this->_data_manager->selectSingleCap($capId);
+	}
 }

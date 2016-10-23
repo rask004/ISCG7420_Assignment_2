@@ -5,9 +5,16 @@
  * Date: 11/10/2016
  * Time: 10:17 PM
  */
+ 
+ ini_set('display_errors','1');
 
 include_once('../Includes/Session.php');
 include('../Includes/Common.php');
+include_once("../Includes/OrderManager.php");
+include_once("../Includes/CapManager.php");
+
+$ordersManager = new \BusinessLayer\OrderManager;
+$capsManager = new \BusinessLayer\CapManager;
 
 if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && isset($_SESSION[\Common\Security::$SessionAdminCheckKey]))
 {
@@ -21,6 +28,8 @@ if (!isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) || $_SESSION[
     header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/home.php");
     exit;
 }
+
+$page_size = 5;
 
 ?>
 
@@ -67,9 +76,56 @@ if (!isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) || $_SESSION[
                     <br/>
                     <br/>
 
-                    <div class="row" style="margin-top: 4px">
+                    <div class="row">
+						<div class="col-xs-0 col-sm-2 col-md-2">
+                        </div>
+						<div class="col-xs-12 col-sm-8 col-md-8">
+                        	<table width="100%">
+                            	<tr>
+                                	<th>
+                                    	Id
+                                    </th>
+									<th>
+                                    	Date Placed
+                                    </th>
+									<th>
+                                    	Status
+                                    </th>
+                                    <th>
+                                    	Total Items
+                                    </th>
+                                    <th>
+                                    	Total Cost
+                                    </th>
 
+                                </tr>
+                                
+                                <tr>
+                                
+                                <?php 
+									
+									
+									// TODO: complete this
+									
+									$order_summaries = $ordersManager->GetAllOrderSummariesForCustomer($_SESSION[\Common\Security::$SessionUserIdKey], 0, 99);
+									
+									foreach($order_summaries as $summary)
+									{
+										echo "<td>". $summary['id'] ." </td>";
+									}
+									
+								?>                  
+                                
+                                </tr>
+                                
+                            </table>
+                        </div>
+						<div class="col-xs-0 col-sm-2 col-md-2">
+                        </div>
                     </div>
+                    <br/>
+                    <br/>
+                    
                 </div>
             </div>
             <div id="divRightSidebar" class="col-md-3">

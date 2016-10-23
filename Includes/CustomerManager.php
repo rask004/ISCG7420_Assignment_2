@@ -6,12 +6,10 @@
  * Time: 14:24 PM
  */
  
- namespace BusinessLayer;
- 
+namespace BusinessLayer;
 
 require_once('DataLayer.php');
 require_once('Common.php');
-
 
 // Customer management business object.
 class CustomerManager

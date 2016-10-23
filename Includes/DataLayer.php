@@ -624,12 +624,52 @@ class DataManager
 		$this->_openConnection();	
 		
 		if (!$query_result = $this->_conn->query("Select id, userId, status, datePlaced, capId, quantity from `CustomerOrder` co JOIN `OrderItem`" .
-						" oi ON oi.`OrderId`=co.`id` WHERE userId=" . $customerId . " order by status, datePlaced, capId, quantity;"))
+						" oi ON oi.`OrderId`=co.`id` WHERE userId=" . $customerId . " order by status, datePlaced, capId, quantity limit " .
+						$limit_start . ", " . $limit_length . ";"))
 		{
 			//TODO: should stop, rollback and redirect to error page if an error occurs.
 		}
 		
 		$orders = array();
+		
+		if ($query_result->num_rows > 0)
+		{
+			while ($row = $query_result->fetch_assoc())
+			{
+				$orders[] = $row;			
+			}
+		}
+		
+		if ($query_result)
+		{
+			$query_result->free();
+		}
+		
+		$this->_closeConnection();	
+		
+		return $orders;	
+	}
+	
+	/*
+		get all orders and orderitems for a customer. use LIMIT.
+	*/
+	public function selectOrderSummariesByCustomer( $customerId,  $limit_start,  $limit_length)
+	{
+		$limit_start = (integer) $limit_start;
+		$limit_length = (integer) $limit_length;
+		$customerId = (integer) $customerId;
+		
+		$this->_openConnection();	
+		
+		if (!$query_result = $this->_conn->query("SELECT co.id as id, co.status as status, co.datePlaced as datePlaced, ".
+		" sum(oi.quantity) as totalQuantity, sum(oi.quantity * c.price) as totalPrice FROM `orderitem` oi, `customerorder` co, ".
+		" `cap` c WHERE userId=" . $customerId . " and oi.orderid = co.id AND c.id = oi.capId group by orderId " .
+		" order by co.status, co.datePlaced, co.id limit " . $limit_start . ", " . $limit_length . ";"))
+		{
+			//TODO: should stop, rollback and redirect to error page if an error occurs.
+		}
+		
+		$summaries = array();
 		
 		if ($query_result->num_rows > 0)
 		{
