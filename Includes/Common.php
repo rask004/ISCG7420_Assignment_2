@@ -54,7 +54,6 @@ class Security
 		$hash = hash_hmac( 'sha256', $password, $salt);
 		return $hash;
 	}
-	
 }
 
 class Constants

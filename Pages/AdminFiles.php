@@ -7,6 +7,7 @@
  * Time: 19:24 PM
  */
 ini_set('display_errors', 1);
+error_reporting(E_ALL);
 
 include_once('../Includes/Session.php');
 include_once('../Includes/Common.php');
@@ -44,20 +45,36 @@ if (!(isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION
 		else
 		{
 			// in case try to upload without file.
-			$file_upload_name = "No file specified";
+			$error_msg = "No file specified";
 			
 			$safe_to_upload = true;
 			
-			if(isset($_FILES["file_Upload"]) && isset($_FILES["file_Upload"]["tmp_name"]))
-			{				
-				if ($_FILES["file_Upload"] != 0)
+			if(isset($_FILES["file_upload"]) && isset($_FILES["file_upload"]["tmp_name"]))
+			{					
+				// check for file error.			
+				if ($_FILES["file_upload"]["error"] != 0)
 				{
 					$safe_to_upload = false;
+					$error_msg = "Error Number: " . $_FILES["file_upload"]["error"];
 				}
-				elseif()
+				elseif($_FILES["file_upload"]["size"] > 124768)
 				{
-				
+					$safe_to_upload = false;
+					$error_msg = "File too big. Must be under 125KB.";
 				}
+				$file_type_array = explode("/", $_FILES["file_upload"]["type"]);
+				
+				if ($file_type_array[0] != "image")
+				{
+					$safe_to_upload = false;
+					$error_msg = "File not identified as an image.";
+				}
+				elseif(!in_array($file_type_array[1], \Common\Constants::$AdminPermittedFileuploadExtensions))
+				{
+					$safe_to_upload = false;
+					$error_msg = "File must be in JPG or PNG format.";
+				}
+				
 			}
 			else
 			{
@@ -66,7 +83,21 @@ if (!(isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION
 			
 			if ($safe_to_upload)
 			{
-				$file_upload_name = $_FILES["fileToUpload"]["name"];
+				$file_parts = explode('.',$_FILES['file_upload']['name']);
+				$ext = $file_parts[count($file_parts) - 1];
+				$file_upload_name = "../" . \Common\Constants::$AdminFileuploadFolder . "/" . sha1_file($_FILES['file_upload']['tmp_name']) . "." . $ext;
+				
+				if (!move_uploaded_file($_FILES['file_upload']['tmp_name'],
+					$file_upload_name
+					))
+				{
+					$file_upload_error = 1;
+					$error_msg = "failed to move tmp file to final location.";
+				}
+				else
+				{
+					$file_upload_success = 1;
+				}
 			}
 			else
 			{
@@ -93,6 +124,8 @@ if (!(isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION
 		{
 			$("#input_delete_filename_hidden").val(name);
 			$("#input_submit_delete").prop("disabled", false);
+			var path = "../uploaded_pictures/" + name;
+			$("#imgDeletePreview").prop("src", path);
 		}
 		
 		function clear_selected_file()
@@ -106,7 +139,7 @@ if (!(isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION
 <body>
     <?php include_once("../Includes/navbar.admin.php"); ?>
 
-    <div class="container-fluid PageContainer" style="overflow-x:scroll;">
+    <div class="container-fluid PageContainer" style="overflow-y:scroll;">
 
         <div class="row">
             <div id="divLeftSidebar" class="col-md-1">
@@ -118,7 +151,7 @@ if (!(isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION
                     <div class="container-fluid PageSection">
                         <div class="row">
                         	<div class="col-xs-12 col-sm-7 col-md-7">
-                                <div class="container-fluid" style="overflow-x:scroll; ">
+                                <div class="container-fluid">
                                     <?php
                                         // get list of files in upload folder.
                                         // display as 2 by x table
@@ -169,7 +202,7 @@ if (!(isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION
                             	<div class="row">
                                 	
 									<div class="col-xs-12 col-sm-12 col-md-12">
-                                		<label>fie selected to delete:</label>
+                                		<label>file selected to delete:</label>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -189,6 +222,13 @@ if (!(isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                 		<input type="button" value="Clear" onclick="clear_selected_file();"  />
+                                    </div>
+
+                                </div>
+                                <br/>
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-12 col-md-12">
+                                		<img style="width:50%;height:50%" id="imgDeletePreview" src="" alt="image selected to delete.">
                                     </div>
 
                                 </div>
@@ -227,7 +267,7 @@ if (!(isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION
 											}
 											elseif(isset($file_upload_success))
 											{
-												echo "SUCCESS, file uploaded: ". $file_upload_name;	
+												echo "SUCCESS, file uploaded. ";	
 											}
 											elseif(isset($file_delete_error))
 											{
@@ -235,7 +275,7 @@ if (!(isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION
 											}
 											elseif(isset($file_upload_error))
 											{
-												echo "ERROR, failed to upload file: ". $file_upload_name;	
+												echo "ERROR, failed to upload file: ". $error_msg;	
 											}
 											else
 											{
@@ -256,11 +296,8 @@ if (!(isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION
             </div>
         </div>
     </div>
-    
     <?php
-		echo '<p>';
 		print_r($_FILES);
-		echo '</p>';
 	?>
     <br/>
     <br/>
