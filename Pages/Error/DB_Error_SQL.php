@@ -11,7 +11,7 @@
 include_once('../../Includes/Common.php');
 include_once('../../Includes/Session.php');
 
-if( !(isset( $_SESSION["last_Error"]) && $_SESSION["last_Error"] == "DB_connection"))
+if( !(isset( $_SESSION["last_Error"]) && $_SESSION["last_Error"] == "DB_Error_Generic"))
 {
 	header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/home.php");
 	exit;
@@ -58,7 +58,7 @@ if( !(isset( $_SESSION["last_Error"]) && $_SESSION["last_Error"] == "DB_connecti
         <div class="row" style="margin: auto 20px">
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <H3 style="color:red">
-                    Could not connect to the Database
+                    Database Error
                 </H3>
             </div>
         </div>
@@ -66,17 +66,20 @@ if( !(isset( $_SESSION["last_Error"]) && $_SESSION["last_Error"] == "DB_connecti
         <br/>
         <div class="row" style="margin: auto 20px">
             <div class="col-xs-12 col-sm-12 col-md-12">
-            	<?php	
-					
+            	<?php
+				
 					if (!isset($_SESSION["Error_MSG"]))
 					{
-						$_SESSION["Error_MSG"] = "";	
+						$DB_Error_Msg = $_SESSION["Error_MSG"];
 					}
-								
-					$receiverEmail = \Common\Constants::$EmailAdminDefault;
-					$subject = "Quality Caps ERROR, Database connection";
-					$body = "An Visitor/customer attempt to open a connection to the database failed. \r\nIf DB is not down for maintenance, please check for errors.\r\n\r\n" . $_SESSION["Error_MSG"];
+					else
+					{
+						$DB_Error_Msg = "NO MESSAGE";
+					}
 					
+					$receiverEmail = \Common\Constants::$EmailAdminDefault;
+					$subject = "Quality Caps ERROR, Database query";
+					$body = "An Error was experienced during a database query.\r\nError Message : " . $DB_Error_Msg . "\r\n\r\n";
 					$headers = "Content-Type: text/html; charset=TIS-620 \n";
 					$headers .= "MIME-Version: 1.0 \r\n";
 					
@@ -84,7 +87,9 @@ if( !(isset( $_SESSION["last_Error"]) && $_SESSION["last_Error"] == "DB_connecti
 					
 				?>
                 
-                An email has been sent to the Administration team.
+                An error occurred processing a database request.
+                
+                Information on the request has been emailed to the Admin Team.
                 
             </div>
         </div>
