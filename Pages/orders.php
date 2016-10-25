@@ -47,41 +47,38 @@ $order_count = $ordersManager->GetCountOfOrderSummariesByCustomer($_SESSION[\Com
     <script type="text/javascript">
 		function OrdersAjax(page, pagesize, itemcount)
 		{
-			var nextPage = page + 1;
-			var prevPage = page - 1;
-			
-			if (itemcount <= pagesize)
-			{
-				$("#lblPrevPage").html("Previous");
-				$("#lblPageNumber").html("Page: 1");
-				$("#lblNextPage").html("Next");
-				$("#tblOrderSummaries").load("../Includes/Ajax/Orders.ajax.php", {p:page});
+			$("#tblOrderSummaries").load("../Includes/Ajax/Orders.ajax.php", {p:page},
+				function(responseTxt, statusTxt, xhr)
+				{
+					if(statusTxt == "success")
+					{
+						var nextPage = page + 1;
+						var prevPage = page - 1;
 						
-				
-			}			
-			// showing first set of order items
-			else if (page <= 1)
-			{
-				$("#lblPrevPage").html("Previous");
-				$("#lblPageNumber").html("Page: 1");
-				$("#lblNextPage").html('<a href="#" onclick="OrdersAjax( ' + nextPage + ', ' + pagesize + ', ' + itemcount + ')">Next</a>');
-				$("#tblOrderSummaries").load("../Includes/Ajax/Orders.ajax.php", {p:page});
-			}
-			// showing last set of order items
-			else if (page * pagesize >= itemcount)
-			{
-				$("#lblPrevPage").html('<a href="#" onclick="OrdersAjax( ' + prevPage + ', ' + pagesize + ', ' + itemcount + ')">Previous</a>');
-				$("#lblPageNumber").html("Page: " + page);
-				$("#lblNextPage").html("Next");
-				$("#tblOrderSummaries").load("../Includes/Ajax/Orders.ajax.php", {p:page});
-			}
-			else
-			{
-				$("#lblPrevPage").html('<a href="#" onclick="OrdersAjax( ' + prevPage + ', ' + pagesize + ', ' + itemcount + ')">Previous</a>');
-				$("#lblPageNumber").html("Page: " + page);
-				$("#lblNextPage").html('<a href="#" onclick="OrdersAjax( ' + nextPage + ', ' + pagesize + ', ' + itemcount + ')">Next</a>');
-				$("#tblOrderSummaries").load("../Includes/Ajax/Orders.ajax.php", {p:page});
-			}
+						
+						if (itemcount <= pagesize || page <= 1)
+						{
+							$("#lblPrevPage").html("Previous");
+							$("#lblPageNumber").html("Page: 1");
+						}
+						else
+						{
+							$("#lblPrevPage").html('<a href="#" onclick="OrdersAjax( ' + prevPage + ', ' + pagesize + ', ' + itemcount + ')">Previous</a>')
+							$("#lblPageNumber").html("Page: " + page);
+						}
+						
+						
+						if (page <= 1 || (page > 1 && page * pagesize < itemcount))
+						{
+							$("#lblNextPage").html('<a href="#" onclick="OrdersAjax( ' + nextPage + ', ' + pagesize + ', ' + itemcount + ')">Next</a>');
+						}
+						else
+						{
+							$("#lblNextPage").html("Next");
+						}
+					}
+				}
+			);
 		}
 	</script>
 </head>

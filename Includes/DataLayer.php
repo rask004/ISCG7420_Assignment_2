@@ -8,7 +8,7 @@
 
 namespace DataLayer;
 
-require_once('../Includes/Session.php');
+require_once('Session.php');
 
 /*
  *	Database interaction object.

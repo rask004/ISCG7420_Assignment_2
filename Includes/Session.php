@@ -6,7 +6,9 @@
  * Time: 5:38 PM
  */
  
-include_once('../Includes/Common.php');
+ ini_set("display_errors","1");
+ 
+ include_once("Common.php");
 
 if (session_status() == PHP_SESSION_NONE) 
 {

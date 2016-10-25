@@ -1,8 +1,8 @@
 <?php
 
 include_once('../Session.php');
-include_once("../OrderManager.php");
-include_once('../Common.php');
+include_once("../Common.php");
+include_once('../OrderManager.php');
 
  ini_set('display_errors','1');
 
@@ -26,9 +26,11 @@ if (!isset($_REQUEST["p"]))
 	
 	header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/AJAX_Error.php");
 	exit;
+	
 }
 else 
 {
+	
 	$ordersManager = new \BusinessLayer\OrderManager;
 
 	$page = (integer) ($_REQUEST["p"] + 0);
@@ -48,8 +50,6 @@ else
 	
 	echo '<tr style="border-bottom: black solid 1px"><th>Id</th><th>Date Placed</th><th>Status</th><th>Total Items</th><th>Total Cost ($)</th></tr>';
 	
-	
-	
 	$order_summaries = $ordersManager->GetAllOrderSummariesForCustomer($id, $start, $length);
 	
 	foreach($order_summaries as $summary)
@@ -58,4 +58,18 @@ else
 		echo "<tr><td>". $summary['id'] ."</td><td>". $date_parts[0] ."</td><td>". $summary['status'] .
 		"</td><td>". $summary['totalQuantity'] ."</td><td>". $summary['totalPrice'] ."</td><td></tr>";
 	}
+	
+	if( count($order_summaries) < 5)
+	{
+		$c = 5 - count($order_summaries);
+		
+		while( $c > 0)
+		{
+			echo "<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp; </td><td>&nbsp; </td><td>&nbsp; </td></tr>";
+			$c -= 1;	
+		}
+	}
+	
 }
+
+?>
