@@ -7,7 +7,7 @@
  */
 
 include_once('../Includes/Session.php');
-include('../Includes/Common.php');
+include_once('../Includes/Common.php');
 
 ?>
 

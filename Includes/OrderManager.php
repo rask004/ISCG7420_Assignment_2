@@ -47,4 +47,12 @@ class OrderManager
 		return $this->_data_manager->selectOrderSummariesByCustomer($customer_id, $start_index, $number_of_items);
 	}
 	
+	/* 
+		retrieve count of order summaries for a customer
+	*/
+	function GetCountOfOrderSummariesByCustomer($customer_id)
+	{
+		return $this->_data_manager->GetCountOfOrderSummariesByCustomer($customer_id);
+	}
+	
 }

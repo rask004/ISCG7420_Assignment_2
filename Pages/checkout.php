@@ -7,7 +7,10 @@
  */
 
 include_once('../Includes/Session.php');
-include('../Includes/Common.php');
+include_once('../Includes/Common.php');
+include_once("../Includes/CapManager.php");
+
+$capsManager = new \BusinessLayer\CapManager;
 
 if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && isset($_SESSION[\Common\Security::$SessionAdminCheckKey]))
 {
@@ -22,6 +25,12 @@ if (!isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) || $_SESSION[
     exit;
 }
 
+$retrievedCaps = array();
+
+$page_size = \Common\Constants::$CheckoutTablePageSize;
+
+$cart_count = count($_SESSION[\Common\Security::$SessionCartArrayKey]);
+
 ?>
 
 <!doctype html>
@@ -35,6 +44,56 @@ if (!isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) || $_SESSION[
     <link rel="stylesheet" type="text/css" href="../css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="../css/Common.css">
     <script type="text/javascript" src="../js/jquery.js"></script>
+    <script type="text/javascript">
+		function CheckoutItemDelete(id)
+		{
+			// ajax call to script to remove item
+			//		include a followup function, to decrement itemcount, decrement page if too high, and update the Checkout table and pages.
+		}
+	
+		function CheckoutAjaxPage(page, pagesize, itemcount)
+		{
+			// update checkout container with current page of items, and update paging elements
+			
+			var nextPage = page + 1;
+			var prevPage = page - 1;
+			
+			// only 1 pages worth of items to show
+			if (itemcount <= pagesize)
+			{
+				$("#lblPrevPage").html("Previous");
+				$("#lblPageNumber").html("Page: 1");
+				$("#lblNextPage").html("Next");
+				$("#divCheckoutContainer").load("../Includes/Ajax/CheckoutPage.ajax.php", {p:page});
+						
+				
+			}			
+			// showing first set of order items
+			else if (page <= 1)
+			{
+				$("#lblPrevPage").html("Previous");
+				$("#lblPageNumber").html("Page: 1");
+				$("#lblNextPage").html('<a href="#" onclick="CheckoutAjaxPage( ' + nextPage + ', ' + pagesize + ', ' + itemcount + ')">Next</a>');
+				$("#divCheckoutContainer").load("../Includes/Ajax/CheckoutPage.ajax.php", {p:page});
+			}
+			// showing last set of order items
+			else if (page * pagesize >= itemcount)
+			{
+				$("#lblPrevPage").html('<a href="#" onclick="CheckoutAjaxPage( ' + prevPage + ', ' + pagesize + ', ' + itemcount + ')">Previous</a>');
+				$("#lblPageNumber").html("Page: " + page);
+				$("#lblNextPage").html("Next");
+				$("#divCheckoutContainer").load("../Includes/Ajax/CheckoutPage.ajax.php", {p:page});
+			}
+			// showing a page between the first and last.
+			else
+			{
+				$("#lblPrevPage").html('<a href="#" onclick="CheckoutAjaxPage( ' + prevPage + ', ' + pagesize + ', ' + itemcount + ')">Previous</a>');
+				$("#lblPageNumber").html("Page: " + page);
+				$("#lblNextPage").html('<a href="#" onclick="CheckoutAjaxPage( ' + nextPage + ', ' + pagesize + ', ' + itemcount + ')">Next</a>');
+				$("#divCheckoutContainer").load("../Includes/Ajax/CheckoutPage.ajax.php", {p:page});
+			}
+		}
+	</script>
 </head>
 
 <body>
@@ -42,7 +101,6 @@ if (!isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) || $_SESSION[
 include_once("../Includes/navbar.member.php");
 ?>
 
-<form method="post" enctype="multipart/form-data" autocomplete="off">
     <div class="container-fluid PageContainer">
 
         <div class="row">
@@ -69,20 +127,41 @@ include_once("../Includes/navbar.member.php");
                     <br/>
 
                     <div class="row" style="margin-top: 4px">
-
+						<div class="container-fluid"id="divCheckoutContainer">
+                                
+                        </div>
                     </div>
+                    
+                    <br/>
+                    <br/>
+                    
+                    <div class="row">
+                    	<div class="col-xs-0 col-sm-2 col-md-2">
+                        </div>
+                        <div class="col-xs-12 col-sm-3 col-md-3">
+                        	<label id="lblPrevPage"></label>
+                        </div>
+                        <div class="col-xs-12 col-sm-2 col-md-2">
+                        	<label id="lblPageNumber"></label>
+                        </div>
+                        <div class="col-xs-12 col-sm-3 col-md-3">
+                        	<label id="lblNextPage"></label>
+                        </div>
+                        <div class="col-xs-0 col-sm-2 col-md-2">
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
             <div id="divRightSidebar" class="col-md-3">
-                <br/>
-                <?php print_r($_SESSION) ?>
-                <br/>
-                <?php print_r($_REQUEST) ?>
             </div>
         </div>
+        
+        <script type="text/javascript">
+			CheckoutAjaxPage(1, <?php echo $page_size ?>, <?php echo $cart_count ?> );
+		</script>
 
     </div>
-</form>
 
 <?php include_once("../Includes/footer.php"); ?>
 </body>

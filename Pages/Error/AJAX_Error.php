@@ -9,7 +9,7 @@
 include_once('../../Includes/Common.php');
 include_once('../../Includes/Session.php');
 
-if( !(isset( $_SESSION["last_Error"]) && $_SESSION["last_Error"] == "DB_Error_Generic"))
+if( !(isset( $_SESSION["last_Error"]) && $_SESSION["last_Error"] == "AJAX_Error"))
 {
 	header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/home.php");
 	exit;
@@ -56,7 +56,7 @@ if( !(isset( $_SESSION["last_Error"]) && $_SESSION["last_Error"] == "DB_Error_Ge
         <div class="row" style="margin: auto 20px">
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <H3 style="color:red">
-                    Database Error
+                    AJAX request error
                 </H3>
             </div>
         </div>
@@ -64,20 +64,18 @@ if( !(isset( $_SESSION["last_Error"]) && $_SESSION["last_Error"] == "DB_Error_Ge
         <br/>
         <div class="row" style="margin: auto 20px">
             <div class="col-xs-12 col-sm-12 col-md-12">
-            	<?php
-				
+            	<?php	
+					
 					if (!isset($_SESSION["Error_MSG"]))
 					{
-						$DB_Error_Msg = $_SESSION["Error_MSG"];
+						$_SESSION["Error_MSG"] = "NO MESSAGE FOUND.";	
 					}
-					else
-					{
-						$DB_Error_Msg = "NO MESSAGE";
-					}
-					
+								
 					$receiverEmail = \Common\Constants::$EmailAdminDefault;
-					$subject = "Quality Caps ERROR, Database query";
-					$body = "An Error was experienced during a database query.\r\nError Message : " . $DB_Error_Msg . "\r\n\r\n";
+					$subject = "Quality Caps ERROR, AJAX request";
+					$body = "An error occurred processing an Ajax Request. Details:\r\n\r\n".
+						$_SESSION["Error_MSG"];
+					
 					$headers = "Content-Type: text/html; charset=TIS-620 \n";
 					$headers .= "MIME-Version: 1.0 \r\n";
 					
@@ -85,9 +83,9 @@ if( !(isset( $_SESSION["last_Error"]) && $_SESSION["last_Error"] == "DB_Error_Ge
 					
 				?>
                 
-                An error occurred processing a database request.
+                An email of this error has been sent to the Administration team.
                 
-                Information on the request has been emailed to the Admin Team.
+                Be aware that any hacking of the AJAX query system will not be tolerated, and customers found responsible for any such hacking will have their accounts permanently disabled.
                 
             </div>
         </div>

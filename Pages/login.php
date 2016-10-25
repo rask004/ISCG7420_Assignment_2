@@ -11,7 +11,7 @@
 include_once('../Includes/Session.php');
 include_once('../Includes/Common.php');
 include_once('../Includes/CustomerManager.php');
-include('../Includes/AdminManager.php');
+include_once('../Includes/AdminManager.php');
 
 $bad_login_message = "";
 
@@ -34,7 +34,6 @@ if (isset($_POST['inputLogin']) && isset($_POST['inputPassword']))
 		$_SESSION[\Common\Security::$SessionAuthenticationKey] = 1;
    		$_SESSION[\Common\Security::$SessionUserLoginKey]  = $customer['login'];
     	$_SESSION[\Common\Security::$SessionUserIdKey] = $customer['id'];
-		$_SESSION[\Common\Security::$SessionCartArrayKey] = array();
 		
 		unset($customerManager);
 		unset($customer);
@@ -142,21 +141,6 @@ if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\
                                 </div>
 
                                 <br/>
-
-                                <div class="row" style="margin-top: 4px">
-                                    <div class="col-xs-2 col-sm-3 col-md-3">
-
-                                    </div>
-                                    <div class="col-xs-8 col-sm-6 col-md-6">
-                                        <input style="width:100%" type="button" value="Reset Password" />
-                                    </div>
-                                    <div class="col-xs-2 col-sm-3 col-md-3">
-
-                                    </div>
-                                </div>
-
-                                <br/>
-
                                 <div class="row" style="margin-top: 4px">
                                     <div class="col-xs-4 col-sm-4 col-md-4">
                                         <input style="width:100%" type="reset" value="Clear" />

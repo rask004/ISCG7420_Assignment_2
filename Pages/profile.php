@@ -7,7 +7,7 @@
  */
  
 include_once('../Includes/Session.php');
-include('../Includes/Common.php');
+include_once('../Includes/Common.php');
 include_once("../Includes/CustomerManager.php");
 	
 $customerManager = new \BusinessLayer\CustomerManager;
@@ -691,6 +691,7 @@ else
                     </div>
                 </div>
                 <div id="divLeftSidebar" class="col-md-3">
+                	<?php print_r($_SESSION); ?>
                 </div>
             </div>
 

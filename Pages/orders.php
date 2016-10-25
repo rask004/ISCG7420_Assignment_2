@@ -5,16 +5,14 @@
  * Date: 11/10/2016
  * Time: 10:17 PM
  */
- 
- ini_set('display_errors','1');
+
+ini_set("display_errors", "1");
 
 include_once('../Includes/Session.php');
-include('../Includes/Common.php');
+include_once('../Includes/Common.php');
 include_once("../Includes/OrderManager.php");
-include_once("../Includes/CapManager.php");
 
 $ordersManager = new \BusinessLayer\OrderManager;
-$capsManager = new \BusinessLayer\CapManager;
 
 if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && isset($_SESSION[\Common\Security::$SessionAdminCheckKey]))
 {
@@ -29,7 +27,9 @@ if (!isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) || $_SESSION[
     exit;
 }
 
-$page_size = 5;
+$page_size = \Common\Constants::$OrdersTablePageSize;
+
+$order_count = $ordersManager->GetCountOfOrderSummariesByCustomer($_SESSION[\Common\Security::$SessionUserIdKey]);
 
 ?>
 
@@ -44,6 +44,46 @@ $page_size = 5;
     <link rel="stylesheet" type="text/css" href="../css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="../css/Common.css">
     <script type="text/javascript" src="../js/jquery.js"></script>
+    <script type="text/javascript">
+		function OrdersAjax(page, pagesize, itemcount)
+		{
+			var nextPage = page + 1;
+			var prevPage = page - 1;
+			
+			if (itemcount <= pagesize)
+			{
+				$("#lblPrevPage").html("Previous");
+				$("#lblPageNumber").html("Page: 1");
+				$("#lblNextPage").html("Next");
+				$("#tblOrderSummaries").load("../Includes/Ajax/Orders.ajax.php", {p:page});
+						
+				
+			}			
+			// showing first set of order items
+			else if (page <= 1)
+			{
+				$("#lblPrevPage").html("Previous");
+				$("#lblPageNumber").html("Page: 1");
+				$("#lblNextPage").html('<a href="#" onclick="OrdersAjax( ' + nextPage + ', ' + pagesize + ', ' + itemcount + ')">Next</a>');
+				$("#tblOrderSummaries").load("../Includes/Ajax/Orders.ajax.php", {p:page});
+			}
+			// showing last set of order items
+			else if (page * pagesize >= itemcount)
+			{
+				$("#lblPrevPage").html('<a href="#" onclick="OrdersAjax( ' + prevPage + ', ' + pagesize + ', ' + itemcount + ')">Previous</a>');
+				$("#lblPageNumber").html("Page: " + page);
+				$("#lblNextPage").html("Next");
+				$("#tblOrderSummaries").load("../Includes/Ajax/Orders.ajax.php", {p:page});
+			}
+			else
+			{
+				$("#lblPrevPage").html('<a href="#" onclick="OrdersAjax( ' + prevPage + ', ' + pagesize + ', ' + itemcount + ')">Previous</a>');
+				$("#lblPageNumber").html("Page: " + page);
+				$("#lblNextPage").html('<a href="#" onclick="OrdersAjax( ' + nextPage + ', ' + pagesize + ', ' + itemcount + ')">Next</a>');
+				$("#tblOrderSummaries").load("../Includes/Ajax/Orders.ajax.php", {p:page});
+			}
+		}
+	</script>
 </head>
 
 <body>
@@ -80,43 +120,7 @@ $page_size = 5;
 						<div class="col-xs-0 col-sm-2 col-md-2">
                         </div>
 						<div class="col-xs-12 col-sm-8 col-md-8">
-                        	<table width="100%">
-                            	<tr>
-                                	<th>
-                                    	Id
-                                    </th>
-									<th>
-                                    	Date Placed
-                                    </th>
-									<th>
-                                    	Status
-                                    </th>
-                                    <th>
-                                    	Total Items
-                                    </th>
-                                    <th>
-                                    	Total Cost
-                                    </th>
-
-                                </tr>
-                                
-                                <tr>
-                                
-                                <?php 
-									
-									
-									// TODO: complete this
-									
-									$order_summaries = $ordersManager->GetAllOrderSummariesForCustomer($_SESSION[\Common\Security::$SessionUserIdKey], 0, 99);
-									
-									foreach($order_summaries as $summary)
-									{
-										echo "<td>". $summary['id'] ." </td>";
-									}
-									
-								?>                  
-                                
-                                </tr>
+                        	<table width="100%" style="border-bottom: black solid 1px" id="tblOrderSummaries">
                                 
                             </table>
                         </div>
@@ -125,19 +129,34 @@ $page_size = 5;
                     </div>
                     <br/>
                     <br/>
+                    <div class="row">
+                    	<div class="col-xs-0 col-sm-2 col-md-2">
+                        </div>
+                        <div class="col-xs-12 col-sm-3 col-md-3">
+                        	<label id="lblPrevPage"></label>
+                        </div>
+                        <div class="col-xs-12 col-sm-2 col-md-2">
+                        	<label id="lblPageNumber"></label>
+                        </div>
+                        <div class="col-xs-12 col-sm-3 col-md-3">
+                        	<label id="lblNextPage"></label>
+                        </div>
+                        <div class="col-xs-0 col-sm-2 col-md-2">
+                        </div>
+                    </div>
                     
                 </div>
             </div>
             <div id="divRightSidebar" class="col-md-3">
-                <br/>
-                <?php print_r($_SESSION) ?>
-                <br/>
-                <?php print_r($_REQUEST) ?>
             </div>
         </div>
 
     </div>
-
+    
+    <script type="text/javascript">
+		OrdersAjax(1, <?php echo $page_size ?>, <?php echo $order_count ?> );
+	</script>
+		
     <?php include_once("../Includes/footer.php"); ?>
 </body>
 </html>

@@ -8,7 +8,7 @@
 
 namespace DataLayer;
 
-include_once('../Includes/Session.php');
+require_once('../Includes/Session.php');
 
 /*
  *	Database interaction object.
@@ -101,7 +101,7 @@ class DataManager
 	private function _openConnection()
 	{
 		$this->_conn = new \mysqli("localhost", "askewr04", "29101978", "askewr04mysql3");
-		if ($mysqli->connect_errno) 
+		if ($this->_conn->connect_errno) 
 		{
 			$_SESSION["last_Error"] = "DB_connection";
 			$_SESSION["Error_MSG"] = (string) $mysqli->connect_errno . "; " . $mysqli->connect_error;
@@ -783,6 +783,38 @@ class DataManager
 		$this->_closeConnection();	
 		
 		return $orders;	
+	}
+	
+	/*
+		get count of order summaries
+	*/
+	public function GetCountOfOrderSummariesByCustomer($customerId)
+	{
+		$customerId = (integer) $customerId;
+		
+		$this->_openConnection();	
+		
+		if (!$query_result = $this->_conn->query("SELECT co.id as id, ".
+		" sum(oi.quantity) as totalQuantity, sum(oi.quantity * c.price) as totalPrice FROM `orderitem` oi, `customerorder` co, ".
+		" `cap` c WHERE userId=" . $customerId . " and oi.orderid = co.id AND c.id = oi.capId group by orderId ;"))
+		{
+			$this->_conn->rollback();
+			$_SESSION["last_Error"] = "DB_Error_Generic";
+			$_SESSION["Error_MSG"] = (string) $mysqli->_conn->errno . "; " . $mysqli->_conn->error . "; SQL=". $sql;
+			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
+			exit;
+		}
+		
+		$summaryCount = $query_result->num_rows;
+		
+		if ($query_result)
+		{
+			$query_result->free();
+		}
+		
+		$this->_closeConnection();	
+		
+		return $summaryCount;	
 	}
 	
 	/*
