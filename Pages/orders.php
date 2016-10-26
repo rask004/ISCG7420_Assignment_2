@@ -56,25 +56,29 @@ $order_count = $ordersManager->GetCountOfOrderSummariesByCustomer($_SESSION[\Com
 						var prevPage = page - 1;
 						
 						
-						if (itemcount <= pagesize || page <= 1)
+						if (itemcount <= pagesize)
 						{
 							$("#lblPrevPage").html("Previous");
 							$("#lblPageNumber").html("Page: 1");
+							$("#lblNextPage").html("Next");
+						}
+						else if (page <= 1)
+						{
+							$("#lblPrevPage").html("Previous");
+							$("#lblPageNumber").html("Page: 1");
+							$("#lblNextPage").html('<a href="#" onclick="OrdersAjax( ' + nextPage + ', ' + pagesize + ', ' + itemcount + ')">Next</a>');
+						}
+						else if (page * pagesize >= itemcount)
+						{
+							$("#lblPrevPage").html('<a href="#" onclick="OrdersAjax( ' + prevPage + ', ' + pagesize + ', ' + itemcount + ')">Previous</a>')
+							$("#lblPageNumber").html("Page: " + page);
+							$("#lblNextPage").html("Next");
 						}
 						else
 						{
 							$("#lblPrevPage").html('<a href="#" onclick="OrdersAjax( ' + prevPage + ', ' + pagesize + ', ' + itemcount + ')">Previous</a>')
 							$("#lblPageNumber").html("Page: " + page);
-						}
-						
-						
-						if (page <= 1 || (page > 1 && page * pagesize < itemcount))
-						{
 							$("#lblNextPage").html('<a href="#" onclick="OrdersAjax( ' + nextPage + ', ' + pagesize + ', ' + itemcount + ')">Next</a>');
-						}
-						else
-						{
-							$("#lblNextPage").html("Next");
 						}
 					}
 				}

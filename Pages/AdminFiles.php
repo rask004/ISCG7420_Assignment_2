@@ -214,13 +214,10 @@ if (!(isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION
                                 <br/>
                             	<div class="row">
                                 	
-									<div class="col-xs-12 col-sm-12 col-md-12">
+									<div class="col-xs-8 col-sm-8 col-md-8">
                                 		<input type="submit" disabled id="input_submit_delete" value="Delete" name="submit"  />
                                     </div>
-                                </div>
-                                <br/>
-                                <div class="row">
-                                    <div class="col-xs-12 col-sm-12 col-md-12">
+                                    <div class="col-xs-4 col-sm-4 col-md-4">
                                 		<input type="button" value="Clear" onclick="clear_selected_file();"  />
                                     </div>
 
@@ -255,10 +252,10 @@ if (!(isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION
                         <br/>
                         <br/>
                         <div class="row">
-	                        <div class="col-xs-0 col-sm-2 col-md-2">
+	                        <div class="col-xs-2 col-sm-2 col-md-2">
                             	
                             </div>
-                        	<div class="col-xs-12 col-sm-8 col-md-8" style="background-color:#979797; text-align:center">
+                        	<div class="col-xs-8 col-sm-8 col-md-8" style="background-color:#979797; text-align:center">
                             	<b><label style="font-size:2em" id="InfoMsg" >
                                 	    <?php
 											if(isset($file_delete_success))
@@ -284,7 +281,7 @@ if (!(isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION
 										?>
                                 </label></b>
                             </div>
-                            <div class="col-xs-0 col-sm-2 col-md-2">
+                            <div class="col-xs-2 col-sm-2 col-md-2">
                             	
                             </div>
                         </div>
@@ -296,9 +293,6 @@ if (!(isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION
             </div>
         </div>
     </div>
-    <?php
-		print_r($_FILES);
-	?>
     <br/>
     <br/>
 

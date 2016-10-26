@@ -48,58 +48,119 @@ $cart_count = count($_SESSION[\Common\Security::$SessionCartArrayKey]);
 		function CheckoutItemDelete(id)
 		{
 			// ajax call to script to remove item
-			//		include a followup function, to decrement itemcount, decrement page if too high, and update the Checkout table and pages.
+			$.ajax("../Includes/Ajax/CheckoutPage.ajax.php", 
+				{
+					d:		id,
+					type: 	'post',
+					success:	function()
+						{							
+							var itemcount = $("#inputJsParamsItemCount").val() - 1;
+							var pagesize = $("#inputJsParamsPageSize").val();
+							var page = $("#inputJsParamsPage").val();
+							
+							if (page > 0 && ((page - 1) * pagesize ) >= itemcount)
+							{
+								page -= 1;
+							}
+							$("#inputJsParamsItemCount").val(itemcount);
+							$("#inputJsParamsPage").val(page);
+						}
+				}
+			);
+			
+			var page = $("#inputJsParamsPage").val();
+			CheckoutAjaxPage(page);
+			
 		}
 	
-		function CheckoutAjaxPage(page, pagesize, itemcount)
+		function CheckoutAjaxPage(page)
 		{
-			// update checkout container with current page of items, and update paging elements
+			var pagesize = $("#inputJsParamsPageSize").val();
+			var itemcount = $("#inputJsParamsItemCount").val();
 			
-			var nextPage = page + 1;
-			var prevPage = page - 1;
-			
-			// only 1 pages worth of items to show
-			if (itemcount <= pagesize)
-			{
-				$("#lblPrevPage").html("Previous");
-				$("#lblPageNumber").html("Page: 1");
-				$("#lblNextPage").html("Next");
-				$("#divCheckoutContainer").load("../Includes/Ajax/CheckoutPage.ajax.php", {p:page});
+			$("#divCheckoutContainer").load("../Includes/Ajax/CheckoutPage.ajax.php", {p:page},
+				function(responseTxt, statusTxt, xhr)
+				{
+					if(statusTxt == "success")
+					{
+						var nextPage = page + 1;
+						var prevPage = page - 1;
 						
-				
-			}			
-			// showing first set of order items
-			else if (page <= 1)
-			{
-				$("#lblPrevPage").html("Previous");
-				$("#lblPageNumber").html("Page: 1");
-				$("#lblNextPage").html('<a href="#" onclick="CheckoutAjaxPage( ' + nextPage + ', ' + pagesize + ', ' + itemcount + ')">Next</a>');
-				$("#divCheckoutContainer").load("../Includes/Ajax/CheckoutPage.ajax.php", {p:page});
-			}
-			// showing last set of order items
-			else if (page * pagesize >= itemcount)
-			{
-				$("#lblPrevPage").html('<a href="#" onclick="CheckoutAjaxPage( ' + prevPage + ', ' + pagesize + ', ' + itemcount + ')">Previous</a>');
-				$("#lblPageNumber").html("Page: " + page);
-				$("#lblNextPage").html("Next");
-				$("#divCheckoutContainer").load("../Includes/Ajax/CheckoutPage.ajax.php", {p:page});
-			}
-			// showing a page between the first and last.
-			else
-			{
-				$("#lblPrevPage").html('<a href="#" onclick="CheckoutAjaxPage( ' + prevPage + ', ' + pagesize + ', ' + itemcount + ')">Previous</a>');
-				$("#lblPageNumber").html("Page: " + page);
-				$("#lblNextPage").html('<a href="#" onclick="CheckoutAjaxPage( ' + nextPage + ', ' + pagesize + ', ' + itemcount + ')">Next</a>');
-				$("#divCheckoutContainer").load("../Includes/Ajax/CheckoutPage.ajax.php", {p:page});
-			}
+						
+						if (itemcount <= pagesize)
+						{
+							$("#lblPrevPage").html("Previous");
+							$("#lblPageNumber").html("Page: 1");
+							$("#lblNextPage").html("Next");
+						}
+						else if (page <= 1)
+						{
+							$("#lblPrevPage").html("Previous");
+							$("#lblPageNumber").html("Page: 1");
+							$("#lblNextPage").html('<a href="#" onclick="CheckoutAjaxPage( ' + nextPage + ')">Next</a>');
+						}
+						else if (page * pagesize >= itemcount)
+						{
+							$("#lblPrevPage").html('<a href="#" onclick="CheckoutAjaxPage( ' + prevPage + ')">Previous</a>')
+							$("#lblPageNumber").html("Page: " + page);
+							$("#lblNextPage").html("Next");
+						}
+						else
+						{
+							$("#lblPrevPage").html('<a href="#" onclick="CheckoutAjaxPage( ' + prevPage + ')">Previous</a>')
+							$("#lblPageNumber").html("Page: " + page);
+							$("#lblNextPage").html('<a href="#" onclick="CheckoutAjaxPage( ' + nextPage + ')">Next</a>');
+						}
+						
+						$("#inputJsParamsPage").val(page);
+					}
+				}
+			);
+		}
+	</script>
+    <script type="text/javascript">
+		function OrdersAjax(page, pagesize, itemcount)
+		{
+			$("#tblOrderSummaries").load("../Includes/Ajax/Orders.ajax.php", {p:page},
+				function(responseTxt, statusTxt, xhr)
+				{
+					if(statusTxt == "success")
+					{
+						var nextPage = page + 1;
+						var prevPage = page - 1;
+						
+						
+						if (itemcount <= pagesize || page <= 1)
+						{
+							$("#lblPrevPage").html("Previous");
+							$("#lblPageNumber").html("Page: 1");
+						}
+						else
+						{
+							$("#lblPrevPage").html('<a href="#" onclick="OrdersAjax( ' + prevPage + ', ' + pagesize + ', ' + itemcount + ')">Previous</a>')
+							$("#lblPageNumber").html("Page: " + page);
+						}
+						
+						
+						if (page <= 1 || (page > 1 && page * pagesize < itemcount))
+						{
+							$("#lblNextPage").html('<a href="#" onclick="OrdersAjax( ' + nextPage + ', ' + pagesize + ', ' + itemcount + ')">Next</a>');
+						}
+						else
+						{
+							$("#lblNextPage").html("Next");
+						}
+					}
+				}
+			);
 		}
 	</script>
 </head>
 
 <body>
-<?php
-include_once("../Includes/navbar.member.php");
-?>
+	<?php
+        include_once("../Includes/navbar.member.php");
+    ?>
 
     <div class="container-fluid PageContainer">
 
@@ -127,7 +188,7 @@ include_once("../Includes/navbar.member.php");
                     <br/>
 
                     <div class="row" style="margin-top: 4px">
-						<div class="container-fluid"id="divCheckoutContainer">
+                        <div class="container-fluid"id="divCheckoutContainer">
                                 
                         </div>
                     </div>
@@ -136,34 +197,42 @@ include_once("../Includes/navbar.member.php");
                     <br/>
                     
                     <div class="row">
-                    	<div class="col-xs-0 col-sm-2 col-md-2">
+                        <div class="col-xs-0 col-sm-2 col-md-2">
                         </div>
-                        <div class="col-xs-12 col-sm-3 col-md-3">
-                        	<label id="lblPrevPage"></label>
+                        <div class="col-xs-4 col-sm-3 col-md-3">
+                            <label id="lblPrevPage"></label>
                         </div>
-                        <div class="col-xs-12 col-sm-2 col-md-2">
-                        	<label id="lblPageNumber"></label>
+                        <div class="col-xs-4 col-sm-2 col-md-2">
+                            <label id="lblPageNumber"></label>
                         </div>
-                        <div class="col-xs-12 col-sm-3 col-md-3">
-                        	<label id="lblNextPage"></label>
+                        <div class="col-xs-4 col-sm-3 col-md-3">
+                            <label id="lblNextPage"></label>
                         </div>
                         <div class="col-xs-0 col-sm-2 col-md-2">
                         </div>
                     </div>
                     
+                    <input type="number" hidden id="inputJsParamsPage" value="1"/>
+                    <input type="number" hidden id="inputJsParamsPageSize" value="<?php echo $page_size ?>"/>
+                    <input type="number" hidden id="inputJsParamsItemCount" value="<?php echo $cart_count ?>"/>
+                    
                 </div>
             </div>
             <div id="divRightSidebar" class="col-md-3">
+	            <br/>
+                <?php print_r($_SESSION); ?>
             </div>
         </div>
         
         <script type="text/javascript">
-			CheckoutAjaxPage(1, <?php echo $page_size ?>, <?php echo $cart_count ?> );
-		</script>
+            CheckoutAjaxPage(1);
+        </script>
 
     </div>
-
-<?php include_once("../Includes/footer.php"); ?>
+    
+	<?php 
+        include_once("../Includes/footer.php"); 
+    ?>
 </body>
 </html>
 

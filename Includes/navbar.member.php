@@ -35,15 +35,6 @@
                         </ul>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-sm-12 col-md-12">
-                        <ul class="nav navbar-nav navbar-left">
-                            <li><a id="navbarCartClearLink" style="color: white; text-align: center" href="#">Clear Cart</a></li>
-                            <li><a id="navbarCheckoutLink" style="color: white; text-align: center" href="../Pages/checkout.php">Checkout</a></li>
-                            <li><a id="navbarCartTotal" style="color: white; text-align: center">$ 0.00</a></li>
-                        </ul>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

@@ -85,7 +85,7 @@ class Constants
 	
 	public static  $AdminPermittedFileuploadExtensions = array("png","jpeg","jpg");
 	
-	public static  $OrdersTablePageSize = 5;
+	public static  $OrdersTablePageSize = 10;
 	
-	public static  $CheckoutTablePageSize = 3;
+	public static  $CheckoutTablePageSize = 1;
 }

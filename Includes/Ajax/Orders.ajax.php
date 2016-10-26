@@ -4,8 +4,6 @@ include_once('../Session.php');
 include_once("../Common.php");
 include_once('../OrderManager.php');
 
- ini_set('display_errors','1');
-
 // Check for correct parameters. redirect to ajax error page if malformed.
 if (!isset($_REQUEST["p"]))
 {
@@ -35,6 +33,8 @@ else
 
 	$page = (integer) ($_REQUEST["p"] + 0);
 	
+	$pagesize = \Common\Constants::$OrdersTablePageSize;
+	
 	if ($_REQUEST["p"] >= 2)
 	{
 		$page = $_REQUEST["p"];
@@ -45,12 +45,11 @@ else
 	}
 	
 	$start = ($page - 1) * \Common\Constants::$OrdersTablePageSize;
-	$length = ($page * \Common\Constants::$OrdersTablePageSize);
 	$id = $_SESSION[\Common\Security::$SessionUserIdKey];
 	
 	echo '<tr style="border-bottom: black solid 1px"><th>Id</th><th>Date Placed</th><th>Status</th><th>Total Items</th><th>Total Cost ($)</th></tr>';
 	
-	$order_summaries = $ordersManager->GetAllOrderSummariesForCustomer($id, $start, $length);
+	$order_summaries = $ordersManager->GetAllOrderSummariesForCustomer($id, $start, $pagesize);
 	
 	foreach($order_summaries as $summary)
 	{
@@ -59,9 +58,9 @@ else
 		"</td><td>". $summary['totalQuantity'] ."</td><td>". $summary['totalPrice'] ."</td><td></tr>";
 	}
 	
-	if( count($order_summaries) < 5)
+	if( count($order_summaries) < $pagesize)
 	{
-		$c = 5 - count($order_summaries);
+		$c = $pagesize - count($order_summaries);
 		
 		while( $c > 0)
 		{

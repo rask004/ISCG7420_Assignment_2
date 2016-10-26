@@ -6,7 +6,7 @@
  * Time: 5:38 PM
  */
  
- ini_set("display_errors","1");
+ ini_set("display_errors", "1");
  
  include_once("Common.php");
 
@@ -20,5 +20,6 @@ if (session_status() == PHP_SESSION_NONE)
 		
 		$_SESSION[\Common\Security::$SessionCartArrayKey][1] = 3;
 		$_SESSION[\Common\Security::$SessionCartArrayKey][2] = 10;
+		$_SESSION[\Common\Security::$SessionCartArrayKey][3] = 17;
 	}
 }
