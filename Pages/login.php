@@ -5,8 +5,6 @@
  * Date: 11/10/2016
  * Time: 10:09 PM
  */
- 
-  ini_set("display_errors", "1");
 
 include_once('../Includes/Session.php');
 include_once('../Includes/Common.php');

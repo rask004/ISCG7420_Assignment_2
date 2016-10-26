@@ -21,30 +21,6 @@
 </head>
 <body>
 	<div style="overflow-x:scroll">
-
-	<?php 
-		$dataManager = new \DataLayer\DataManager; 
-	
-		echo		'<br/>';
-		$senderEmail = 'AskewR04@myunitec.ac.nz';
-		$receiverEmail = "rolandjamesaskew37@gmail.com";
-		$subject = "Quality Caps, Registered Customer";
-		$body = "Dear Customer,\r\n\r\n\r\nWelcome to Quality Caps!\r\n\r\nYour Details are:\r\n\tLogin\t\t\t".'AAAAAA'."\r\n\tPassword\t\t".'BBBBBB'."\r\n\r\nYours Sincerely,\r\n\r\nThe QualityCapsTeam\r\n";
-		$headers = "From: Admin <". $senderEmail. ">\r\n";
-		$headers .= "Reply-To: ". $senderEmail. "\r\n";
-		$headers .= "Content-Type: text/html; charset=TIS-620 \n";
-		$headers .= "MIME-Version: 1.0 \r\n";
-		
-		if(!mail($receiverEmail, $subject, $body, $headers))
-		{
-			echo "ERROR SENDING EMAIL<br/>";
-			echo "receiver = " . $receiverEmail . "<br/>";
-			echo "subject = " . $subject . "<br/>";
-			echo "body = " . $body . "<br/>";
-			echo "headers = '". $headers ."'<br/>";
-		}
-		echo "<br/>";
-	?>
     
     <H4>Select Single Customer, ID: 2</H4>
     
