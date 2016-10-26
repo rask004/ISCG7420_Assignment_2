@@ -6,8 +6,9 @@ include_once('../Session.php');
 include_once("../CapManager.php");
 include_once('../Common.php');
 
-if (!isset($_REQUEST["p"]) && !isset($_REQUEST["d"]))
+if (!isset($_REQUEST["p"]))
 {
+	
 	// redirect to AJAX error page.
 	$_SESSION["last_Error"] = "AJAX_Error";
 	$_SESSION["Error_MSG"] = "Orders ajax page: ";
@@ -27,7 +28,7 @@ if (!isset($_REQUEST["p"]) && !isset($_REQUEST["d"]))
 	exit;
 }
 
-elseif (isset($_REQUEST["p"]))
+else
 {
 	$cart = $_SESSION[\Common\Security::$SessionCartArrayKey];
 	
@@ -86,7 +87,7 @@ elseif (isset($_REQUEST["p"]))
 			
 			echo '<div class="row"><div class="col-xs-0 col-sm-1 col-md-1"></div>'.
 				'<div class="col-xs-6 col-sm-2 col-md-2">'.
-				'<input style="background-color:red" type="button" value="X" onclick="CheckoutItemDelete('.$capId .')" /></div>'.
+				'<input style="background-color:red" type="button" value="X" onclick="$.when(CheckoutItemDelete('.$capId .')).then(CheckoutAjaxPage(1))" /></div>'.
 				'<div class="col-xs-3 col-sm-2 col-md-2"><label>ID: </label></div><div class="col-xs-3 col-sm-7 col-md-7">'.
 				'<span>'. $capId .'</span></div></div>';
 			echo '<div class="row"><div class="col-xs-0 col-sm-3 col-md-3"></div>'.
@@ -101,14 +102,5 @@ elseif (isset($_REQUEST["p"]))
 				'<div class="col-xs-6 col-sm-1 col-md-1"><span>$'. $total .'</span></div></div><br/>';
 			
 		}
-	}
-}
-
-elseif (isset($_REQUEST["d"]))
-{
-	echo "<p>Deleting item...</p>";
-	if (isset($_SESSION[\Common\Security::$SessionCartArrayKey][$_REQUEST["d"]]))
-	{
-		unset($_SESSION[\Common\Security::$SessionCartArrayKey][$_REQUEST["d"]]);
 	}
 }

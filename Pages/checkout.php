@@ -47,14 +47,18 @@ $cart_count = count($_SESSION[\Common\Security::$SessionCartArrayKey]);
     <script type="text/javascript">
 		function CheckoutItemDelete(id)
 		{
+			var pagesize = parseInt($("#inputJsParamsPageSize").val());
+			var itemcount = parseInt($("#inputJsParamsItemCount").val());
+			var page = parseInt($("#inputJsParamsPage").val());
+			
 			// ajax call to script to remove item
-			$.ajax("../Includes/Ajax/CheckoutPage.ajax.php", 
+			$.ajax("../Includes/Ajax/CheckoutDelete.ajax.php", 
 				{
 					d:		id,
 					type: 	'post',
 					success:	function()
 						{							
-							var itemcount = $("#inputJsParamsItemCount").val() - 1;
+							itemcount - 1;
 							var pagesize = $("#inputJsParamsPageSize").val();
 							var page = $("#inputJsParamsPage").val();
 							
@@ -62,21 +66,20 @@ $cart_count = count($_SESSION[\Common\Security::$SessionCartArrayKey]);
 							{
 								page -= 1;
 							}
+							
 							$("#inputJsParamsItemCount").val(itemcount);
 							$("#inputJsParamsPage").val(page);
 						}
 				}
 			);
 			
-			var page = $("#inputJsParamsPage").val();
-			CheckoutAjaxPage(page);
-			
 		}
 	
 		function CheckoutAjaxPage(page)
 		{
-			var pagesize = $("#inputJsParamsPageSize").val();
-			var itemcount = $("#inputJsParamsItemCount").val();
+			page = parseInt(page);
+			var pagesize = parseInt($("#inputJsParamsPageSize").val());
+			var itemcount = parseInt($("#inputJsParamsItemCount").val());
 			
 			$("#divCheckoutContainer").load("../Includes/Ajax/CheckoutPage.ajax.php", {p:page},
 				function(responseTxt, statusTxt, xhr)
@@ -116,43 +119,7 @@ $cart_count = count($_SESSION[\Common\Security::$SessionCartArrayKey]);
 					}
 				}
 			);
-		}
-	</script>
-    <script type="text/javascript">
-		function OrdersAjax(page, pagesize, itemcount)
-		{
-			$("#tblOrderSummaries").load("../Includes/Ajax/Orders.ajax.php", {p:page},
-				function(responseTxt, statusTxt, xhr)
-				{
-					if(statusTxt == "success")
-					{
-						var nextPage = page + 1;
-						var prevPage = page - 1;
-						
-						
-						if (itemcount <= pagesize || page <= 1)
-						{
-							$("#lblPrevPage").html("Previous");
-							$("#lblPageNumber").html("Page: 1");
-						}
-						else
-						{
-							$("#lblPrevPage").html('<a href="#" onclick="OrdersAjax( ' + prevPage + ', ' + pagesize + ', ' + itemcount + ')">Previous</a>')
-							$("#lblPageNumber").html("Page: " + page);
-						}
-						
-						
-						if (page <= 1 || (page > 1 && page * pagesize < itemcount))
-						{
-							$("#lblNextPage").html('<a href="#" onclick="OrdersAjax( ' + nextPage + ', ' + pagesize + ', ' + itemcount + ')">Next</a>');
-						}
-						else
-						{
-							$("#lblNextPage").html("Next");
-						}
-					}
-				}
-			);
+			
 		}
 	</script>
 </head>
@@ -219,8 +186,6 @@ $cart_count = count($_SESSION[\Common\Security::$SessionCartArrayKey]);
                 </div>
             </div>
             <div id="divRightSidebar" class="col-md-3">
-	            <br/>
-                <?php print_r($_SESSION); ?>
             </div>
         </div>
         
