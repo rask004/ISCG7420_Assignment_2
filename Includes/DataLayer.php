@@ -8,6 +8,10 @@
 
 namespace DataLayer;
 
+
+ini_set('display_errors','1');
+
+
 require_once('Session.php');
 
 /*
@@ -134,18 +138,18 @@ class DataManager
 		{		
 			$this->_openConnection();
 			
-			$id = (integer) $id;
+			$id = (integer) $customer_id;
 			
 			// need to know the orderid. request a new order id first.
 			$result = $this->_conn->query("SHOW TABLE STATUS LIKE 'CustomerOrder'");
-			$data = $this->_conn->fetch_assoc($result);
-			$next_order_id = $data['auto_increment'];
+			$data = $result->fetch_assoc();
+			$next_order_id = $data['Auto_increment'];
 			
-			$now = new DateTime();
+			$now = new \DateTime();
 			
 			$this->_conn->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
 			// create the customer order.
-			$sql = "insert into CustomerOrder (id, userId, datePlaced) values (".$next_order_id.",".$customer_id.",".$now->format('Y-m-d H:i:s').");";
+			$sql = "insert into CustomerOrder (id, userId, datePlaced) values (".$next_order_id.",".$customer_id.",'".$now->format('Y-m-d H:i:s')."');";
 			if (!$this->_conn->query($sql))
 			{
 				$this->_conn->rollback();

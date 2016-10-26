@@ -10,8 +10,8 @@
  
  include_once("Common.php");
 
-if (session_status() == PHP_SESSION_NONE) 
-{
+//if (session_status() == PHP_SESSION_NONE) 
+//{
     session_start();
 	
 	if ( !(isset( $_SESSION[\Common\Security::$SessionCartArrayKey] ) && is_array($_SESSION[\Common\Security::$SessionCartArrayKey]) ) )
@@ -22,4 +22,4 @@ if (session_status() == PHP_SESSION_NONE)
 		$_SESSION[\Common\Security::$SessionCartArrayKey][2] = 10;
 		$_SESSION[\Common\Security::$SessionCartArrayKey][3] = 17;
 	}
-}
+//}

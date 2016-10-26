@@ -6,8 +6,6 @@
  * Time: 10:17 PM
  */
 
-ini_set("display_errors", "1");
-
 include_once('../Includes/Session.php');
 include_once('../Includes/Common.php');
 include_once("../Includes/OrderManager.php");
@@ -147,8 +145,18 @@ $order_count = $ordersManager->GetCountOfOrderSummariesByCustomer($_SESSION[\Com
                     </div>
                     
                 </div>
+                
+                <br/>
+                <br/>
+                
+                <div hidden id="divCheckoutsuccessMsg" class="alert alert-success" role="alert">
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  <strong>Success!</strong> You have been signed in successfully!
+                </div>
             </div>
             <div id="divRightSidebar" class="col-md-3">
+            	<br/>
+                <?php print_r($_SESSION); ?>
             </div>
         </div>
 
@@ -156,9 +164,23 @@ $order_count = $ordersManager->GetCountOfOrderSummariesByCustomer($_SESSION[\Com
     
     <script type="text/javascript">
 		OrdersAjax(1, <?php echo $page_size ?>, <?php echo $order_count ?> );
+		window.setTimeout(function() 
+			{
+				$(".alert").fadeTo(500, 0).slideUp(500, function()
+				{
+					$(this).remove(); 
+				});
+			}, 4000);
 	</script>
 		
     <?php include_once("../Includes/footer.php"); ?>
+    
+    <?php 
+		if (isset($_REQUEST) && isset($_REQUEST['s']) && $_REQUEST['s'] = 1)
+		{
+			echo '<script type="text/javascript">$("#divCheckoutsuccessMsg").prop("hidden", false);</script>';
+		}
+	?>
 </body>
 </html>
 

@@ -34,7 +34,11 @@ else
 	
 	if (count($cart) == 0)
 	{
-		echo '<div class="row"><label>There are no items in your shopping cart.</label></div>';
+		echo '<div class="row"><div class="col-xs-0 col-sm-2 col-md-2"></div>'.
+			'<div class="col-xs-12 col-sm-8 col-md-8"><label>There are no items in your shopping cart.</label></div>'.
+			'<div class="col-xs-0 col-sm-2 col-md-2"></div>'.
+			'<div class="col-xs-0 col-sm-2 col-md-2"></div>'.
+			'</div>';
 	}
 	else
 	{
@@ -87,8 +91,11 @@ else
 			
 			echo '<div class="row"><div class="col-xs-0 col-sm-1 col-md-1"></div>'.
 				'<div class="col-xs-6 col-sm-2 col-md-2">'.
-				'<input style="background-color:red" type="button" value="X" onclick="$.when(CheckoutItemDelete('.$capId .')).then(CheckoutAjaxPage(1))" /></div>'.
-				'<div class="col-xs-3 col-sm-2 col-md-2"><label>ID: </label></div><div class="col-xs-3 col-sm-7 col-md-7">'.
+				'<form method="post" enctype="multipart/form-data" autocomplete="off"><input style="background-color:red" type="submit" value="X" />'.
+				'<input hidden type="text" value="'. $capId .'" name="CapId" />'.
+				'<input hidden type="text" value="Delete" name="submit" /></form></div>'.
+				'<div class="col-xs-3 col-sm-2 col-md-2">'.
+				'<label>ID: </label></div><div class="col-xs-3 col-sm-7 col-md-7">'.
 				'<span>'. $capId .'</span></div></div>';
 			echo '<div class="row"><div class="col-xs-0 col-sm-3 col-md-3"></div>'.
 				'<div class="col-xs-4 col-sm-2 col-md-2"><label>Name: </label></div>'.

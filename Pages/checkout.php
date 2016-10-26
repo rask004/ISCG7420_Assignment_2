@@ -9,8 +9,7 @@
 include_once('../Includes/Session.php');
 include_once('../Includes/Common.php');
 include_once("../Includes/CapManager.php");
-
-$capsManager = new \BusinessLayer\CapManager;
+include_once("../Includes/OrderManager.php");
 
 if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && isset($_SESSION[\Common\Security::$SessionAdminCheckKey]))
 {
@@ -25,11 +24,54 @@ if (!isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) || $_SESSION[
     exit;
 }
 
+// handle form responses
+if (isset( $_POST ) && isset($_POST['submit']))
+{
+	if ($_POST['submit'] == 'Delete' && isset($_POST['CapId']))
+	{
+		//remove the cart item
+		$id = $_POST['CapId'];
+		if (isset($_SESSION[\Common\Security::$SessionCartArrayKey][$id]))
+		{
+			unset($_SESSION[\Common\Security::$SessionCartArrayKey][$id]);
+		}
+		
+	}
+	elseif($_POST['submit'] == 'Clear')
+	{
+		// clear the cart and return to home.
+		unset($_SESSION[\Common\Security::$SessionCartArrayKey]);
+		$_SESSION[\Common\Security::$SessionCartArrayKey] = array();
+		header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/home.php");
+		exit;
+	}
+	elseif($_POST['submit'] == 'Checkout')
+	{
+		// create new order with orderitems, show successful notice, then redirect to orders page.
+		$ordersManager = new \BusinessLayer\OrderManager;
+		$id = $_SESSION[\Common\Security::$SessionUserIdKey];
+		$cart = $_SESSION[\Common\Security::$SessionCartArrayKey];
+		
+		$ordersManager->PlaceOrder($id, $cart);
+		
+		// clear the cart after placing the order.
+		$_SESSION[\Common\Security::$SessionCartArrayKey] = array();
+			 
+		header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/orders.php?s=1");
+    	exit;
+	}
+}
+
+$capsManager = new \BusinessLayer\CapManager;
+
 $retrievedCaps = array();
 
 $page_size = \Common\Constants::$CheckoutTablePageSize;
 
 $cart_count = count($_SESSION[\Common\Security::$SessionCartArrayKey]);
+
+
+
 
 ?>
 
@@ -45,36 +87,6 @@ $cart_count = count($_SESSION[\Common\Security::$SessionCartArrayKey]);
     <link rel="stylesheet" type="text/css" href="../css/Common.css">
     <script type="text/javascript" src="../js/jquery.js"></script>
     <script type="text/javascript">
-		function CheckoutItemDelete(id)
-		{
-			var pagesize = parseInt($("#inputJsParamsPageSize").val());
-			var itemcount = parseInt($("#inputJsParamsItemCount").val());
-			var page = parseInt($("#inputJsParamsPage").val());
-			
-			// ajax call to script to remove item
-			$.ajax("../Includes/Ajax/CheckoutDelete.ajax.php", 
-				{
-					d:		id,
-					type: 	'post',
-					success:	function()
-						{							
-							itemcount - 1;
-							var pagesize = $("#inputJsParamsPageSize").val();
-							var page = $("#inputJsParamsPage").val();
-							
-							if (page > 0 && ((page - 1) * pagesize ) >= itemcount)
-							{
-								page -= 1;
-							}
-							
-							$("#inputJsParamsItemCount").val(itemcount);
-							$("#inputJsParamsPage").val(page);
-						}
-				}
-			);
-			
-		}
-	
 		function CheckoutAjaxPage(page)
 		{
 			page = parseInt(page);
@@ -128,7 +140,7 @@ $cart_count = count($_SESSION[\Common\Security::$SessionCartArrayKey]);
 	<?php
         include_once("../Includes/navbar.member.php");
     ?>
-
+    
     <div class="container-fluid PageContainer">
 
         <div class="row">
@@ -182,6 +194,28 @@ $cart_count = count($_SESSION[\Common\Security::$SessionCartArrayKey]);
                     <input type="number" hidden id="inputJsParamsPage" value="1"/>
                     <input type="number" hidden id="inputJsParamsPageSize" value="<?php echo $page_size ?>"/>
                     <input type="number" hidden id="inputJsParamsItemCount" value="<?php echo $cart_count ?>"/>
+                    
+                    <br/>
+                    <br/>
+                    
+                    <form method="post" enctype="multipart/form-data" autocomplete="off">
+                    
+                    <div class="row">
+                        <div class="col-xs-0 col-sm-2 col-md-2">
+                        </div>
+                        <div class="col-xs-6 col-sm-3 col-md-3">
+                            <input type="submit" Value="Clear" name="submit" />
+                        </div>
+                        <div class="col-xs-0 col-sm-3 col-md-3">
+                        </div>
+                        <div class="col-xs-6 col-sm-2 col-md-2">
+                             <input type="submit" Value="Checkout" name="submit" />
+                        </div>
+                        <div class="col-xs-0 col-sm-2 col-md-2">
+                        </div>
+                    </div>
+                    
+                    </form>
                     
                 </div>
             </div>
