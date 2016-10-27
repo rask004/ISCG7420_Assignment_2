@@ -87,5 +87,11 @@ class Constants
 	
 	public static  $OrdersTablePageSize = 10;
 	
-	public static  $CheckoutTablePageSize = 1;
+	public static  $CheckoutTablePageSize = 3;
+	
+	public static  $HomeCategoriesTablePageSize = 3;
+	
+	public static  $HomeCapsTablePageSize = 3;
+	
+	public static  $HomeCartTablePageSize = 2;
 }

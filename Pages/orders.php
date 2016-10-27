@@ -151,7 +151,7 @@ $order_count = $ordersManager->GetCountOfOrderSummariesByCustomer($_SESSION[\Com
                 
                 <div hidden id="divCheckoutsuccessMsg" class="alert alert-success" role="alert">
                   <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                  <strong>Success!</strong> You have been signed in successfully!
+                  <strong>Success!</strong> You order has been placed!
                 </div>
             </div>
             <div id="divRightSidebar" class="col-md-3">

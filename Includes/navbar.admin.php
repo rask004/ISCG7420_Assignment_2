@@ -21,7 +21,8 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-left" href="../Pages/home.php"><img Height="80" alt="Logo" src="../images/Logo.png"/></a>
+            <!-- NOTE: as admin should only be at admin pages, and no other pages, admin header logo leads to logout, not home page. -->
+            <a class="navbar-left" href="../Pages/logout.php"><img Height="80" alt="Logo" src="../images/Logo.png"/></a>
         </div>
         <div class="navbar-collapse collapse col-sm-8 col-md-9">
             <div class="container-fluid">
