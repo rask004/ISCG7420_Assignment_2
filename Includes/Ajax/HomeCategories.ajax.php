@@ -45,7 +45,7 @@ else
 		$page = 1;
 	}
 	
-	$start = ($page - 1) * \Common\Constants::$OrdersTablePageSize;
+	$start = ($page - 1) * \Common\Constants::$HomeCategoriesTablePageSize;
 	
 	$categories = $categoryManager->RetrieveCategoriesForHomePage($start, $pagesize);
 	
@@ -56,21 +56,9 @@ else
 		$imgUrl = '../' . \Common\Constants::$AdminFileuploadFolder .'/'. $cat["imageUrl"];
 		
 		echo '<div class="row"><div class="col-xs-0 col-sm-3 col-md-3"></div>'.
-			'<div class="col-xs-12 col-sm-6 col-md-6"><img width=100% alt="no picture" src="'.$imgUrl.'" /></div></div>'.
+			'<div class="col-xs-12 col-sm-6 col-md-6"><img style="max-width:140px;max-height:100px" alt="no picture" src="'.$imgUrl.'" /></div></div>'.
 			'<div class="row"><div class="col-xs-0 col-sm-3 col-md-3"></div>'.
 			'<div class="col-xs-12 col-sm-6 col-md-6"><input type="button" value="'.$name.'"/></div></div>'.
 			'<br/>';
-	}
-	
-	//if number of categories less than page size, fill remaining space with placeholders.
-	if( count($categories) < $pagesize)
-	{
-		$c = $pagesize - count($categories);
-		
-		while( $c > 0)
-		{
-			echo '<p>&nbsp;</p>';
-			$c -= 1;	
-		}
 	}
 }

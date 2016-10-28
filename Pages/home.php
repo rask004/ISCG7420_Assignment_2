@@ -186,27 +186,27 @@ unset($categoryManager);
 						
 						if (itemcount <= pagesize)
 						{
-							$("#lblCategoryPrevPage").html("Previous");
-							$("#lblCategoryPageNumber").html("Page: 1");
-							$("#lblCategoryNextPage").html("Next");
+							$("#lblCategoriesPrevPage").html("Previous");
+							$("#lblCategoriesPageNumber").html("Page: 1");
+							$("#lblCategoriesNextPage").html("Next");
 						}
 						else if (page <= 1)
 						{
-							$("#lblCategoryPrevPage").html("Previous");
-							$("#lblCategoryPageNumber").html("Page: 1");
-							$("#lblCategoryNextPage").html('<a href="#" onclick="ShowPageCategories( ' + nextPage + ')">Next</a>');
+							$("#lblCategoriesPrevPage").html("Previous");
+							$("#lblCategoriesPageNumber").html("Page: 1");
+							$("#lblCategoriesNextPage").html('<a href="#" onclick="ShowPageCategories( ' + nextPage + ')">Next</a>');
 						}
 						else if (page * pagesize >= itemcount)
 						{
-							$("#lblCategoryPrevPage").html('<a href="#" onclick="ShowPageCategories( ' + prevPage + ')">Previous</a>')
-							$("#lblCategoryPageNumber").html("Page: " + page);
-							$("#lblCategoryNextPage").html("Next");
+							$("#lblCategoriesPrevPage").html('<a href="#" onclick="ShowPageCategories( ' + prevPage + ')">Previous</a>')
+							$("#lblCategoriesPageNumber").html("Page: " + page);
+							$("#lblCategoriesNextPage").html("Next");
 						}
 						else
 						{
-							$("#lblCategoryPrevPage").html('<a href="#" onclick="ShowPageCategories( ' + prevPage + ')">Previous</a>')
-							$("#lblCategoryPageNumber").html("Page: " + page);
-							$("#lblCategoryNextPage").html('<a href="#" onclick="ShowPageCategories( ' + nextPage + ')">Next</a>');
+							$("#lblCategoriesPrevPage").html('<a href="#" onclick="ShowPageCategories( ' + prevPage + ')">Previous</a>')
+							$("#lblCategoriesPageNumber").html("Page: " + page);
+							$("#lblCategoriesNextPage").html('<a href="#" onclick="ShowPageCategories( ' + nextPage + ')">Next</a>');
 						}
 					}
 				}
