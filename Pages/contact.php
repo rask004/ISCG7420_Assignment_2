@@ -7,7 +7,13 @@
  */
 
 include_once('../Includes/Session.php');
-include('../Includes/Common.php');
+include_once('../Includes/Common.php');
+
+if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && isset($_SESSION[\Common\Security::$SessionAdminCheckKey]))
+{
+    header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/AdminFiles.php");
+    exit;
+}
 
 ?>
 

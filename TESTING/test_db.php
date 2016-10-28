@@ -21,8 +21,6 @@
 </head>
 <body>
 	<div style="overflow-x:scroll">
-
-	<?php $dataManager = new \DataLayer\DataManager; ?>
     
     <H4>Select Single Customer, ID: 2</H4>
     

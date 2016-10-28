@@ -5,13 +5,204 @@
  * Date: 11/10/2016
  * Time: 10:13 PM
  */
-
+ 
 include_once('../Includes/Session.php');
-include('../Includes/Common.php');
+include_once('../Includes/Common.php');
+include_once("../Includes/CustomerManager.php");
+	
+$customerManager = new \BusinessLayer\CustomerManager;
 
+$PostRegisterKey = \Common\Constants::$RegistrationSubmitKeyword;
+$PostUpdateProfileKey = \Common\Constants::$ProfileUpdateKeyword;
+
+// postback, when submitting new customer or updating profile.
+if (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey || $_POST["submit"] == $PostUpdateProfileKey))
+{
+	
+	foreach( $_POST as $key => $value)
+	{
+		// prevent any sql injection by removing key symbols.
+		if ($key != "txtPassword")
+		{
+			$_POST[$key] = str_replace(array("(", ")", ";", "%", "=", "<", ">"), "", $value);	
+		}
+	}
+	
+	// new customer validation, server side
+	$isValid = true;
+	
+	// check if email or login is in use.
+	if ($customerManager->findMatchingEmail($_POST["txtEmail"]) || $customerManager->findMatchingLogin($_POST["txtLogin"]))
+	{
+		$isValid = false;
+		$ErrorMsg = "Supplied login, or email, is already in use. Try a different login name, or email.";
+	}	
+	// use regex for identifying valid entries, and if contact numbers are missing.
+	if ($isValid && empty($_POST["txtHomePhone"]) && empty($_POST["txtWorkPhone"]) && empty($_POST["txtMobilePhone"]) )
+	{
+		$isValid = false;
+		$ErrorMsg = "At least one phone number must be given.";
+	}
+	$regex_output = array();
+	preg_match(\Common\Constants::$ValidationCharsGenericNameRegex, $_POST["txtFirstName"], $regex_output);
+	if ($isValid && (empty($regex_output) || !($regex_output[0] === $_POST["txtFirstName"])) )
+	{
+		$isValid = false;
+		$ErrorMsg = "Invalid first Name. Use letters, full stops, commas, or apostrophes only.";
+	}
+	preg_match(\Common\Constants::$ValidationCharsGenericNameRegex, $_POST["txtLastName"], $regex_output);
+	if ($isValid && (empty($regex_output) || !($regex_output[0] === $_POST["txtLastName"])) )
+	{
+		$isValid = false;	
+		$ErrorMsg = "Invalid last Name. Use letters, full stops, commas, or apostrophes only.";
+	}
+	preg_match(\Common\Constants::$ValidationCharsLoginRegex, $_POST["txtLogin"], $regex_output);
+	if ($isValid && (empty($regex_output) || !($regex_output[0] === $_POST["txtLogin"])) )
+	{
+		$isValid = false;	
+		$ErrorMsg = "Invalid login. Use letters, numbers and underscores only.";
+	}
+	preg_match(\Common\Constants::$ValidationLandlineRegex, $_POST["txtHomePhone"], $regex_output);
+	if ($isValid && !empty($_POST["txtHomePhone"]) && (empty($regex_output) || !($regex_output[0] === $_POST["txtHomePhone"])) )
+	{
+		$isValid = false;	
+		$ErrorMsg = "Invalid home phone. Try a number in the form '0N-NNN-NNNN' or similar pattern. first digit must be a zero.";
+	}
+	preg_match(\Common\Constants::$ValidationLandlineRegex, $_POST["txtWorkPhone"], $regex_output);
+	if ($isValid && !empty($_POST["txtWorkPhone"]) && (empty($regex_output) || !($regex_output[0] === $_POST["txtWorkPhone"])) )
+	{
+		$isValid = false;	
+		$ErrorMsg = "Invalid work phone. Try a number in the form '0N-NNN-NNNN' or similar pattern. first digit must be a zero.";
+	}
+	preg_match(\Common\Constants::$ValidationCellPhoneRegex, $_POST["txtMobilePhone"], $regex_output);
+	if ($isValid && !empty($_POST["txtMobilePhone"]) && (empty($regex_output) || !($regex_output[0] === $_POST["txtMobilePhone"])) )
+	{
+		$isValid = false;
+		$ErrorMsg = "Invalid mobile phone. Try a number in the form '0NN-NNN-NNNN' or similar pattern. first digit must be a zero.";	
+	}
+	preg_match(\Common\Constants::$ValidationCharsGenericNameRegex, $_POST["txtSuburb"], $regex_output);
+	if ($isValid && (empty($regex_output) || !($regex_output[0] === $_POST["txtSuburb"]) ))
+	{
+		$isValid = false;		
+		$ErrorMsg = "Invalid suburb. Use letters, full stops, commas, or apostrophes only.";
+	}
+	preg_match(\Common\Constants::$ValidationCharsGenericNameRegex, $_POST["txtCity"], $regex_output);
+	if ($isValid && (empty($regex_output) || !($regex_output[0] === $_POST["txtCity"]) ))
+	{
+		$isValid = false;		
+		$ErrorMsg = "Invalid city. Use letters, full stops, commas, or apostrophes only.";
+	}
+	preg_match(\Common\Constants::$ValidationStreetAddressRegex, $_POST["txtAddress"], $regex_output);
+	if ($isValid && (empty($regex_output) || !($regex_output[0] === $_POST["txtAddress"]) ))
+	{
+		$isValid = false;		
+		$ErrorMsg = "Invalid address. Must be in form '[flat number/]numbers[letter] name suffix' first number cannot be zero.";
+	}
+	if ($isValid && !filter_var($_POST["txtEmail"], FILTER_VALIDATE_EMAIL))
+	{
+		$isValid = false;
+		$ErrorMsg = "Invalid email. Must be in form 'name@site.domain', e.g. 'xli@yourunitec.ac.nz' or 'jnx@yourunitec.com'.";
+	}
+	
+	// if valid, do registration / update profile and send email.
+	if ($isValid)
+	{
+		include_once("../Includes/BusinessLayer.php");
+	
+		$customerManager = new \BusinessLayer\CustomerManager;
+	
+		if ($_POST["submit"] == $PostRegisterKey)
+		{
+			if($customerManager->RegisterCustomer($_POST["txtFirstName"], $_POST["txtLastName"], $_POST["txtLogin"], $_POST["txtPassword"],
+				$_POST["txtEmail"], $_POST["txtHomePhone"], $_POST["txtWorkPhone"], $_POST["txtMobilePhone"], $_POST["txtAddress"],
+				$_POST["txtSuburb"], $_POST["txtCity"]))	
+			{
+				// request first available admin, obtain email
+				
+				$senderEmail = \Common\Constants::$EmailAdminDefault;
+				$receiverEmail = $_POST["txtEmail"];
+				$subject = "Quality Caps, Registered Customer";
+				$body = "Dear Customer,\r\n\r\n\r\nWelcome to Quality Caps!\r\n\r\nYour Details are:\r\n\tLogin\t\t\t".$_POST["txtLogin"]."\r\n\tPassword\t\t".$_POST["txtPassword"]."\r\n\r\nYoursSincerely,\r\n\r\nThe QualityCapsTeam\r\n";
+				
+				$headers = "From: ". $senderEmail. "\r\n";
+				$headers .= "Reply-To: ". $senderEmail. "\r\n";
+				$headers .= "Content-Type: text/html; charset=TIS-620 \n";
+				$headers .= "MIME-Version: 1.0 \r\n";
+				
+				$queryString = "";
+				//redirect to login page. present message about mail failure if mail not sent.
+				if (!mail($receiverEmail, $subject, $body, $headers))
+				{
+					$queryString .= "?". \Common\Constants::$QueryStringEmailErrorKey . "=1";
+				}
+				
+				header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/login.php". $queryString);
+				exit;
+			}
+			else
+			{
+				$ErrorMsg = "ERROR: could not register new customer. Please contact admin at ". $senderEmail ." immediately.";
+			}
+		}
+		elseif ($_POST["submit"] == $PostUpdateProfileKey)
+		{
+			if($customerManager->UpdateProfile($_POST["txtFirstName"], $_POST["txtLastName"], $_POST["txtLogin"],
+				$_POST["txtEmail"], $_POST["txtHomePhone"], $_POST["txtWorkPhone"], $_POST["txtMobilePhone"], $_POST["txtAddress"],
+				$_POST["txtSuburb"], $_POST["txtCity"], $_SESSION[\Common\Security::$SessionUserIdKey] ))
+			{
+				// indicate primary update of profile worked.
+				$successfulProfileUpdate = true;
+				
+				if(!$customerManager->UpdatePassword($_POST["txtPassword"], $_SESSION[\Common\Security::$SessionUserIdKey]))
+				{
+					$ErrorMsg = "ERROR: Updated profile but could not change password. Please contact admin at ". $senderEmail ." immediately.";
+				}
+				else
+				{
+					// request first available admin, obtain email.
+				
+					$senderEmail = \Common\Constants::$EmailAdminDefault;
+					$receiverEmail = $_POST["txtEmail"];
+					$subject = "Quality Caps, Registered Customer";
+					$body = "Dear Customer,\r\n\r\n\r\nWelcome to Quality Caps!\r\n\r\nYour Details are:\r\n\tLogin\t\t\t".$_POST["txtLogin"]."\r\n\tPassword\t\t".$_POST["txtPassword"]."\r\n\r\nYoursSincerely,\r\n\r\nThe QualityCapsTeam\r\n";
+					
+					$headers = "From: ". $senderEmail. "\r\n";
+					$headers .= "Reply-To: ". $senderEmail. "\r\n";
+					$headers .= "Content-Type: text/html; charset=TIS-620 \n";
+					$headers .= "MIME-Version: 1.0 \r\n";
+					
+					if (!mail($receiverEmail, $subject, $body, $headers))
+					{
+						$ErrorMsg = "Customer was registered but could not send confirmation email. Please contact admin at ". $senderEmail ." immediately.";
+					}
+				}
+			}
+			else
+			{
+				$ErrorMsg = "ERROR: could not update profile. Please contact admin at ". $senderEmail ." immediately.";
+			}
+		}
+	}	
+}
+
+if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && isset($_SESSION[\Common\Security::$SessionAdminCheckKey]))
+{
+    header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/AdminFiles.php");
+    exit;
+}
+
+
+// setup page for logged in user (Profile) or visitor (Registration)
 if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
 {
     $isDisabled = 'disabled';
+	
+	$customer = $customerManager->findCustomer($_SESSION[\Common\Security::$SessionUserIdKey]);
+	if (empty($customer))
+	{
+		$ErrorMsg = "ERROR: could not retrieve logged in customer information. Try logging out and back in. If problem persists, contact admin at " .
+			\Common\Constants::$EmailAdminDefault . " Immediately";	
+	}
 }
 else
 {
@@ -49,7 +240,7 @@ else
 				$("#txtFirstName").prop( 'disabled', false);
 				$("#txtLastName").prop( 'disabled', false);
 				$("#txtLogin").prop( 'disabled', false);
-				$("#txtPassword").prop( 'disabled', false);
+				$("#btnChangeProfilePassword").prop( 'disabled', false);
 				$("#txtHomePhone").prop( 'disabled', false);
 				$("#txtWorkPhone").prop( 'disabled', false);
 				$("#txtMobilePhone").prop( 'disabled', false);
@@ -67,7 +258,10 @@ else
 				$("#txtFirstName").prop( 'disabled', true);
 				$("#txtLastName").prop( 'disabled', true);
 				$("#txtLogin").prop( 'disabled', true);
+				$("#btnChangeProfilePassword").prop( 'disabled', true);
+				$("#btnChangeProfilePassword").val("Change Password" );
 				$("#txtPassword").prop( 'disabled', true);
+				$("#txtPassword").val('');
 				$("#txtHomePhone").prop( 'disabled', true);
 				$("#txtWorkPhone").prop( 'disabled', true);
 				$("#txtMobilePhone").prop( 'disabled', true);
@@ -77,6 +271,21 @@ else
 				$("#submit").prop( 'disabled', true);
 				$("#resetForm").prop( 'hidden', true);
 				$("#btnEditForm").prop( 'hidden', false);
+		}
+		
+		function profile_password_toggle() 
+		{
+				if($("#btnChangeProfilePassword").val() == "Change Password")
+				{
+					$("#btnChangeProfilePassword").val("Reset Password" );
+					$("#txtPassword").prop( 'disabled', false);
+				}
+				else
+				{
+					$("#btnChangeProfilePassword").val("Change Password" );
+					$("#txtPassword").prop( 'disabled', true);
+					$("#txtPassword").val('');
+				}
 		}
 			
     </script>
@@ -100,7 +309,6 @@ else
 
             <div class="row">
                 <div id="divLeftSidebar" class="col-md-3">
-
                 </div>
                 <div id="divCentreSpace" class="col-md-6">
                     <div class="container-fluid PageSection">
@@ -137,16 +345,21 @@ else
                                 <label style="float: left" for="txtFirstName">First Name:</label>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
-                                <?php
-                                if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
-                                {
-                                    $memberFirstName = 'MyFirstName';
-                                }
-                                ?>
+                                
                                 <input style="float: left; width:100%" id="txtFirstName"
-                                       name="txtFirstName"
+                                       name="txtFirstName" 
+									   	<?php 
+											if(isset($customer)) 
+											{ 
+												echo 'value="' . $customer["firstName"] . '"';
+											} 
+											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey))
+											{
+												echo 'value="' .$_POST["txtFirstName"]. '"';
+											}
+										?>
                                        <?= $isDisabled ?>
-                                       required value="<?= $memberFirstName ?>" type="text" />
+                                       required maxlength="32" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -160,7 +373,43 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtLastName"
-                                       name="txtLastName" <?= $isDisabled ?> required type="text" />
+                                       name="txtLastName"
+									   <?php 
+											if(isset($customer)) 
+											{ 
+												echo 'value="' . $customer["lastName"] . '"';
+											} 
+											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey))
+											{
+												echo 'value="' . $_POST["txtLastName"] . '"';
+											}
+										?>
+                                       <?= $isDisabled ?> required maxlength="32" type="text" />
+                            </div>
+                            <div class="col-xs-0 col-sm-1 col-md-2">
+                            </div>
+                        </div>
+                        
+                        <div class="row" style="margin-top: 4px">
+                            <div class="col-xs-0 col-sm-1 col-md-2">
+                            </div>
+                            <div class="col-xs-12 col-sm-4 col-md-4">
+                                <label style="float: left" for="txtEmail">Email:</label>
+                            </div>
+                            <div class="col-xs-12 col-sm-6 col-md-4">
+                                <input style="float: left; width:100%" id="txtEmail"
+                                       name="txtEmail" 
+									   <?php 
+									   		if(isset($customer)) 
+											{ 
+												echo 'value="' . $customer["emailAddress"] . '"';
+											} 
+											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey))
+											{
+												echo 'value="' . $_POST["txtEmail"] . '"';
+											}
+										?>
+									   <?= $isDisabled ?> required minlength="5" maxlength="100" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -176,7 +425,18 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtLogin"
-                                       name="txtLogin" <?= $isDisabled ?> required minlength="8" type="text" />
+                                       name="txtLogin" 
+									   <?php 
+									   		if (isset($customer)) 
+											{ 
+												echo 'value="' . $customer["login"] . '"';
+											} 											 
+											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey))
+											{
+												echo 'value="' . $_POST["txtLogin"] . '"';
+											}
+										?>
+									   <?= $isDisabled ?> required minlength="8" maxlength="32" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -185,13 +445,39 @@ else
                         <div class="row" style="margin-top: 4px">
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
-                            <div class="col-xs-12 col-sm-4 col-md-4">
-                                <label style="float: left" for="txtPassword">Password:</label>
-                            </div>
-                            <div class="col-xs-12 col-sm-6 col-md-4">
-                                <input style="float: left; width:100%" id="txtPassword"
-                                       name="txtPassword" <?= $isDisabled ?> required minlength="10" type="text" />
-                            </div>
+                            <?php
+                            if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
+                            {
+								echo '<div class="col-xs-12 col-sm-4 col-md-4">' .
+									 '<input type="button" id="btnChangeProfilePassword" '.
+									 ' disabled onclick="profile_password_toggle();" style="float: left; width:80%" value="Change Password" />' .
+									 '</div>' .
+									 '<div class="col-xs-12 col-sm-6 col-md-4">'.
+										 '<input style="float: left; width:100%" id="txtPassword"' .
+											    ' name="txtPassword"  value="" ' .
+											    ' disabled required minlength="10" type="text" />' .
+									 '</div>';
+							}
+							else
+							{
+								$password = "";
+								if (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey))
+								{
+									$password .= $_POST["txtPassword"];
+								}
+								echo '<div class="col-xs-12 col-sm-4 col-md-4">' .
+									 '<label style="float: left" for="txtPassword">Password:</label>' .
+									 '</div>' .
+									 '<div class="col-xs-12 col-sm-6 col-md-4">' .
+										 '<input style="float: left; width:100%" id="txtPassword"' .
+											    ' name="txtPassword"  value="' .
+													$password .
+												'" ' .
+											    $isDisabled . ' required minlength="10" type="text" />' .
+									 '</div>';
+							}
+							?>
+                            
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
                         </div>
@@ -206,7 +492,18 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtHomePhone"
-                                       name="txtHomePhone" <?= $isDisabled ?> required type="text" />
+                                       name="txtHomePhone"
+									   <?php 
+									   		if (isset($customer)) 
+											{ 
+												echo 'value="' . $customer["homeNumber"] . '"';
+											} 											 
+											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey))
+											{
+												echo 'value="' . $_POST["txtHomePhone"] . '"';
+											}
+										?>
+									   <?= $isDisabled ?> minlength="8" maxlength="13"  type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -220,7 +517,18 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtWorkPhone"
-                                       name="txtWorkPhone" <?= $isDisabled ?> required type="text" />
+                                       name="txtWorkPhone" 
+									   <?php 
+									   		if (isset($customer)) 
+											{ 
+												echo 'value="' . $customer["workNumber"] . '"';
+											} 											 
+											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey))
+											{
+												echo 'value="' . $_POST["txtWorkPhone"] . '"';
+											}
+										?>
+									   <?= $isDisabled ?> minlength="8" maxlength="13" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -234,7 +542,18 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtMobilePhone"
-                                       name="txtMobilePhone" <?= $isDisabled ?> required type="text" />
+                                       name="txtMobilePhone" 
+									   <?php 
+									   		if (isset($customer)) 
+											{ 
+												echo 'value="' . $customer["mobileNumber"] . '"';
+											} 											 
+											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey))
+											{
+												echo 'value="' . $_POST["txtMobilePhone"] . '"';
+											}
+										?>
+									   <?= $isDisabled ?> minlength="9" maxlength="14" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -250,7 +569,18 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtAddress"
-                                       name="txtAddress" <?= $isDisabled ?> required type="text" />
+                                       name="txtAddress" 
+									   <?php 
+									   		if (isset($customer)) 
+											{ 
+												echo 'value="' . $customer["streetAddress"] . '"';
+											} 											 
+											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey))
+											{
+												echo 'value="' . $_POST["txtAddress"] . '"';
+											}
+										?>
+									   <?= $isDisabled ?> required  minlength="3" maxlength="48" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -264,7 +594,18 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtSuburb"
-                                       name="txtSuburb" <?= $isDisabled ?> required type="text" />
+                                       name="txtSuburb"
+									   <?php 
+									   		if (isset($customer)) 
+											{ 
+												echo 'value="' . $customer["suburb"] . '"';
+											} 											 
+											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey))
+											{
+												echo 'value="' . $_POST["txtSuburb"] . '"';
+											}
+										?>
+									   <?= $isDisabled ?> required maxlength="24" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -278,7 +619,18 @@ else
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input style="float: left; width:100%" id="txtCity"
-                                       name="txtCity" <?= $isDisabled ?> required type="text" />
+                                       name="txtCity"
+									   <?php 
+									   		if (isset($customer)) 
+											{ 
+												echo 'value="' . $customer["city"] . '"';
+											} 											 
+											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey))
+											{
+												echo 'value="' . $_POST["txtCity"] . '"';
+											}
+										?>
+									   <?= $isDisabled ?> required maxlength="24" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -320,17 +672,25 @@ else
                                     <?= $isDisabled ?> value="<?= $submitValue ?>" type="submit" />
                             </div>
                             <div class="col-xs-0 col-sm-2 col-md-2">
-
+								
                             </div>
                         </div>
                         <br/>
                     </div>
+                    <br/>
+                    <div id="divErrorMessage">
+	                    <p>
+							<?php 
+								// only show errors if a message is given.
+								if (isset($ErrorMsg))
+								{
+									echo $ErrorMsg;	
+								}
+							?>
+                        </p>
+                    </div>
                 </div>
                 <div id="divLeftSidebar" class="col-md-3">
-                    <br/>
-                    <?php print_r($_SESSION) ?>
-                    <br/>
-                    <?php print_r($_REQUEST) ?>
                 </div>
             </div>
 
@@ -340,5 +700,21 @@ else
     </form>
 
     <?php include_once("../Includes/footer.php"); ?>
+    <?php 
+		// make div for error message more visible
+		if (isset($ErrorMsg))
+		{
+			echo '<script type="text/javascript">'.
+				'$("#divErrorMessage").prop'."('border', 'solid black 2px');".
+				'$("#divErrorMessage").prop'."('background-color', 'red');".
+				'</script>';
+		}
+		if (isset($successfulProfileUpdate))
+		{
+			echo '<script type="text/javascript">'.
+				'reset_form();'.
+				'</script>';
+		}
+	?>
 </body>
 </html>

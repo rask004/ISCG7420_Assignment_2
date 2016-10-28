@@ -7,22 +7,68 @@
  */
 
 include_once('../Includes/Session.php');
-include('../Includes/Common.php');
+include_once('../Includes/Common.php');
+include_once('../Includes/CustomerManager.php');
+include_once('../Includes/AdminManager.php');
 
-// process postback - for testing, currently expect a particular user and pass (not real user).
-if (isset($_POST['inputLogin']) && isset($_POST['inputPassword'])
-    && $_POST['inputLogin'] == 'test__login' && $_POST['inputPassword'] == 'test__password')
+$bad_login_message = "";
+
+// TODO: check query string for email error message.
+if(isset($_SERVER["QUERY_STRING"][\Common\Constants::$QueryStringEmailErrorKey]))
 {
-    $_SESSION[\Common\Security::$SessionAuthenticationKey] = 1;
-    $_SESSION[\Common\Security::$SessionUserLoginKey]  = 'test__login';
-    $_SESSION[\Common\Security::$SessionUserIdKey] = 3;
+	$ErrorMsg = "Customer was registered but could not send confirmation email. Please contact admin at ". $senderEmail ." immediately.";
 }
 
-//  redirect already authenticated users - redirect to home.
+// process postback - for testing, currently expect a particular user and pass (not real user).
+if (isset($_POST['inputLogin']) && isset($_POST['inputPassword']))
+{	
+	$customerManager = new \BusinessLayer\CustomerManager;
+	$adminManager = new \BusinessLayer\AdminManager;
+	
+	if ($customerManager->checkMatchingPasswordForCustomerLogin($_POST['inputLogin'], $_POST['inputPassword']))
+	{
+		$customer = $customerManager->findCustomerByLogin($_POST['inputLogin']);
+		
+		$_SESSION[\Common\Security::$SessionAuthenticationKey] = 1;
+   		$_SESSION[\Common\Security::$SessionUserLoginKey]  = $customer['login'];
+    	$_SESSION[\Common\Security::$SessionUserIdKey] = $customer['id'];
+		
+		unset($customerManager);
+		unset($customer);
+	}
+	elseif ($adminManager->checkMatchingPasswordForAdminLogin($_POST['inputLogin'], $_POST['inputPassword']))
+	{
+		$admin = $adminManager->findAdminByLogin($_POST['inputLogin']);
+		
+		$_SESSION[\Common\Security::$SessionAuthenticationKey] = 1;
+   		$_SESSION[\Common\Security::$SessionUserLoginKey]  = $admin['login'];
+    	$_SESSION[\Common\Security::$SessionUserIdKey] = $admin['id'];
+		$_SESSION[\Common\Security::$SessionAdminCheckKey] = 1;
+		
+		unset($adminManager);
+		unset($admin);
+	}
+	else
+	{
+		$bad_login_message = "Login failed. Please check your you entered your login and password correctly.";	
+	}
+	
+}
+
+//  redirect already authenticated users - redirect to home or admin as appropriate.
 if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
 {
-    header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/home.php");
-    exit;
+	if(isset($_SESSION[\Common\Security::$SessionAdminCheckKey]))
+	{
+		header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/AdminFiles.php");
+    	exit;
+	}
+	else
+	{
+		header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/home.php");
+    	exit;
+	}
+    
 }
 
 ?>
@@ -47,7 +93,6 @@ if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\
 
         <div class="row">
             <div id="divLeftSidebar" class="col-md-3">
-				<?php print_r(hash_algos()); ?>
             </div>
             <div id="divCentreSpace" class="col-md-6">
 
@@ -80,7 +125,7 @@ if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\
                                     </div>
                                     <div class="col-xs-12 col-sm-8 col-md-7">
                                         <input style="float: right; width:100%" id="inputLogin"
-                                               name="inputLogin" required type="text" />
+                                               name="inputLogin" required minlength="6" type="text" />
                                     </div>
                                 </div>
                                 <div class="row" style="margin-top: 4px">
@@ -94,21 +139,6 @@ if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\
                                 </div>
 
                                 <br/>
-
-                                <div class="row" style="margin-top: 4px">
-                                    <div class="col-xs-2 col-sm-3 col-md-3">
-
-                                    </div>
-                                    <div class="col-xs-8 col-sm-6 col-md-6">
-                                        <input style="width:100%" type="button" value="Reset Password" />
-                                    </div>
-                                    <div class="col-xs-2 col-sm-3 col-md-3">
-
-                                    </div>
-                                </div>
-
-                                <br/>
-
                                 <div class="row" style="margin-top: 4px">
                                     <div class="col-xs-4 col-sm-4 col-md-4">
                                         <input style="width:100%" type="reset" value="Clear" />
@@ -128,13 +158,30 @@ if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\
                             </div>
                         </div>
                     </div>
+                    
+                    <br/>
+                    <br/>
+                    <div>
+                    <p style="text-align:center">
+                    	<?= $bad_login_message ?>
+                    </p>
+                    </div>
+                    <br/>
+                    <div id="divErrorMessage">
+	                    <p>
+							<?php 
+								// only show errors if a message is given.
+								if (isset($ErrorMsg))
+								{
+									echo $ErrorMsg;	
+								}
+							?>
+                        </p>
+                    </div>
                 </form>
 
             </div>
             <div id="divRightsidebar" class="col-md-3">
-            	<?php 
-					var_dump(bin2hex(random_bytes(16)));
-				?>
             </div>
         </div>
     </div>

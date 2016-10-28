@@ -6,9 +6,9 @@
  * Time: 14:24 PM
  */
 
-require_once('DataLayer.php');
-
 namespace BusinessLayer;
+
+require_once('DataLayer.php');
 
 // Orders business object.
 
@@ -21,5 +21,15 @@ class CategoryManager
 		$this->_data_manager = new \DataLayer\DataManager;
 	}
 	
-	//TODO: add functionality for retrieving category records
+	// get categories with assigned caps, paginated, to show on home page. 
+	public function RetrieveCategoriesForHomePage($firstRecordIndex, $numberOfRecords)
+	{
+		return $this->_data_manager->selectAvailableCategoriesWithLimit($firstRecordIndex, $numberOfRecords);
+	}
+	
+	// get count of all categories with assigned caps, paginated, to show on home page. 
+	public function RetrieveCountOfCategoriesForHomePage()
+	{
+		return $this->_data_manager->selectCountOfAvailableCategories();
+	}
 }

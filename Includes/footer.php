@@ -7,13 +7,13 @@
  */
  
  
-include('../Includes/Common.php');
+include_once('../Includes/Common.php');
 
 ?>
 
 <!-- Footer -->
 <div class="navbar-fixed-bottom navbar-inverse">
-    <div class="col-xs-12 col-sm-4 col-md-4" style="color: white">
+    <div class="col-xs-4 col-sm-4 col-md-4" style="color: white">
             <span id="footerCurrentTime" style="float:left">
             <!-- Call javascript function -->
                 <script type="text/javascript">
@@ -30,7 +30,7 @@ include('../Includes/Common.php');
             </span>
     </div>
 
-    <div class="col-xs-12 col-sm-4 col-md-4" style="color: white; text-align: center">
+    <div class="col-xs-8 col-sm-4 col-md-4" style="color: white; text-align: center">
         <span id="loginGreeting">
                 <?php
                 if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
