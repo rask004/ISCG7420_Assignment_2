@@ -589,8 +589,7 @@ class DataManager
 		
 		$this->_openConnection();	
 		
-		if (!$query_result = $this->_conn->query("Select * from `category` WHERE `id` in (select distinct `categoryId` from `cap`) order by id," .
-		" name LIMIT " . $limit_start . ", " . $limit_length . ";"))
+		if (!$query_result = $this->_conn->query("SELECT c.id, c.name, cp.imageUrl FROM `cap` cp, `category` c WHERE cp.categoryId = c.id group by c.id ".  			"order by id, name LIMIT " . $limit_start . ", " . $limit_length . ";"))
 		{
 			$this->_conn->rollback();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
@@ -620,6 +619,35 @@ class DataManager
 	}
 	
 	/*
+		get a count of all categories associated with caps
+	*/
+	public function selectCountOfAvailableCategories()
+	{
+		$this->_openConnection();	
+		
+		if (!$query_result = $this->_conn->query("Select * from `category` WHERE `id` in (select distinct `categoryId` from `cap`);"))
+		{
+			$this->_conn->rollback();
+			$_SESSION["last_Error"] = "DB_Error_Generic";
+			$_SESSION["Error_MSG"] = (string) $mysqli->_conn->errno . "; " . $mysqli->_conn->error . "; SQL=". $sql;
+			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
+			exit;
+		}
+		
+		$categoryCount = $query_result->num_rows;
+		
+		if ($query_result)
+		{
+			$query_result->free();
+		}
+		
+		$this->_closeConnection();	
+		
+		return $categoryCount;	
+	}
+	
+	
+	/*
 		get all products for a category, using the categoryId. use LIMIT.
 	*/
 	public function selectCapsbyCategoryIdWithLimit( $categoryId,  $limit_start,  $limit_length)
@@ -641,6 +669,42 @@ class DataManager
 		
 		if (!$query_result = $this->_conn->query("Select * from `cap` WHERE `categoryId` = " . $categoryId . " order by categoryId, id LIMIT "
 		. $limit_start . ", " . $limit_length . ";"))
+		{
+			$this->_conn->rollback();
+			$_SESSION["last_Error"] = "DB_Error_Generic";
+			$_SESSION["Error_MSG"] = (string) $mysqli->_conn->errno . "; " . $mysqli->_conn->error . "; SQL=". $sql;
+			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
+			exit;
+		}
+		
+		$caps = array();
+		
+		if ($query_result->num_rows > 0)
+		{
+			while ($row = $query_result->fetch_assoc())
+			{
+					$caps[] = $row;
+			}
+		}
+		
+		if ($query_result)
+		{
+			$query_result->free();
+		}
+		
+		$this->_closeConnection();	
+		
+		return $caps;	
+	}
+	
+	/*
+		get all products for a category, using the categoryId. use LIMIT.
+	*/
+	public function selecAlltCaps()
+	{
+		$this->_openConnection();	
+		
+		if (!$query_result = $this->_conn->query("Select * from `cap` order by id;"))
 		{
 			$this->_conn->rollback();
 			$_SESSION["last_Error"] = "DB_Error_Generic";

@@ -35,11 +35,7 @@ else
 	
 	$pagesize = \Common\Constants::$OrdersTablePageSize;
 	
-	if ($_REQUEST["p"] >= 2)
-	{
-		$page = $_REQUEST["p"];
-	}
-	else
+	if ($page < 1)
 	{
 		$page = 1;
 	}

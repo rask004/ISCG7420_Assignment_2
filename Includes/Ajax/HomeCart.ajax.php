@@ -11,7 +11,7 @@ include_once('../Common.php');
 */
 
 // check for malformed AJAX
-if (!isset($_REQUEST["c"]) && !isset($_REQUEST["p"]) && !isset($_REQUEST["p"]))
+if (!isset($_REQUEST["c"]) && !isset($_REQUEST["p"]) && !isset($_REQUEST["d"]))
 {
 	
 	

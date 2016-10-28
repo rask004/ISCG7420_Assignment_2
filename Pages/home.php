@@ -8,6 +8,8 @@
 
 include_once('../Includes/Session.php');
 include_once('../Includes/Common.php');
+include_once('../Includes/CategoryManager.php');
+include_once('../Includes/CapManager.php');
 
 // only customers and visitors can visit home page. 
 if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && isset($_SESSION[\Common\Security::$SessionAdminCheckKey]))
@@ -18,6 +20,14 @@ if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && isset($_SES
 
 $cartPageSize = \Common\Constants::$HomeCartTablePageSize;
 $cartItemCount = count($_SESSION[\Common\Security::$SessionCartArrayKey]);
+
+$categoryPageSize = \common\constants::$HomeCategoriesTablePageSize;
+$categoryManager = new \BusinessLayer\CategoryManager;
+$categoryCount = $categoryManager->RetrieveCountOfCategoriesForHomePage();
+
+$capPageSize = \common\constants::$HomeCapsTablePageSize;
+
+unset($categoryManager);
 
 ?>
 
@@ -33,6 +43,7 @@ $cartItemCount = count($_SESSION[\Common\Security::$SessionCartArrayKey]);
     <link rel="stylesheet" type="text/css" href="../css/Common.css">
     <script type="text/javascript" src="../js/jquery.js"></script>
     <script type="text/javascript">
+	
 		// clear the cart. 
 		function ClearCart()
 		{
@@ -48,6 +59,7 @@ $cartItemCount = count($_SESSION[\Common\Security::$SessionCartArrayKey]);
 			);
 		};
 		
+		// show a page of the cart.
 		function ShowPageCart(page)
 		{
 			// grab and parse stored page data.
@@ -55,7 +67,7 @@ $cartItemCount = count($_SESSION[\Common\Security::$SessionCartArrayKey]);
 			var pagesize = parseInt($("#inputJsParamsCartPageSize").val());
 			var itemcount = parseInt($("#inputJsParamsCartItemCount").val());
 			
-			// update the current cart page.
+			// update the current page.
 			$("#divShoppingCart").load("../Includes/Ajax/HomeCart.ajax.php", {p:page},
 				function(responseTxt, statusTxt, xhr)
 				{
@@ -97,6 +109,7 @@ $cartItemCount = count($_SESSION[\Common\Security::$SessionCartArrayKey]);
 			$("#inputJsParamsCartPage").val(page);
 		};
 		
+		// remove one cart item, given an item id.
 		function DeleteCartItem(id)
 		{
 			id = parseInt(id);
@@ -104,6 +117,7 @@ $cartItemCount = count($_SESSION[\Common\Security::$SessionCartArrayKey]);
 			var pagesize = parseInt($("#inputJsParamsCartPageSize").val());
 			var itemcount = parseInt($("#inputJsParamsCartItemCount").val());
 			
+			// both delete item AND show page of items.
 			$("#divShoppingCart").load("../Includes/Ajax/HomeCart.ajax.php", {d:id, p:page},
 				function(responseTxt, statusTxt, xhr)
 				{
@@ -115,6 +129,7 @@ $cartItemCount = count($_SESSION[\Common\Security::$SessionCartArrayKey]);
 							page -= 1;	
 						}
 						
+						// update page controls
 						var nextPage = page + 1;
 						var prevPage = page - 1;
 						
@@ -150,6 +165,56 @@ $cartItemCount = count($_SESSION[\Common\Security::$SessionCartArrayKey]);
 			$("#inputJsParamsCartPage").val(page);
 			$("#inputJsParamsCartItemCount").val(itemcount);
 		};
+		
+		// show a page of categories
+		function ShowPageCategories(page)
+		{
+			// grab and parse stored page data.
+			page = parseInt(page);
+			var pagesize = parseInt($("#inputJsParamsCategoryPageSize").val());
+			var itemcount = parseInt($("#inputJsParamsCategoryItemCount").val());
+			
+			// update the current page.
+			$("#divAvailableCategories").load("../Includes/Ajax/HomeCategories.ajax.php", {p:page},
+				function(responseTxt, statusTxt, xhr)
+				{
+					if(statusTxt == "success")
+					{
+						// update page controls.
+						var nextPage = page + 1;
+						var prevPage = page - 1;
+						
+						if (itemcount <= pagesize)
+						{
+							$("#lblCategoryPrevPage").html("Previous");
+							$("#lblCategoryPageNumber").html("Page: 1");
+							$("#lblCategoryNextPage").html("Next");
+						}
+						else if (page <= 1)
+						{
+							$("#lblCategoryPrevPage").html("Previous");
+							$("#lblCategoryPageNumber").html("Page: 1");
+							$("#lblCategoryNextPage").html('<a href="#" onclick="ShowPageCategories( ' + nextPage + ')">Next</a>');
+						}
+						else if (page * pagesize >= itemcount)
+						{
+							$("#lblCategoryPrevPage").html('<a href="#" onclick="ShowPageCategories( ' + prevPage + ')">Previous</a>')
+							$("#lblCategoryPageNumber").html("Page: " + page);
+							$("#lblCategoryNextPage").html("Next");
+						}
+						else
+						{
+							$("#lblCategoryPrevPage").html('<a href="#" onclick="ShowPageCategories( ' + prevPage + ')">Previous</a>')
+							$("#lblCategoryPageNumber").html("Page: " + page);
+							$("#lblCategoryNextPage").html('<a href="#" onclick="ShowPageCategories( ' + nextPage + ')">Next</a>');
+						}
+					}
+				}
+			);
+			
+			// store current page number for other controls to use.
+			$("#inputJsParamsCategoryPage").val(page);
+		}
 		
 	</script>
 </head>
@@ -193,6 +258,29 @@ $cartItemCount = count($_SESSION[\Common\Security::$SessionCartArrayKey]);
                         	<!-- create flow list of Categories having products, paginated -->
                         </div>
                     </div>
+                    
+                    <br/>
+                    
+                    <div class="row">
+                        <div class="col-xs-0 col-sm-2 col-md-1">
+                        </div>
+                        <div class="col-xs-4 col-sm-3 col-md-3">
+                            <label id="lblCategoriesPrevPage"></label>
+                        </div>
+                        <div class="col-xs-4 col-sm-2 col-md-4">
+                            <label id="lblCategoriesPageNumber"></label>
+                        </div>
+                        <div class="col-xs-4 col-sm-3 col-md-3">
+                            <label id="lblCategoriesNextPage"></label>
+                        </div>
+                        <div class="col-xs-0 col-sm-2 col-md-1">
+                        </div>
+                    </div>
+                    
+                    <input type="number" hidden id="inputJsParamsCategoryPage" value="1" />
+                    <input type="number" hidden id="inputJsParamsCategoryPageSize" value="<?php echo $categoryPageSize ?>" />
+                    <input type="number" hidden id="inputJsParamsCategoryItemCount" value="<?php echo $categoryCount ?>" />
+                    
                 </div>
             </div>
             <div id="divCentreSpace" class="col-md-6">
@@ -293,6 +381,7 @@ $cartItemCount = count($_SESSION[\Common\Security::$SessionCartArrayKey]);
     
     <script type="text/javascript">
     	ShowPageCart(1);
+		ShowPageCategories(1);
     </script>
 
     <?php include_once("../Includes/footer.php"); ?>

@@ -29,4 +29,20 @@ class CapManager
 	{
 		return $this->_data_manager->selectSingleCap($capId);
 	}
+	
+	/*
+		Retrieve a page of caps.
+	*/
+	function GetCapsByCategorywithLimit($categoryId, $firstCapIndex, $numberOfCaps)
+	{
+		return $this->_data_manager->selectCapsbyCategoryIdWithLimit($categoryId, $firstCapIndex, $numberOfCaps);
+	}
+	
+	/*
+		Retrieve all caps.
+	*/
+	function GetAllCaps()
+	{
+		return $this->_data_manager->selectAllCaps();
+	}
 }
