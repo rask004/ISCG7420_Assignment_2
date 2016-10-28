@@ -214,6 +214,96 @@ unset($categoryManager);
 			
 			// store current page number for other controls to use.
 			$("#inputJsParamsCategoryPage").val(page);
+		};
+		
+		// show a page of caps, given a categoryId. If categoryId is -1, show page of all caps.
+		function ShowPageCaps(catId, page)
+		{
+			// grab and parse stored page data.
+			catId = parseInt(catId);
+			page = parseInt(page);
+			var pagesize = parseInt($("#inputJsParamsCapPageSize").val());
+			
+			$("#divCapsPageControls").prop("hidden", false);
+			$("#divCapsByCategory").prop("hidden", false);
+			$("#divCapDetails").prop("hidden", true);
+			$("#txtCapsHeader").html("Caps");
+			
+			// update the current page.
+			$("#divCapsByCategory").load("../Includes/Ajax/HomeCaps.ajax.php", {c:catId, p:page},
+				function(responseTxt, statusTxt, xhr)
+				{
+					if(statusTxt == "success")
+					{
+						var itemcount = parseInt($("#inputJsParamsCapItemCount").val());
+						
+						// update page controls.
+						var nextPage = page + 1;
+						var prevPage = page - 1;
+						
+						if (itemcount <= pagesize)
+						{
+							$("#lblCapsPrevPage").html("Previous");
+							$("#lblCapsPageNumber").html("Page: 1");
+							$("#lblCapsNextPage").html("Next");
+						}
+						else if (page <= 1)
+						{
+							$("#lblCapsPrevPage").html("Previous");
+							$("#lblCapsPageNumber").html("Page: 1");
+							$("#lblCapsNextPage").html('<a href="#" onclick="ShowPageCaps( ' + catId + ',' + nextPage + ')">Next</a>');
+						}
+						else if (page * pagesize >= itemcount)
+						{
+							$("#lblCapsPrevPage").html('<a href="#" onclick="ShowPageCaps( ' + catId + ',' + prevPage + ')">Previous</a>')
+							$("#lblCapsPageNumber").html("Page: " + page);
+							$("#lblCapsNextPage").html("Next");
+						}
+						else
+						{
+							$("#lblCapsPrevPage").html('<a href="#" onclick="ShowPageCaps( ' + catId + ',' + prevPage + ')">Previous</a>')
+							$("#lblCapsPageNumber").html("Page: " + page);
+							$("#lblCapsNextPage").html('<a href="#" onclick="ShowPageCaps( ' + catId + ',' + nextPage + ')">Next</a>');
+						}
+					}
+				}
+			);
+		};
+		
+		// show a page of caps, given a categoryId. If categoryId is -1, show page of all caps.
+		function ShowCapDetails(capId)
+		{
+			// grab and parse stored page data.
+			capId = parseInt(capId);
+			
+			// update the current page.
+			$("#divCapDetails").load("../Includes/Ajax/HomeCaps.ajax.php", {d:capId},
+				function(responseTxt, statusTxt, xhr)
+				{
+					$("#divCapsPageControls").prop("hidden", true);
+					$("#divCapsByCategory").prop("hidden", true);
+					$("#divCapDetails").prop("hidden", false);
+					$("#txtCapsHeader").html("Cap Details");
+				}
+			);
+		};
+		
+		// add a cap to the cart
+		function AddCapToCart()
+		{
+			var capId = parseInt($("#lblAddCapId").html());
+			var qty = parseInt($("#inputAddCapQuantity").val());
+			
+			$("#divCapDetails").load("../Includes/Ajax/HomeCart.ajax.php", {a:capId, aq:qty},
+				function(responseTxt, statusTxt, xhr)
+				{
+					$("#divCapsPageControls").prop("hidden", false);
+					$("#divCapsByCategory").prop("hidden", false);
+					$("#divCapDetails").prop("hidden", true);
+					$("#txtCapsHeader").html("Caps");
+				}
+			);
+			
 		}
 		
 	</script>
@@ -303,12 +393,45 @@ unset($categoryManager);
                     <br/>
 
                     <div class="row" style="margin-top: 4px">
-						<div class="container-fluid" id="divProductsByCategory">
+						<div class="container-fluid" id="divCapsByCategory">
                         	<!-- create table list of Products for a selected category, paginated -->
                         </div>
-						<div hidden class="container-fluid" id="divProductDetails">
+						<div hidden class="container-fluid" id="divCapDetails">
                         	<!-- show details of a product, option to add to shopping cart. -->
+                            
+                            <div class="row">
+                            	<div class="col-xs-12 col-sm-12 col-md-12">
+                                	<img id="imgCapDetails" src="" alt="NO IMAGE" />
+                                </div>
+                            </div>
+                            <div class="row">
+                            	<div class="col-xs-12 col-sm-12 col-md-12">
+                                	<label id="lblCapDetailsName"></label>
+                                </div>
+                            </div>
                         </div>
+                        <br/>
+                        
+                        <div class="row" id="divCapsPageControls">
+                            <div class="col-xs-0 col-sm-2 col-md-1">
+                            </div>
+                            <div class="col-xs-4 col-sm-3 col-md-3">
+                                <label id="lblCapsPrevPage"></label>
+                            </div>
+                            <div class="col-xs-4 col-sm-2 col-md-4">
+                                <label id="lblCapsPageNumber"></label>
+                            </div>
+                            <div class="col-xs-4 col-sm-3 col-md-3">
+                                <label id="lblCapsNextPage"></label>
+                            </div>
+                            <div class="col-xs-0 col-sm-2 col-md-1">
+                            </div>
+                        </div>
+                        
+                        <input type="number" hidden id="inputJsParamsCapPage" value="1" />
+                        <input type="number" hidden id="inputJsParamsCapPageSize" value="<?php echo $capPageSize ?>" />
+                        <input type="number" hidden id="inputJsParamsCapItemCount" value="" />
+                        
                     </div>
                 </div>
             </div>
@@ -382,6 +505,7 @@ unset($categoryManager);
     <script type="text/javascript">
     	ShowPageCart(1);
 		ShowPageCategories(1);
+		ShowPageCaps(-1,1);
     </script>
 
     <?php include_once("../Includes/footer.php"); ?>

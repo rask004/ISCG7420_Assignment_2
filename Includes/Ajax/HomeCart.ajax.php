@@ -11,10 +11,8 @@ include_once('../Common.php');
 */
 
 // check for malformed AJAX
-if (!isset($_REQUEST["c"]) && !isset($_REQUEST["p"]) && !isset($_REQUEST["d"]))
-{
-	
-	
+if (!isset($_REQUEST["c"]) && !isset($_REQUEST["p"]) && !isset($_REQUEST["d"]) && !isset($_REQUEST["a"]) && !isset($_REQUEST["aq"]) )
+{	
 	// redirect to AJAX error page.
 	$_SESSION["last_Error"] = "AJAX_Error";
 	$_SESSION["Error_MSG"] = "Home Cart ajax page: ";
@@ -51,7 +49,21 @@ elseif (isset($_REQUEST["d"]))
 	unset($_SESSION[\Common\Security::$SessionCartArrayKey][$id]);
 }
 
-// check 
+// add a cart item, with a quantity to add by.
+elseif( isset($_REQUEST["a"]) && isset($_REQUEST["aq"]) )
+{
+	$id = (integer) ($_REQUEST["a"] + 0);
+	$qty = (integer) ($_REQUEST["aq"] + 0);
+	
+	if ( !isset($_SESSION[\Common\Security::$SessionCartArrayKey]))
+	{
+		$_SESSION[\Common\Security::$SessionCartArrayKey][$id] = 0;	
+	}
+	
+	$_SESSION[\Common\Security::$SessionCartArrayKey][$id] += $qty;
+}
+
+// update cart page
 if (isset($_REQUEST["p"]))
 {
 	$cart = $_SESSION[\Common\Security::$SessionCartArrayKey];

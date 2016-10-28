@@ -700,11 +700,11 @@ class DataManager
 	/*
 		get all products for a category, using the categoryId. use LIMIT.
 	*/
-	public function selecAlltCaps()
+	public function selectAllCaps($limit_start,  $limit_length)
 	{
 		$this->_openConnection();	
 		
-		if (!$query_result = $this->_conn->query("Select * from `cap` order by id;"))
+		if (!$query_result = $this->_conn->query("Select * from `cap` order by id LIMIT ".$limit_start.", ".$limit_length.";"))
 		{
 			$this->_conn->rollback();
 			$_SESSION["last_Error"] = "DB_Error_Generic";

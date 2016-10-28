@@ -91,7 +91,9 @@ class Constants
 	
 	public static  $HomeCategoriesTablePageSize = 3;
 	
-	public static  $HomeCapsTablePageSize = 3;
+	public static  $HomeCapsTablePageSize = 4;
+	
+	public static  $HomeCapsTablePageWidth = 2;
 	
 	public static  $HomeCartTablePageSize = 3;
 }

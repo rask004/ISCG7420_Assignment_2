@@ -45,20 +45,21 @@ else
 		$page = 1;
 	}
 	
-	$start = ($page - 1) * \Common\Constants::$HomeCategoriesTablePageSize;
+	$start = ($page - 1) * $pagesize;
 	
 	$categories = $categoryManager->RetrieveCategoriesForHomePage($start, $pagesize);
 	
 	// display each category.
 	foreach($categories as $cat)
 	{
+		$id = $cat['id'];
 		$name = $cat['name'];
 		$imgUrl = '../' . \Common\Constants::$AdminFileuploadFolder .'/'. $cat["imageUrl"];
 		
 		echo '<div class="row"><div class="col-xs-0 col-sm-3 col-md-3"></div>'.
 			'<div class="col-xs-12 col-sm-6 col-md-6"><img style="max-width:140px;max-height:100px" alt="no picture" src="'.$imgUrl.'" /></div></div>'.
 			'<div class="row"><div class="col-xs-0 col-sm-3 col-md-3"></div>'.
-			'<div class="col-xs-12 col-sm-6 col-md-6"><input type="button" value="'.$name.'"/></div></div>'.
+			'<div class="col-xs-12 col-sm-6 col-md-6"><input type="button" value="'.$name.'" onclick="ShowPageCaps('.$id.',1)" /></div></div>'.
 			'<br/>';
 	}
 }

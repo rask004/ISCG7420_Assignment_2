@@ -41,8 +41,8 @@ class CapManager
 	/*
 		Retrieve all caps.
 	*/
-	function GetAllCaps()
+	function GetAllCaps($firstCapIndex, $numberOfCaps)
 	{
-		return $this->_data_manager->selectAllCaps();
+		return $this->_data_manager->selectAllCaps($firstCapIndex, $numberOfCaps);
 	}
 }
