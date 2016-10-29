@@ -16,7 +16,7 @@ if (isset($_REQUEST["p"]) && isset($_REQUEST["c"]) )
 	// ok to process
 	
 	$CapManager = new \BusinessLayer\CapManager;
-	$capId = (integer) ($_REQUEST["c"] + 0);
+	$categoryId = (integer) ($_REQUEST["c"] + 0);
 	$page = (integer) ($_REQUEST["p"] + 0);
 	$pagesize = \Common\Constants::$HomeCapsTablePageSize;
 	$pagewidth = \Common\Constants::$HomeCapsTablePageWidth;
@@ -30,18 +30,20 @@ if (isset($_REQUEST["p"]) && isset($_REQUEST["c"]) )
 	
 	$caps = array();
 	
-	if ($capId < 0)
+	$capCount = 0;
+	
+	if ($categoryId < 0)
 	{
 		$caps = $CapManager->GetAllCaps($start, $pagesize);
+		$capCount = $CapManager->GetAllCapsCount();
 	}
 	else
 	{
-		$caps = $CapManager->GetCapsByCategorywithLimit($capId, $start, $pagesize);
+		$caps = $CapManager->GetCapsByCategorywithLimit($categoryId, $start, $pagesize);
+		$capCount = $CapManager->GetCapsByCategoryCount($categoryId);
 	}
 	
-	$capcount = count($caps);
-	
-	
+	echo '<script type="text/javascript">$("#inputJsParamsCapItemCount").val('.$capCount.')</script>';
 	
 	$c = 0;
 	

@@ -45,4 +45,20 @@ class CapManager
 	{
 		return $this->_data_manager->selectAllCaps($firstCapIndex, $numberOfCaps);
 	}
+	
+	/*
+		Retrieve count of caps for a category.
+	*/
+	function GetCapsByCategoryCount($categoryId)
+	{
+		return $this->_data_manager->selectCountOfCapsbyCategoryId($categoryId);
+	}
+	
+	/*
+		Retrieve count of all caps.
+	*/
+	function GetAllCapsCount()
+	{
+		return $this->_data_manager->selectCountOfAllCaps();
+	}
 }
