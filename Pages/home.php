@@ -306,6 +306,15 @@ unset($categoryManager);
 			
 		}
 		
+		// reshow the caps page
+		function ReturnToCapListing()
+		{
+			$("#divCapsPageControls").prop("hidden", false);
+			$("#divCapsByCategory").prop("hidden", false);
+			$("#divCapDetails").prop("hidden", true);
+			$("#txtCapsHeader").html("Caps");
+		}
+		
 	</script>
 </head>
 
@@ -491,7 +500,7 @@ unset($categoryManager);
                         	<input type="button" value="Clear" />
                         </div>
                         <div class="col-xs-0 col-sm-3 col-md-3"></div>
-                        <div class="col-xs-6 col-sm-4 col-md-4">
+                        <div class="col-xs-6 col-sm-3 col-md-3">
                         	<input disabled id="btnCheckout" type="button" value="Checkout" onclick="location.assign('http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/checkout.php')" />
                         </div>
                     </div>
