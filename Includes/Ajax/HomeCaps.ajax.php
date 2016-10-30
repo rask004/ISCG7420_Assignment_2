@@ -16,7 +16,7 @@ if (isset($_REQUEST["p"]) && isset($_REQUEST["c"]) )
 	// ok to process
 	
 	$CapManager = new \BusinessLayer\CapManager;
-	$capId = (integer) ($_REQUEST["c"] + 0);
+	$categoryId = (integer) ($_REQUEST["c"] + 0);
 	$page = (integer) ($_REQUEST["p"] + 0);
 	$pagesize = \Common\Constants::$HomeCapsTablePageSize;
 	$pagewidth = \Common\Constants::$HomeCapsTablePageWidth;
@@ -30,28 +30,32 @@ if (isset($_REQUEST["p"]) && isset($_REQUEST["c"]) )
 	
 	$caps = array();
 	
-	if ($capId < 0)
+	$capCount = 0;
+	
+	if ($categoryId < 0)
 	{
 		$caps = $CapManager->GetAllCaps($start, $pagesize);
+		$capCount = $CapManager->GetAllCapsCount();
 	}
 	else
 	{
-		$caps = $CapManager->GetCapsByCategorywithLimit($capId, $start, $pagesize);
+		$caps = $CapManager->GetCapsByCategorywithLimit($categoryId, $start, $pagesize);
+		$capCount = $CapManager->GetCapsByCategoryCount($categoryId);
 	}
 	
-	$capcount = count($caps);
-	
-	
+	echo '<script type="text/javascript">$("#inputJsParamsCapItemCount").val('.$capCount.')</script>';
 	
 	$c = 0;
 	
-	echo '<table class="table"><tr>';
+	$colWidth = 12 / $pagewidth;
+	
+	echo '<div class="container-fluid"><div class="row">';
 	
 	foreach($caps as $cap)
 	{
 		if ($c >= $pagewidth)
 		{
-			echo '</tr><tr>';
+			echo '</div><br/><div class="row">';
 			$c = 0;
 		}
 		
@@ -60,25 +64,22 @@ if (isset($_REQUEST["p"]) && isset($_REQUEST["c"]) )
 		$price = number_format((float)$cap["price"], 2, '.', '');
 		$id = $cap["id"];
 		
-		echo '<td>';
+		echo '<div class="col-xs-12 col-sm-'.$colWidth.' col-md-'.$colWidth.'"><div class="container-fluid">';
 		
-		echo '<div class="container-fluid">'.
-			'<div class="row"><div class="col-xs-12 col-sm-10 col-md-10">'.
+		echo '<div class="row"><div class="col-xs-12 col-sm-12 col-md-12">'.
 			'<img style="width:160px; height:160px;" alt="no picture" src="'.$imgUrl.'" /></div></div><br/>'.
-			'<div class="row"><div class="col-xs-8 col-sm-5 col-md-5">'.
+			'<div class="row"><div class="col-xs-8 col-sm-8 col-md-8">'.
 			'<input type="button" value="'.$name.'" onclick="ShowCapDetails('.$id.');" /></div>'.
-			'<div class="col-xs-0 col-sm-1 col-md-1"></div>'.
-			'<div class="col-xs-12 col-sm-4 col-md-4"><label>$ '.$price.' </label></div></div>'.
-			'</div>';
-
-		echo '</td>';
+			'<div class="col-xs-0 col-sm-0 col-md-1"></div>'.
+			'<div class="col-xs-12 col-sm-8 col-md-8"><label>$ '.$price.' </label></div></div>';
+			
+		echo '</div></div>';
 		
 		// limit cells per row to page width.	
 		$c += 1;
 	}
 	
-	
-	echo '</tr></table>';
+	echo '</div></div>';
 }
 // requesting to show details of specific cap
 elseif (isset( $_REQUEST["d"] ))
@@ -116,11 +117,11 @@ elseif (isset( $_REQUEST["d"] ))
 			'<div class="col-xs-0 col-sm-1 col-md-1"></div>'.
 			'<div class="col-xs-6 col-sm-6 col-md-6"><input type="number" id="inputAddCapQuantity" min="1" max="9" value="1"/></div></div><br/>'.
 			'<div class="row"><div class="col-xs-0 col-sm-2 col-md-2"></div>'.
-			'<div class="col-xs-6 col-sm-9 col-md-9">DESCRIPTION</div></div><br/>'.
+			'<div class="col-xs-6 col-sm-9 col-md-9">'.$description.'</div></div><br/>'.
 			'<div class="row"><div class="col-xs-0 col-sm-2 col-md-2"></div>'.
-			'<div class="col-xs-6 col-sm-4 col-md-4"><input type="button" value="Add To Cart" onclick="AddCapToCart()" /></div>'.
+			'<div class="col-xs-6 col-sm-3 col-md-3"><input type="button" value="Add To Cart" onclick="AddCapToCart()" /></div>'.
 			'<div class="col-xs-0 col-sm-2 col-md-2"></div>'.
-			'<div class="col-xs-6 col-sm-3 col-md-3"></div>';
+			'<div class="col-xs-6 col-sm-4 col-md-4"><input type="button" value="Cancel" onclick="ReturnToCapListing()" /></div>';
 	}
 }
 else

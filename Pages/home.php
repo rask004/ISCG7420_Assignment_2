@@ -294,7 +294,7 @@ unset($categoryManager);
 			var capId = parseInt($("#lblAddCapId").html());
 			var qty = parseInt($("#inputAddCapQuantity").val());
 			
-			$("#divCapDetails").load("../Includes/Ajax/HomeCart.ajax.php", {a:capId, aq:qty},
+			$("#divShoppingCart").load("../Includes/Ajax/HomeCart.ajax.php", {a:capId, aq:qty},
 				function(responseTxt, statusTxt, xhr)
 				{
 					$("#divCapsPageControls").prop("hidden", false);
@@ -304,6 +304,17 @@ unset($categoryManager);
 				}
 			);
 			
+			ShowPageCart(1);
+			
+		}
+		
+		// reshow the caps page
+		function ReturnToCapListing()
+		{
+			$("#divCapsPageControls").prop("hidden", false);
+			$("#divCapsByCategory").prop("hidden", false);
+			$("#divCapDetails").prop("hidden", true);
+			$("#txtCapsHeader").html("Caps");
 		}
 		
 	</script>
@@ -491,7 +502,7 @@ unset($categoryManager);
                         	<input type="button" value="Clear" />
                         </div>
                         <div class="col-xs-0 col-sm-3 col-md-3"></div>
-                        <div class="col-xs-6 col-sm-4 col-md-4">
+                        <div class="col-xs-6 col-sm-3 col-md-3">
                         	<input disabled id="btnCheckout" type="button" value="Checkout" onclick="location.assign('http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/checkout.php')" />
                         </div>
                     </div>
