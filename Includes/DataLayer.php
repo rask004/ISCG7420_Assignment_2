@@ -700,6 +700,36 @@ class DataManager
 	/*
 		get all products for a category, using the categoryId. use LIMIT.
 	*/
+	public function selectCountOfCapsbyCategoryId( $categoryId)
+	{
+		$categoryId = (integer) $categoryId;
+		
+		$this->_openConnection();	
+		
+		if (!$query_result = $this->_conn->query("Select * from `cap` WHERE `categoryId` = " . $categoryId . ";"))
+		{
+			$this->_conn->rollback();
+			$_SESSION["last_Error"] = "DB_Error_Generic";
+			$_SESSION["Error_MSG"] = (string) $mysqli->_conn->errno . "; " . $mysqli->_conn->error . "; SQL=". $sql;
+			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
+			exit;
+		}
+		
+		$capCount = $query_result->num_rows;
+		
+		if ($query_result)
+		{
+			$query_result->free();
+		}
+		
+		$this->_closeConnection();
+		
+		return $capCount;	
+	}
+	
+	/*
+		get all products for a category, using the categoryId. use LIMIT.
+	*/
 	public function selectAllCaps($limit_start,  $limit_length)
 	{
 		$this->_openConnection();	
@@ -731,6 +761,34 @@ class DataManager
 		$this->_closeConnection();	
 		
 		return $caps;	
+	}
+	
+	/*
+		get all products for a category, using the categoryId. use LIMIT.
+	*/
+	public function selectCountOfAllCaps()
+	{
+		$this->_openConnection();	
+		
+		if (!$query_result = $this->_conn->query("Select * from `cap`;"))
+		{
+			$this->_conn->rollback();
+			$_SESSION["last_Error"] = "DB_Error_Generic";
+			$_SESSION["Error_MSG"] = (string) $mysqli->_conn->errno . "; " . $mysqli->_conn->error . "; SQL=". $sql;
+			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
+			exit;
+		}
+		
+		$capcount = $query_result->num_rows;
+		
+		if ($query_result)
+		{
+			$query_result->free();
+		}
+		
+		$this->_closeConnection();	
+		
+		return $capcount;	
 	}
 	
 	/*

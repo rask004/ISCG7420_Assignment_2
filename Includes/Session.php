@@ -17,9 +17,5 @@
 	if ( !(isset( $_SESSION[\Common\Security::$SessionCartArrayKey] ) && is_array($_SESSION[\Common\Security::$SessionCartArrayKey]) ) )
 	{
 		$_SESSION[\Common\Security::$SessionCartArrayKey] = array();
-		
-		$_SESSION[\Common\Security::$SessionCartArrayKey][1] = 3;
-		$_SESSION[\Common\Security::$SessionCartArrayKey][2] = 10;
-		$_SESSION[\Common\Security::$SessionCartArrayKey][3] = 17;
 	}
 //}
