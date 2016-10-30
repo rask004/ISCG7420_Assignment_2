@@ -55,7 +55,7 @@ elseif( isset($_REQUEST["a"]) && isset($_REQUEST["aq"]) )
 	$id = (integer) ($_REQUEST["a"] + 0);
 	$qty = (integer) ($_REQUEST["aq"] + 0);
 	
-	if ( !isset($_SESSION[\Common\Security::$SessionCartArrayKey]))
+	if ( !isset($_SESSION[\Common\Security::$SessionCartArrayKey][$id]))
 	{
 		$_SESSION[\Common\Security::$SessionCartArrayKey][$id] = 0;	
 	}
@@ -119,7 +119,7 @@ if (isset($_REQUEST["p"]))
 		foreach($page_items as $capId=>$qty)
 		{
 			$cap = $capsManager->GetSingleCap($capId);
-			$price = $cap["price"];
+			$price = number_format((float)$cap["price"], 2, '.', '');
 			$name = $cap["name"];
 			$total = $price * $qty;
 			

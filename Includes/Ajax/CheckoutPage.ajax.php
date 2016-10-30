@@ -84,9 +84,9 @@ else
 		foreach($page_items as $capId=>$qty)
 		{
 			$cap = $capsManager->GetSingleCap($capId);
-			$price = $cap["price"];
+			$price = number_format((float)$cap["price"], 2, '.', '');
 			$name = $cap["name"];
-			$total = $price * $qty;
+			$total = number_format((float) ($price * $qty), 2, '.', '');
 			
 			
 			echo '<div class="row"><div class="col-xs-0 col-sm-1 col-md-1"></div>'.

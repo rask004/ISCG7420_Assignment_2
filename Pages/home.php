@@ -294,7 +294,7 @@ unset($categoryManager);
 			var capId = parseInt($("#lblAddCapId").html());
 			var qty = parseInt($("#inputAddCapQuantity").val());
 			
-			$("#divCapDetails").load("../Includes/Ajax/HomeCart.ajax.php", {a:capId, aq:qty},
+			$("#divShoppingCart").load("../Includes/Ajax/HomeCart.ajax.php", {a:capId, aq:qty},
 				function(responseTxt, statusTxt, xhr)
 				{
 					$("#divCapsPageControls").prop("hidden", false);
@@ -303,6 +303,8 @@ unset($categoryManager);
 					$("#txtCapsHeader").html("Caps");
 				}
 			);
+			
+			ShowPageCart(1);
 			
 		}
 		
