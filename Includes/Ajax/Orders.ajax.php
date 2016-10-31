@@ -43,7 +43,7 @@ else
 	$start = ($page - 1) * \Common\Constants::$OrdersTablePageSize;
 	$id = $_SESSION[\Common\Security::$SessionUserIdKey];
 	
-	echo '<tr style="border-bottom: black solid 1px"><th>Id</th><th>Date Placed</th><th>Status</th><th>Total Items</th><th>Total Cost ($)</th></tr>';
+	echo '<tr><th>Id</th><th>Date Placed</th><th>Status</th><th>Total Items</th><th>Total Cost ($)</th></tr>';
 	
 	$order_summaries = $ordersManager->GetAllOrderSummariesForCustomer($id, $start, $pagesize);
 	
@@ -51,7 +51,7 @@ else
 	{
 		$date_parts = explode(" ", $summary['datePlaced']);
 		echo "<tr><td>". $summary['id'] ."</td><td>". $date_parts[0] ."</td><td>". $summary['status'] .
-		"</td><td>". $summary['totalQuantity'] ."</td><td>". $summary['totalPrice'] ."</td><td></tr>";
+		"</td><td>". $summary['totalQuantity'] ."</td><td>". number_format((float) $summary['totalPrice'], 2, '.', '') ."</td><td></tr>";
 	}
 	
 	if( count($order_summaries) < $pagesize)
