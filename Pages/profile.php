@@ -235,8 +235,10 @@ else
     <script type="text/javascript" src="../js/jquery.js"></script>
     <script type="text/javascript">
 	
-		function make_form_editable() 
+		function change_form() 
 		{
+			if($("#btnEditForm").val() == "Edit")
+			{
 				$("#txtFirstName").prop( 'disabled', false);
 				$("#txtLastName").prop( 'disabled', false);
 				$("#txtLogin").prop( 'disabled', false);
@@ -248,13 +250,10 @@ else
 				$("#txtSuburb").prop( 'disabled', false);
 				$("#txtCity").prop( 'disabled', false);
 				$("#submit").prop( 'disabled', false);
-				$("#resetForm").prop( 'hidden', false);
-				$("#btnEditForm").prop( 'hidden', true);
-		}
-
-
-		function reset_form() 
-		{
+				$("#btnEditForm").val("Reset");
+			}
+			else
+			{
 				$("#txtFirstName").prop( 'disabled', true);
 				$("#txtLastName").prop( 'disabled', true);
 				$("#txtLogin").prop( 'disabled', true);
@@ -269,8 +268,8 @@ else
 				$("#txtSuburb").prop( 'disabled', true);
 				$("#txtCity").prop( 'disabled', true);
 				$("#submit").prop( 'disabled', true);
-				$("#resetForm").prop( 'hidden', true);
-				$("#btnEditForm").prop( 'hidden', false);
+				$("#btnEditForm").val("Edit");
+			}
 		}
 		
 		function profile_password_toggle() 
@@ -311,7 +310,7 @@ else
                 <div id="divLeftSidebar" class="col-md-3">
                 </div>
                 <div id="divCentreSpace" class="col-md-6">
-                    <div class="container-fluid PageSection">
+                    <div class="container-fluid panel panel-default  PageSection">
                         <br/>
 
                         <div class="row" style="margin: auto 20px">
@@ -342,11 +341,11 @@ else
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
                             <div class="col-xs-12 col-sm-4 col-md-4">
-                                <label style="float: left" for="txtFirstName">First Name:</label>
+                                <label class="label label-default" style="margin-top:4px; float: left; font-size:0.9em" for="txtFirstName">First Name:</label>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 
-                                <input style="float: left; width:100%" id="txtFirstName"
+                                <input class="form-control" style="float: left; width:100%" id="txtFirstName"
                                        name="txtFirstName" 
 									   	<?php 
 											if(isset($customer)) 
@@ -369,10 +368,10 @@ else
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
                             <div class="col-xs-12 col-sm-4 col-md-4">
-                                <label style="float: left" for="txtLastName">Last Name:</label>
+                                <label class="label label-default" style="margin-top:4px; float: left; font-size:0.9em" for="txtLastName">Last Name:</label>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
-                                <input style="float: left; width:100%" id="txtLastName"
+                                <input class="form-control" style="float: left; width:100%" id="txtLastName"
                                        name="txtLastName"
 									   <?php 
 											if(isset($customer)) 
@@ -394,10 +393,10 @@ else
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
                             <div class="col-xs-12 col-sm-4 col-md-4">
-                                <label style="float: left" for="txtEmail">Email:</label>
+                                <label class="label label-default" style="margin-top:4px; float: left; font-size:0.9em" for="txtEmail">Email:</label>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
-                                <input style="float: left; width:100%" id="txtEmail"
+                                <input class="form-control" style="float: left; width:100%" id="txtEmail"
                                        name="txtEmail" 
 									   <?php 
 									   		if(isset($customer)) 
@@ -421,10 +420,10 @@ else
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
                             <div class="col-xs-12 col-sm-4 col-md-4">
-                                <label style="float: left" for="txtLogin">Login:</label>
+                                <label class="label label-default" style="margin-top:4px; float: left; font-size:0.9em" for="txtLogin">Login:</label>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
-                                <input style="float: left; width:100%" id="txtLogin"
+                                <input class="form-control" style="float: left; width:100%" id="txtLogin"
                                        name="txtLogin" 
 									   <?php 
 									   		if (isset($customer)) 
@@ -449,11 +448,11 @@ else
                             if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
                             {
 								echo '<div class="col-xs-12 col-sm-4 col-md-4">' .
-									 '<input type="button" id="btnChangeProfilePassword" '.
+									 '<input type="button" class="btn btn-warning" id="btnChangeProfilePassword" '.
 									 ' disabled onclick="profile_password_toggle();" style="float: left; width:80%" value="Change Password" />' .
 									 '</div>' .
 									 '<div class="col-xs-12 col-sm-6 col-md-4">'.
-										 '<input style="float: left; width:100%" id="txtPassword"' .
+										 '<input class="form-control" style="float: left; width:100%" id="txtPassword"' .
 											    ' name="txtPassword"  value="" ' .
 											    ' disabled required minlength="10" type="text" />' .
 									 '</div>';
@@ -469,7 +468,7 @@ else
 									 '<label style="float: left" for="txtPassword">Password:</label>' .
 									 '</div>' .
 									 '<div class="col-xs-12 col-sm-6 col-md-4">' .
-										 '<input style="float: left; width:100%" id="txtPassword"' .
+										 '<input class="form-control" style="float: left; width:100%" id="txtPassword"' .
 											    ' name="txtPassword"  value="' .
 													$password .
 												'" ' .
@@ -488,10 +487,10 @@ else
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
                             <div class="col-xs-12 col-sm-4 col-md-4">
-                                <label style="float: left" for="txtHomePhone">Home Phone:</label>
+                                <label class="label label-default" style="margin-top:4px; float: left; font-size:0.9em" for="txtHomePhone">Home Phone:</label>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
-                                <input style="float: left; width:100%" id="txtHomePhone"
+                                <input class="form-control" style="float: left; width:100%" id="txtHomePhone"
                                        name="txtHomePhone"
 									   <?php 
 									   		if (isset($customer)) 
@@ -513,10 +512,10 @@ else
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
                             <div class="col-xs-12 col-sm-4 col-md-4">
-                                <label style="float: left" for="txtWorkPhone">Work Phone:</label>
+                                <label class="label label-default" style="margin-top:4px; float: left; font-size:0.9em" for="txtWorkPhone">Work Phone:</label>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
-                                <input style="float: left; width:100%" id="txtWorkPhone"
+                                <input class="form-control" style="float: left; width:100%" id="txtWorkPhone"
                                        name="txtWorkPhone" 
 									   <?php 
 									   		if (isset($customer)) 
@@ -538,10 +537,10 @@ else
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
                             <div class="col-xs-12 col-sm-4 col-md-4">
-                                <label style="float: left" for="txtMobilePhone">Mobile Phone:</label>
+                                <label class="label label-default" style="margin-top:4px; float: left; font-size:0.9em" for="txtMobilePhone">Mobile Phone:</label>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
-                                <input style="float: left; width:100%" id="txtMobilePhone"
+                                <input class="form-control" style="float: left; width:100%" id="txtMobilePhone"
                                        name="txtMobilePhone" 
 									   <?php 
 									   		if (isset($customer)) 
@@ -565,10 +564,10 @@ else
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
                             <div class="col-xs-12 col-sm-4 col-md-4">
-                                <label style="float: left" for="txtAddress">Street Address:</label>
+                                <label class="label label-default" style="margin-top:4px; float: left; font-size:0.9em" for="txtAddress">Street Address:</label>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
-                                <input style="float: left; width:100%" id="txtAddress"
+                                <input class="form-control" style="float: left; width:100%" id="txtAddress"
                                        name="txtAddress" 
 									   <?php 
 									   		if (isset($customer)) 
@@ -590,10 +589,10 @@ else
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
                             <div class="col-xs-12 col-sm-4 col-md-4">
-                                <label style="float: left" for="txtSuburb">Suburb:</label>
+                                <label class="label label-default" style="margin-top:4px; float: left; font-size:0.9em" for="txtSuburb">Suburb:</label>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
-                                <input style="float: left; width:100%" id="txtSuburb"
+                                <input class="form-control" style="float: left; width:100%" id="txtSuburb"
                                        name="txtSuburb"
 									   <?php 
 									   		if (isset($customer)) 
@@ -615,10 +614,10 @@ else
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
                             <div class="col-xs-12 col-sm-4 col-md-4">
-                                <label style="float: left" for="txtCity">City:</label>
+                                <label class="label label-default" style="margin-top:4px; float: left; font-size:0.9em" for="txtCity">City:</label>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
-                                <input style="float: left; width:100%" id="txtCity"
+                                <input class="form-control" style="float: left; width:100%" id="txtCity"
                                        name="txtCity"
 									   <?php 
 									   		if (isset($customer)) 
@@ -649,11 +648,10 @@ else
                                 $submitValue = 'Save';
 
                                 echo '<div class="col-xs-6 col-sm-3 col-md-3">' .
-                                    '<input type="button" id="btnEditForm" onclick="make_form_editable();" value="Edit" />' .
-									'<input type="reset" value="Reset" hidden id="resetForm" onclick="reset_form();" />' .
+                                    '<input type="button" class="btn btn-primary" id="btnEditForm" onclick="change_form();" value="Edit" />' .
                                     '</div>' .
                                     '<div class="col-xs-12 col-sm-2 col-md-2">' .
-									'<a href="../Pages/orders.php">Orders</a>' .
+									'<a class="btn btn-primary" href="../Pages/orders.php">Orders</a>' .
                                     '</div>' ;
                             }
                             else
@@ -661,14 +659,14 @@ else
                                 $submitValue = 'Register';
 
                                 echo '<div class="col-xs-6 col-sm-3 col-md-3">' .
-                                    '<input type="reset" value="Reset" id="resetRegister" />' .
+                                    '<input type="reset" class="btn btn-primary" value="Reset" id="resetRegister" />' .
                                     '</div>' .
                                     '<div class="col-xs-0 col-sm-2 col-md-2">' .
                                     '</div>';
                             }
                             ?>
                             <div class="col-xs-6 col-sm-3 col-md-3">
-                                <input style="float: right;" id="submit" name="submit"
+                                <input class="btn btn-primary" style="float: right;" id="submit" name="submit"
                                     <?= $isDisabled ?> value="<?= $submitValue ?>" type="submit" />
                             </div>
                             <div class="col-xs-0 col-sm-2 col-md-2">

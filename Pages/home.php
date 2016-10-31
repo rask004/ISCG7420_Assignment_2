@@ -86,26 +86,34 @@ unset($categoryManager);
 							if ($("#inputJsParamsCartItemCount").val() <= $("#inputJsParamsCartPageSize").val())
 							{
 								$("#lblCartPrevPage").html("Previous");
+								$("#lblCartPrevPage").css("PageLinkDisabled");
 								$("#lblCartPageNumber").html("Page: 1");
 								$("#lblCartNextPage").html("Next");
+								$("#lblCartNextPage").css("PageLinkDisabled");
 							}
 							else if (page <= 1)
 							{
 								$("#lblCartPrevPage").html("Previous");
+								$("#lblCartPrevPage").css("PageLinkDisabled");
 								$("#lblCartPageNumber").html("Page: 1");
-								$("#lblCartNextPage").html('<a href="#" onclick="ShowPageCart( ' + nextPage + ')">Next</a>');
+								$("#lblCartNextPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCart( ' + nextPage + ')">Next</a>');
+								$("#lblCartNextPage").css("PageLinkActive");
 							}
 							else if (page * $("#inputJsParamsCartPageSize").val() >= $("#inputJsParamsCartItemCount").val())
 							{
-								$("#lblCartPrevPage").html('<a href="#" onclick="ShowPageCart( ' + prevPage + ')">Previous</a>')
+								$("#lblCartPrevPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCart( ' + prevPage + ')">Previous</a>');
+								$("#lblCartPrevPage").css("PageLinkActive");
 								$("#lblCartPageNumber").html("Page: " + page);
 								$("#lblCartNextPage").html("Next");
+								$("#lblCartNextPage").css("PageLinkDisabled");
 							}
 							else
 							{
-								$("#lblCartPrevPage").html('<a href="#" onclick="ShowPageCart( ' + prevPage + ')">Previous</a>')
+								$("#lblCartPrevPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCart( ' + prevPage + ')">Previous</a>');
+								$("#lblCartPrevPage").css("PageLinkActive");
 								$("#lblCartPageNumber").html("Page: " + page);
-								$("#lblCartNextPage").html('<a href="#" onclick="ShowPageCart( ' + nextPage + ')">Next</a>');
+								$("#lblCartNextPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCart( ' + nextPage + ')">Next</a>');
+								$("#lblCartNextPage").css("PageLinkActive");
 							}
 						}
 					}
@@ -130,7 +138,7 @@ unset($categoryManager);
 						if(statusTxt == "success")
 						{
 							var itemcount = $("#inputJsParamsCartItemCount").val() - 1;
-							$("#inputJsParamsCartItemCount").val(itemcount)
+							$("#inputJsParamsCartItemCount").val(itemcount);
 							if (($("#inputJsParamsCartPage").val() - 1) * $("#inputJsParamsCartPageSize").val() >= $("#inputJsParamsCartItemCount").val())
 							{
 								var page = $("#inputJsParamsCartPage").val() - 1;
@@ -144,26 +152,34 @@ unset($categoryManager);
 							if ($("#inputJsParamsCartItemCount").val() <= $("#inputJsParamsCartPageSize").val())
 							{
 								$("#lblCartPrevPage").html("Previous");
+								$("#lblCartPrevPage").css("PageLinkDisabled");
 								$("#lblCartPageNumber").html("Page: 1");
 								$("#lblCartNextPage").html("Next");
+								$("#lblCartNextPage").css("PageLinkDisabled");
 							}
 							else if ($("#inputJsParamsCartPage").val() <= 1)
 							{
 								$("#lblCartPrevPage").html("Previous");
+								$("#lblCartPrevPage").css("PageLinkDisabled");
 								$("#lblCartPageNumber").html("Page: 1");
-								$("#lblCartNextPage").html('<a href="#" onclick="ShowPageCart( ' + nextPage + ')">Next</a>');
+								$("#lblCartNextPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCart( ' + nextPage + ')">Next</a>');
+								$("#lblCartNextPage").css("PageLinkActive");
 							}
 							else if ($("#inputJsParamsCartPage").val() * $("#inputJsParamsCartPageSize").val() >= $("#inputJsParamsCartItemCount").val())
 							{
-								$("#lblCartPrevPage").html('<a href="#" onclick="ShowPageCart( ' + prevPage + ')">Previous</a>')
+								$("#lblCartPrevPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCart( ' + prevPage + ')">Previous</a>');
+								$("#lblCartPrevPage").css("PageLinkActive");
 								$("#lblCartPageNumber").html("Page: " + page);
 								$("#lblCartNextPage").html("Next");
+								$("#lblCartNextPage").css("PageLinkDisabled");
 							}
 							else
 							{
-								$("#lblCartPrevPage").html('<a href="#" onclick="ShowPageCart( ' + prevPage + ')">Previous</a>')
+								$("#lblCartPrevPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCart( ' + prevPage + ')">Previous</a>');
+								$("#lblCartPrevPage").css("PageLinkActive");
 								$("#lblCartPageNumber").html("Page: " + page);
-								$("#lblCartNextPage").html('<a href="#" onclick="ShowPageCart( ' + nextPage + ')">Next</a>');
+								$("#lblCartNextPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCart( ' + nextPage + ')">Next</a>');
+								$("#lblCartNextPage").css("PageLinkActive");
 							}
 							
 							$("#inputJsParamsCartPage").val(page);
@@ -194,26 +210,31 @@ unset($categoryManager);
 							if ($("#inputJsParamsCategoryItemCount").val() <= $("#inputJsParamsCategoryPageSize").val())
 							{
 								$("#lblCategoriesPrevPage").html("Previous");
+								$("#lblCategoriesPrevPage").css("PageLinkDisabled");
 								$("#lblCategoriesPageNumber").html("Page: 1");
 								$("#lblCategoriesNextPage").html("Next");
+								$("#lblCategoriesNextPage").css("PageLinkDisabled");
 							}
 							else if (page <= 1)
 							{
 								$("#lblCategoriesPrevPage").html("Previous");
+								$("#lblCategoriesPrevPage").css("PageLinkDisabled");
 								$("#lblCategoriesPageNumber").html("Page: 1");
-								$("#lblCategoriesNextPage").html('<a href="#" onclick="ShowPageCategories( ' + nextPage + ')">Next</a>');
+								$("#lblCategoriesNextPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCategories( ' + nextPage + ')">Next</a>');
+								$("#lblCategoriesNextPage").css("PageLinkActive");
 							}
 							else if (page * $("#inputJsParamsCategoryPageSize").val() >= $("#inputJsParamsCategoryItemCount").val())
 							{
-								$("#lblCategoriesPrevPage").html('<a href="#" onclick="ShowPageCategories( ' + prevPage + ')">Previous</a>')
+								$("#lblCategoriesPrevPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCategories( ' + prevPage + ')">Previous</a>');
 								$("#lblCategoriesPageNumber").html("Page: " + page);
 								$("#lblCategoriesNextPage").html("Next");
+								$("#lblCategoriesNextPage").css("PageLinkDisabled");
 							}
 							else
 							{
-								$("#lblCategoriesPrevPage").html('<a href="#" onclick="ShowPageCategories( ' + prevPage + ')">Previous</a>')
+								$("#lblCategoriesPrevPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCategories( ' + prevPage + ')">Previous</a>');
 								$("#lblCategoriesPageNumber").html("Page: " + page);
-								$("#lblCategoriesNextPage").html('<a href="#" onclick="ShowPageCategories( ' + nextPage + ')">Next</a>');
+								$("#lblCategoriesNextPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCategories( ' + nextPage + ')">Next</a>');
 							}
 						}
 					}
@@ -250,26 +271,30 @@ unset($categoryManager);
 							if ($("#inputJsParamsCapItemCount").val() <= $("#inputJsParamsCapPageSize").val())
 							{
 								$("#lblCapsPrevPage").html("Previous");
+								$("#lblCapsPrevPage").css("PageLinkDisabled");
 								$("#lblCapsPageNumber").html("Page: 1");
 								$("#lblCapsNextPage").html("Next");
+								$("#lblCapsNextPage").css("PageLinkDisabled");
 							}
 							else if (page <= 1)
 							{
 								$("#lblCapsPrevPage").html("Previous");
+								$("#lblCapsPrevPage").css("PageLinkDisabled");
 								$("#lblCapsPageNumber").html("Page: 1");
-								$("#lblCapsNextPage").html('<a href="#" onclick="ShowPageCaps( ' + catId + ',' + nextPage + ')">Next</a>');
+								$("#lblCapsNextPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCaps( ' + catId + ',' + nextPage + ')">Next</a>');
 							}
 							else if (page * $("#inputJsParamsCapPageSize").val() >= $("#inputJsParamsCapItemCount").val())
 							{
-								$("#lblCapsPrevPage").html('<a href="#" onclick="ShowPageCaps( ' + catId + ',' + prevPage + ')">Previous</a>')
+								$("#lblCapsPrevPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCaps( ' + catId + ',' + prevPage + ')">Previous</a>')
 								$("#lblCapsPageNumber").html("Page: " + page);
 								$("#lblCapsNextPage").html("Next");
+								$("#lblCapsNextPage").css("PageLinkDisabled");
 							}
 							else
 							{
-								$("#lblCapsPrevPage").html('<a href="#" onclick="ShowPageCaps( ' + catId + ',' + prevPage + ')">Previous</a>')
+								$("#lblCapsPrevPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCaps( ' + catId + ',' + prevPage + ')">Previous</a>')
 								$("#lblCapsPageNumber").html("Page: " + page);
-								$("#lblCapsNextPage").html('<a href="#" onclick="ShowPageCaps( ' + catId + ',' + nextPage + ')">Next</a>');
+								$("#lblCapsNextPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCaps( ' + catId + ',' + nextPage + ')">Next</a>');
 							}
 						}
 					}
@@ -347,7 +372,7 @@ unset($categoryManager);
 
         <div class="row">
             <div id="divLeftSidebar" class="col-md-3">
-                <div class="container-fluid PageSection">
+                <div class="container-fluid panel panel-default PageSection">
                     <br/>
 
                     <div class="row" style="margin: auto 20px">
@@ -374,18 +399,23 @@ unset($categoryManager);
                     <br/>
                     
                     <div class="row">
-                        <div class="col-xs-0 col-sm-2 col-md-1">
-                        </div>
-                        <div class="col-xs-4 col-sm-3 col-md-3">
-                            <label id="lblCategoriesPrevPage"></label>
-                        </div>
-                        <div class="col-xs-4 col-sm-2 col-md-4">
-                            <label id="lblCategoriesPageNumber"></label>
-                        </div>
-                        <div class="col-xs-4 col-sm-3 col-md-3">
-                            <label id="lblCategoriesNextPage"></label>
-                        </div>
-                        <div class="col-xs-0 col-sm-2 col-md-1">
+                    	<div class="col-xs-12 col-sm-12 col-md-12">
+                    		<div class="container-fluid">
+                        
+                                <div class="row">
+                                    <div class="col-xs-0 col-sm-1 col-md-1">
+                                    </div>
+                                    <div class="col-xs-4 col-sm-3 col-md-3">
+                                        <label class="label label-primary PageLinkDisabled" id="lblCategoriesPrevPage"></label>
+                                    </div>
+                                    <div class="col-xs-4 col-sm-4 col-md-4">
+                                        <label class="label label-primary PageLinkDisabled" id="lblCategoriesPageNumber"></label>
+                                    </div>
+                                    <div class="col-xs-4 col-sm-3 col-md-3">
+                                        <label class="label label-primary PageLinkDisabled" id="lblCategoriesNextPage"></label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
@@ -393,10 +423,12 @@ unset($categoryManager);
                     <input type="number" hidden id="inputJsParamsCategoryPageSize" value="<?php echo $categoryPageSize ?>" />
                     <input type="number" hidden id="inputJsParamsCategoryItemCount" value="<?php echo $categoryCount ?>" />
                     
+                    <br/>
+                    
                 </div>
             </div>
             <div id="divCentreSpace" class="col-md-6">
-                <div class="container-fluid PageSection">
+                <div class="container-fluid panel panel-default PageSection">
                     <br/>
 
                     <div class="row" style="margin: auto 20px">
@@ -421,33 +453,40 @@ unset($categoryManager);
 						<div hidden class="container-fluid" id="divCapDetails">
                         	<!-- show details of a product, option to add to shopping cart. -->
                         </div>
-                        <br/>
+                    </div>
+                    <br/>
+                    
+                    <div class="row">
                         
-                        <div class="row" id="divCapsPageControls">
-                            <div class="col-xs-0 col-sm-2 col-md-1">
-                            </div>
-                            <div class="col-xs-4 col-sm-3 col-md-3">
-                                <label id="lblCapsPrevPage"></label>
-                            </div>
-                            <div class="col-xs-4 col-sm-2 col-md-4">
-                                <label id="lblCapsPageNumber"></label>
-                            </div>
-                            <div class="col-xs-4 col-sm-3 col-md-3">
-                                <label id="lblCapsNextPage"></label>
-                            </div>
-                            <div class="col-xs-0 col-sm-2 col-md-1">
+                        <div class="col-xs-12 col-sm-12 col-md-12">
+                        	<div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-xs-0 col-sm-1 col-md-1">
+                                    </div>
+                                    <div class="col-xs-4 col-sm-3 col-md-3">
+                                        <label class="label label-primary PageLinkDisabled" id="lblCapsPrevPage"></label>
+                                    </div>
+                                    <div class="col-xs-4 col-sm-4 col-md-4">
+                                        <label class="label label-primary PageLinkDisabled" id="lblCapsPageNumber"></label>
+                                    </div>
+                                    <div class="col-xs-4 col-sm-3 col-md-3">
+                                        <label class="label label-primary PageLinkDisabled" id="lblCapsNextPage"></label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                    </div>                              
                         
-                        <input type="number" hidden id="inputJsParamsCapPage" value="1" />
-                        <input type="number" hidden id="inputJsParamsCapPageSize" value="<?php echo $capPageSize ?>" />
-                        <input type="number" hidden id="inputJsParamsCapItemCount" value="" />
+                    <input type="number" hidden id="inputJsParamsCapPage" value="1" />
+                    <input type="number" hidden id="inputJsParamsCapPageSize" value="<?php echo $capPageSize ?>" />
+                    <input type="number" hidden id="inputJsParamsCapItemCount" value="" />
+                    
+                    <br/>
                         
-                    </div>
                 </div>
             </div>
             <div id="divRightSidebar" class="col-md-3">
-                <div class="container-fluid PageSection">
+                <div class="container-fluid panel panel-default PageSection">
                     <br/>
 
                     <div class="row" style="margin: auto 20px">
@@ -475,18 +514,23 @@ unset($categoryManager);
                     <br/>
                     
                     <div class="row">
-                        <div class="col-xs-0 col-sm-2 col-md-2">
-                        </div>
-                        <div class="col-xs-4 col-sm-3 col-md-3">
-                            <label id="lblCartPrevPage"></label>
-                        </div>
-                        <div class="col-xs-4 col-sm-2 col-md-2">
-                            <label id="lblCartPageNumber"></label>
-                        </div>
-                        <div class="col-xs-4 col-sm-3 col-md-3">
-                            <label id="lblCartNextPage"></label>
-                        </div>
-                        <div class="col-xs-0 col-sm-2 col-md-2">
+                        <div class="container-fluid">
+                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                <div class="row">
+                                    <div class="col-xs-0 col-sm-1 col-md-1">
+                                        
+                                    </div>
+                                    <div class="col-xs-4 col-sm-3 col-md-3">
+                                        <label class="label label-primary PageLinkDisabled" id="lblCartPrevPage"></label>
+                                    </div>
+                                    <div class="col-xs-4 col-sm-4 col-md-4">
+                                        <label class="label label-primary PageLinkDisabled" id="lblCartPageNumber"></label>
+                                    </div>
+                                    <div class="col-xs-4 col-sm-3 col-md-3">
+                                        <label class="label label-primary PageLinkDisabled" id="lblCartNextPage"></label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
@@ -510,7 +554,6 @@ unset($categoryManager);
                 </div>
             </div>
         </div>
-
     </div>
     
     <script type="text/javascript">

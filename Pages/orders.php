@@ -57,26 +57,34 @@ $order_count = $ordersManager->GetCountOfOrderSummariesByCustomer($_SESSION[\Com
 						if (itemcount <= pagesize)
 						{
 							$("#lblPrevPage").html("Previous");
+							$("#lblPrevPage").css("PageLinkDisabled");
 							$("#lblPageNumber").html("Page: 1");
 							$("#lblNextPage").html("Next");
+							$("#lblNextPage").css("PageLinkDisabled");
 						}
 						else if (page <= 1)
 						{
 							$("#lblPrevPage").html("Previous");
+							$("#lblPrevPage").css("PageLinkDisabled");
 							$("#lblPageNumber").html("Page: 1");
-							$("#lblNextPage").html('<a href="#" onclick="OrdersAjax( ' + nextPage + ', ' + pagesize + ', ' + itemcount + ')">Next</a>');
+							$("#lblNextPage").html('<a href="#" class="PageLinkActive" onclick="OrdersAjax( ' + nextPage + ', ' + pagesize + ', ' + itemcount + ')">Next</a>');
+							$("#lblNextPage").css("PageLinkActive");
 						}
 						else if (page * pagesize >= itemcount)
 						{
-							$("#lblPrevPage").html('<a href="#" onclick="OrdersAjax( ' + prevPage + ', ' + pagesize + ', ' + itemcount + ')">Previous</a>')
+							$("#lblPrevPage").html('<a href="#" class="PageLinkActive" onclick="OrdersAjax( ' + prevPage + ', ' + pagesize + ', ' + itemcount + ')">Previous</a>');
+							$("#lblPrevPage").css("PageLinkActive");
 							$("#lblPageNumber").html("Page: " + page);
 							$("#lblNextPage").html("Next");
+							$("#lblNextPage").css("PageLinkDisabled");
 						}
 						else
 						{
-							$("#lblPrevPage").html('<a href="#" onclick="OrdersAjax( ' + prevPage + ', ' + pagesize + ', ' + itemcount + ')">Previous</a>')
+							$("#lblPrevPage").html('<a href="#" class="PageLinkActive" onclick="OrdersAjax( ' + prevPage + ', ' + pagesize + ', ' + itemcount + ')">Previous</a>');
+							$("#lblPrevPage").css("PageLinkActive");
 							$("#lblPageNumber").html("Page: " + page);
-							$("#lblNextPage").html('<a href="#" onclick="OrdersAjax( ' + nextPage + ', ' + pagesize + ', ' + itemcount + ')">Next</a>');
+							$("#lblNextPage").html('<a href="#" class="PageLinkActive" onclick="OrdersAjax( ' + nextPage + ', ' + pagesize + ', ' + itemcount + ')">Next</a>');
+							$("#lblNextSPage").css("PageLinkActive");
 						}
 					}
 				}
@@ -97,7 +105,7 @@ $order_count = $ordersManager->GetCountOfOrderSummariesByCustomer($_SESSION[\Com
 
             </div>
             <div id="divCentreSpace" class="col-md-6">
-                <div class="container-fluid PageSection">
+                <div class="container-fluid panel panel-default PageSection">
                     <br/>
 
                     <div class="row" style="margin: auto 20px">
@@ -119,7 +127,7 @@ $order_count = $ordersManager->GetCountOfOrderSummariesByCustomer($_SESSION[\Com
 						<div class="col-xs-0 col-sm-2 col-md-2">
                         </div>
 						<div class="col-xs-12 col-sm-8 col-md-8">
-                        	<table width="100%" style="border-bottom: black solid 1px" id="tblOrderSummaries">
+                        	<table width="100%" class="table table-striped" id="tblOrderSummaries">
                                 
                             </table>
                         </div>
@@ -129,18 +137,16 @@ $order_count = $ordersManager->GetCountOfOrderSummariesByCustomer($_SESSION[\Com
                     <br/>
                     <br/>
                     <div class="row">
-                    	<div class="col-xs-0 col-sm-2 col-md-2">
+                    	<div class="col-xs-0 col-sm-1 col-md-1">
+                        </div>
+                        <div class="col-xs-12 col-sm-4 col-md-4">
+                        	<label class="label label-primary PageLinkDisabled" id="lblPrevPage"></label>
                         </div>
                         <div class="col-xs-12 col-sm-3 col-md-3">
-                        	<label id="lblPrevPage"></label>
-                        </div>
-                        <div class="col-xs-12 col-sm-2 col-md-2">
-                        	<label id="lblPageNumber"></label>
+                        	<label class="label label-primary PageLinkDisabled" id="lblPageNumber"></label>
                         </div>
                         <div class="col-xs-12 col-sm-3 col-md-3">
-                        	<label id="lblNextPage"></label>
-                        </div>
-                        <div class="col-xs-0 col-sm-2 col-md-2">
+                        	<label class="label label-primary PageLinkDisabled" id="lblNextPage"></label>
                         </div>
                     </div>
                     
@@ -155,8 +161,6 @@ $order_count = $ordersManager->GetCountOfOrderSummariesByCustomer($_SESSION[\Com
                 </div>
             </div>
             <div id="divRightSidebar" class="col-md-3">
-            	<br/>
-                <?php print_r($_SESSION); ?>
             </div>
         </div>
 

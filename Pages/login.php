@@ -97,7 +97,7 @@ if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\
             <div id="divCentreSpace" class="col-md-6">
 
                 <form method="post" enctype="multipart/form-data">
-                    <div class="container-fluid PageSection">
+                    <div class="container-fluid panel panel-default PageSection">
                         <br/>
 
                         <div class="row" style="margin: auto 20px">
@@ -124,7 +124,7 @@ if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\
                                         <label style="float: left" for="inputLogin">Login:</label>
                                     </div>
                                     <div class="col-xs-12 col-sm-8 col-md-7">
-                                        <input style="float: right; width:100%" id="inputLogin"
+                                        <input class="form-control" style="float: right; width:100%" id="inputLogin"
                                                name="inputLogin" required minlength="6" type="text" />
                                     </div>
                                 </div>
@@ -133,7 +133,7 @@ if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\
                                         <label style="float: left" for="inputPassword">Password:</label>
                                     </div>
                                     <div class="col-xs-12 col-sm-8 col-md-7">
-                                        <input style="float: right; width:100%" id="inputPassword"
+                                        <input class="form-control" style="float: right; width:100%" id="inputPassword"
                                                name="inputPassword" required minlength="10" type="text" />
                                     </div>
                                 </div>
@@ -141,13 +141,13 @@ if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\
                                 <br/>
                                 <div class="row" style="margin-top: 4px">
                                     <div class="col-xs-4 col-sm-4 col-md-4">
-                                        <input style="width:100%" type="reset" value="Clear" />
+                                        <input class="btn btn-primary" style="width:100%" type="reset" value="Clear" />
                                     </div>
                                     <div class="col-xs-4 col-sm-4 col-md-4">
 
                                     </div>
                                     <div class="col-xs-4 col-sm-4 col-md-4">
-                                        <input style="width:100%" name="submit" type="submit" value="Submit" />
+                                        <input class="btn btn-primary" style="width:100%" name="submit" type="submit" value="Submit" />
                                     </div>
                                 </div>
 

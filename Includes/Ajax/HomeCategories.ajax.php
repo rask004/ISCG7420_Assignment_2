@@ -1,7 +1,5 @@
 <?php
 
-ini_set("display_errors","1");
-
 include_once('../Session.php');
 include_once("../CategoryManager.php");
 include_once('../Common.php');
@@ -49,6 +47,8 @@ else
 	
 	$categories = $categoryManager->RetrieveCategoriesForHomePage($start, $pagesize);
 	
+	echo '<div class="row">';
+	
 	// display each category.
 	foreach($categories as $cat)
 	{
@@ -56,10 +56,14 @@ else
 		$name = $cat['name'];
 		$imgUrl = '../' . \Common\Constants::$AdminFileuploadFolder .'/'. $cat["imageUrl"];
 		
+		echo '<div class="col-xs-12 col-sm-4 col-md-12"><div class="container-fluid">';
 		echo '<div class="row"><div class="col-xs-0 col-sm-3 col-md-3"></div>'.
-			'<div class="col-xs-12 col-sm-6 col-md-6"><img class="img-thumbnail" style="max-width:80%;max-height:80%" alt="no picture" src="'.$imgUrl.'" /></div></div>'.
+			'<div class="col-xs-12 col-sm-6 col-md-6"><img class="img-thumbnail" style="max-width:120px;max-height:120px" alt="no picture" src="'.$imgUrl.'" /></div></div>'.
 			'<div class="row"><div class="col-xs-0 col-sm-3 col-md-3"></div>'.
 			'<div class="col-xs-12 col-sm-6 col-md-6"><input class="btn btn-primary" type="button" value="'.$name.'" onclick="ShowPageCaps('.$id.',1)" /></div></div>'.
 			'<br/>';
+		echo '</div></div>';
 	}
+	
+	echo '</div>';
 }

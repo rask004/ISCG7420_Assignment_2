@@ -148,7 +148,7 @@ $cart_count = count($_SESSION[\Common\Security::$SessionCartArrayKey]);
 
             </div>
             <div id="divCentreSpace" class="col-md-6">
-                <div class="container-fluid PageSection">
+                <div class="container-fluid panel panel-default PageSection">
                     <br/>
 
                     <div class="row" style="margin: auto 20px">
@@ -179,15 +179,13 @@ $cart_count = count($_SESSION[\Common\Security::$SessionCartArrayKey]);
                         <div class="col-xs-0 col-sm-2 col-md-2">
                         </div>
                         <div class="col-xs-4 col-sm-3 col-md-3">
-                            <label id="lblPrevPage"></label>
-                        </div>
-                        <div class="col-xs-4 col-sm-2 col-md-2">
-                            <label id="lblPageNumber"></label>
+                            <label class="label label-primary PageLinkDisabled" id="lblPrevPage"></label>
                         </div>
                         <div class="col-xs-4 col-sm-3 col-md-3">
-                            <label id="lblNextPage"></label>
+                            <label class="label label-primary PageLinkDisabled" id="lblPageNumber"></label>
                         </div>
-                        <div class="col-xs-0 col-sm-2 col-md-2">
+                        <div class="col-xs-4 col-sm-3 col-md-3">
+                            <label class="label label-primary PageLinkDisabled" id="lblNextPage"></label>
                         </div>
                     </div>
                     
@@ -204,12 +202,12 @@ $cart_count = count($_SESSION[\Common\Security::$SessionCartArrayKey]);
                         <div class="col-xs-0 col-sm-2 col-md-2">
                         </div>
                         <div class="col-xs-6 col-sm-3 col-md-3">
-                            <input type="submit" Value="Clear" name="submit" />
+                            <input class="btn btn-primary" type="submit" Value="Clear" name="submit" />
                         </div>
                         <div class="col-xs-0 col-sm-3 col-md-3">
                         </div>
                         <div class="col-xs-6 col-sm-2 col-md-2">
-                             <input type="submit" Value="Checkout" name="submit" />
+                             <input class="btn btn-primary" type="submit" Value="Checkout" name="submit" />
                         </div>
                         <div class="col-xs-0 col-sm-2 col-md-2">
                         </div>

@@ -1,7 +1,5 @@
 <?php
 
-ini_set("display_errors","1");
-
 include_once('../Session.php');
 include_once("../CapManager.php");
 include_once('../Common.php');

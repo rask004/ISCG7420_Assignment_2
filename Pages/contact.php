@@ -49,7 +49,7 @@ if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && isset($_SES
 
             </div>
             <div id="divCentreSpace" class="col-md-6">
-                <div class="container-fluid PageSection">
+                <div class="container-fluid panel panel-default PageSection">
                     <br/>
 
                     <div class="row" style="margin: auto 20px">
