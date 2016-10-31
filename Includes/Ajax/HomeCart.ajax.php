@@ -51,6 +51,7 @@ elseif (isset($_REQUEST["d"]))
 // add a cart item, with a quantity to add by.
 elseif( isset($_REQUEST["a"]) && isset($_REQUEST["aq"]) )
 {
+	// prevent query injection errors, convert all request parameters to numbers.
 	$id = (integer) ($_REQUEST["a"] + 0);
 	$qty = (integer) ($_REQUEST["aq"] + 0);
 	
@@ -66,14 +67,17 @@ elseif( isset($_REQUEST["a"]) && isset($_REQUEST["aq"]) )
 if (isset($_REQUEST["p"]))
 {
 	$cart = $_SESSION[\Common\Security::$SessionCartArrayKey];
+	$itemcount = count($cart);	
 	
-	if (count($cart) == 0)
+	echo '<input type="number" hidden id="inputJsParamsCartItemCount" value="'.$itemcount.'" />';
+	
+	if ($itemcount == 0)
 	{
 		echo '<p><label>There are no items in your shopping cart.</label></p>';
 	}
 	else
 	{
-		$itemcount = count($cart);
+		
 		$page = (integer) ($_REQUEST["p"] + 0);
 		$pagesize = \Common\Constants::$HomeCartTablePageSize;	
 		$capsManager = new \BusinessLayer\CapManager;
@@ -120,12 +124,12 @@ if (isset($_REQUEST["p"]))
 			$cap = $capsManager->GetSingleCap($capId);
 			$price = number_format((float)$cap["price"], 2, '.', '');
 			$name = $cap["name"];
-			$total = $price * $qty;
+			$total = number_format((float) ($price * $qty) , 2, '.', '');
 			
 			
 			echo '<div class="row"><div class="col-xs-0 col-sm-1 col-md-1"></div>'.
 				'<div class="col-xs-4 col-sm-2 col-md-2">'.
-				'<input style="background-color:red" type="button" onclick="DeleteCartItem('.$capId.')" value="X" /></div>'.
+				'<input style="background-color:red" type="button" class="btn btn-danger" onclick="DeleteCartItem('.$capId.')" value="X" /></div>'.
 				'<div class="col-xs-4 col-sm-2 col-md-2">'.
 				'<label>ID: </label></div><div class="col-xs-4 col-sm-2 col-md-2">'.
 				'<span>'. $capId .'</span></div><div class="col-xs-0 col-sm-4 col-md-4"></div></div>';

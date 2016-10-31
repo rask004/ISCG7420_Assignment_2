@@ -47,13 +47,15 @@ unset($categoryManager);
 		// clear the cart. 
 		function ClearCart()
 		{
-			$("#divShoppingCart").load("../Includes/Ajax/HomeCart.ajax.php", {c:1},
-				function(responseTxt, statusTxt, xhr)
-				{
-					$("#inputJsParamsCartItemCount").val(0);	// cart is now empty.
-					$("#inputJsParamsCartPage").val(1);			// placeholder for current page.
-				}
-			);
+			$( document ).ready(function() {
+				$("#divShoppingCart").load("../Includes/Ajax/HomeCart.ajax.php", {c:1},
+					function(responseTxt, statusTxt, xhr)
+					{
+						$("#inputJsParamsCartItemCount").val(0);	// cart is now empty.
+						$("#inputJsParamsCartPage").val(1);			// placeholder for current page.
+					}
+				);
+			});
 			
 			ShowPageCart(1);
 		};
@@ -63,49 +65,55 @@ unset($categoryManager);
 		{
 			// grab and parse stored page data.
 			page = parseInt(page);
-			var pagesize = parseInt($("#inputJsParamsCartPageSize").val());
-			var itemcount = parseInt($("#inputJsParamsCartItemCount").val());
 			
-			// update the current page.
-			$("#divShoppingCart").load("../Includes/Ajax/HomeCart.ajax.php", {p:page},
-				function(responseTxt, statusTxt, xhr)
-				{
-					if(statusTxt == "success")
+			$( document ).ready(function() {
+				// update the current page.
+				
+				//pagesize =  parseInt($("#inputJsParamsCartPageSize").val());
+				
+				// cannot use itemcount variable, from parsing inputJsParamsCartItemCount as integer - seems to produce wrong value.
+				// instead, use inputJsParamsCartItemCount element value directly
+			
+				$("#divShoppingCart").load("../Includes/Ajax/HomeCart.ajax.php", {p:page},
+					function(responseTxt, statusTxt, xhr)
 					{
-						// update page controls.
-						var nextPage = page + 1;
-						var prevPage = page - 1;
-						
-						if (itemcount <= pagesize)
+						if(statusTxt == "success")
 						{
-							$("#lblCartPrevPage").html("Previous");
-							$("#lblCartPageNumber").html("Page: 1");
-							$("#lblCartNextPage").html("Next");
-						}
-						else if (page <= 1)
-						{
-							$("#lblCartPrevPage").html("Previous");
-							$("#lblCartPageNumber").html("Page: 1");
-							$("#lblCartNextPage").html('<a href="#" onclick="ShowPageCart( ' + nextPage + ')">Next</a>');
-						}
-						else if (page * pagesize >= itemcount)
-						{
-							$("#lblCartPrevPage").html('<a href="#" onclick="ShowPageCart( ' + prevPage + ')">Previous</a>')
-							$("#lblCartPageNumber").html("Page: " + page);
-							$("#lblCartNextPage").html("Next");
-						}
-						else
-						{
-							$("#lblCartPrevPage").html('<a href="#" onclick="ShowPageCart( ' + prevPage + ')">Previous</a>')
-							$("#lblCartPageNumber").html("Page: " + page);
-							$("#lblCartNextPage").html('<a href="#" onclick="ShowPageCart( ' + nextPage + ')">Next</a>');
+							// update page controls.
+							var nextPage = page + 1;
+							var prevPage = page - 1;
+							
+							if ($("#inputJsParamsCartItemCount").val() <= $("#inputJsParamsCartPageSize").val())
+							{
+								$("#lblCartPrevPage").html("Previous");
+								$("#lblCartPageNumber").html("Page: 1");
+								$("#lblCartNextPage").html("Next");
+							}
+							else if (page <= 1)
+							{
+								$("#lblCartPrevPage").html("Previous");
+								$("#lblCartPageNumber").html("Page: 1");
+								$("#lblCartNextPage").html('<a href="#" onclick="ShowPageCart( ' + nextPage + ')">Next</a>');
+							}
+							else if (page * $("#inputJsParamsCartPageSize").val() >= $("#inputJsParamsCartItemCount").val())
+							{
+								$("#lblCartPrevPage").html('<a href="#" onclick="ShowPageCart( ' + prevPage + ')">Previous</a>')
+								$("#lblCartPageNumber").html("Page: " + page);
+								$("#lblCartNextPage").html("Next");
+							}
+							else
+							{
+								$("#lblCartPrevPage").html('<a href="#" onclick="ShowPageCart( ' + prevPage + ')">Previous</a>')
+								$("#lblCartPageNumber").html("Page: " + page);
+								$("#lblCartNextPage").html('<a href="#" onclick="ShowPageCart( ' + nextPage + ')">Next</a>');
+							}
 						}
 					}
-				}
-			);
+				);
+			});
 			
 			// store current page number for other controls to use.
-			$("#inputJsParamsCartPage").val(page);
+			$("#inputJsParamsCartPage").val(page);			
 		};
 		
 		// remove one cart item, given an item id.
@@ -113,56 +121,57 @@ unset($categoryManager);
 		{
 			id = parseInt(id);
 			var page = parseInt($("#inputJsParamsCartPage").val());
-			var pagesize = parseInt($("#inputJsParamsCartPageSize").val());
-			var itemcount = parseInt($("#inputJsParamsCartItemCount").val());
 			
-			// both delete item AND show page of items.
-			$("#divShoppingCart").load("../Includes/Ajax/HomeCart.ajax.php", {d:id, p:page},
-				function(responseTxt, statusTxt, xhr)
-				{
-					if(statusTxt == "success")
+			$( document ).ready(function() {
+				// both delete item AND show page of items.
+				$("#divShoppingCart").load("../Includes/Ajax/HomeCart.ajax.php", {d:id, p:page},
+					function(responseTxt, statusTxt, xhr)
 					{
-						itemcount -= 1;
-						if ((page - 1) * pagesize >= itemcount)
+						if(statusTxt == "success")
 						{
-							page -= 1;	
-						}
-						
-						// update page controls
-						var nextPage = page + 1;
-						var prevPage = page - 1;
-						
-						
-						if (itemcount <= pagesize)
-						{
-							$("#lblCartPrevPage").html("Previous");
-							$("#lblCartPageNumber").html("Page: 1");
-							$("#lblCartNextPage").html("Next");
-						}
-						else if (page <= 1)
-						{
-							$("#lblCartPrevPage").html("Previous");
-							$("#lblCartPageNumber").html("Page: 1");
-							$("#lblCartNextPage").html('<a href="#" onclick="ShowPageCart( ' + nextPage + ')">Next</a>');
-						}
-						else if (page * pagesize >= itemcount)
-						{
-							$("#lblCartPrevPage").html('<a href="#" onclick="ShowPageCart( ' + prevPage + ')">Previous</a>')
-							$("#lblCartPageNumber").html("Page: " + page);
-							$("#lblCartNextPage").html("Next");
-						}
-						else
-						{
-							$("#lblCartPrevPage").html('<a href="#" onclick="ShowPageCart( ' + prevPage + ')">Previous</a>')
-							$("#lblCartPageNumber").html("Page: " + page);
-							$("#lblCartNextPage").html('<a href="#" onclick="ShowPageCart( ' + nextPage + ')">Next</a>');
+							var itemcount = $("#inputJsParamsCartItemCount").val() - 1;
+							$("#inputJsParamsCartItemCount").val(itemcount)
+							if (($("#inputJsParamsCartPage").val() - 1) * $("#inputJsParamsCartPageSize").val() >= $("#inputJsParamsCartItemCount").val())
+							{
+								var page = $("#inputJsParamsCartPage").val() - 1;
+								$("#inputJsParamsCartPage").val(page);	
+							}
+							
+							// update page controls
+							var nextPage = $("#inputJsParamsCartPage").val() + 1;
+							var prevPage = $("#inputJsParamsCartPage").val() - 1;							
+							
+							if ($("#inputJsParamsCartItemCount").val() <= $("#inputJsParamsCartPageSize").val())
+							{
+								$("#lblCartPrevPage").html("Previous");
+								$("#lblCartPageNumber").html("Page: 1");
+								$("#lblCartNextPage").html("Next");
+							}
+							else if ($("#inputJsParamsCartPage").val() <= 1)
+							{
+								$("#lblCartPrevPage").html("Previous");
+								$("#lblCartPageNumber").html("Page: 1");
+								$("#lblCartNextPage").html('<a href="#" onclick="ShowPageCart( ' + nextPage + ')">Next</a>');
+							}
+							else if ($("#inputJsParamsCartPage").val() * $("#inputJsParamsCartPageSize").val() >= $("#inputJsParamsCartItemCount").val())
+							{
+								$("#lblCartPrevPage").html('<a href="#" onclick="ShowPageCart( ' + prevPage + ')">Previous</a>')
+								$("#lblCartPageNumber").html("Page: " + page);
+								$("#lblCartNextPage").html("Next");
+							}
+							else
+							{
+								$("#lblCartPrevPage").html('<a href="#" onclick="ShowPageCart( ' + prevPage + ')">Previous</a>')
+								$("#lblCartPageNumber").html("Page: " + page);
+								$("#lblCartNextPage").html('<a href="#" onclick="ShowPageCart( ' + nextPage + ')">Next</a>');
+							}
+							
+							$("#inputJsParamsCartPage").val(page);
+							$("#inputJsParamsCartItemCount").val(itemcount);
 						}
 					}
-				}
-			);
-			
-			$("#inputJsParamsCartPage").val(page);
-			$("#inputJsParamsCartItemCount").val(itemcount);
+				);
+			});			
 		};
 		
 		// show a page of categories
@@ -170,46 +179,46 @@ unset($categoryManager);
 		{
 			// grab and parse stored page data.
 			page = parseInt(page);
-			var pagesize = parseInt($("#inputJsParamsCategoryPageSize").val());
-			var itemcount = parseInt($("#inputJsParamsCategoryItemCount").val());
 			
-			// update the current page.
-			$("#divAvailableCategories").load("../Includes/Ajax/HomeCategories.ajax.php", {p:page},
-				function(responseTxt, statusTxt, xhr)
-				{
-					if(statusTxt == "success")
+			$( document ).ready(function() {
+				// update the current page.
+				$("#divAvailableCategories").load("../Includes/Ajax/HomeCategories.ajax.php", {p:page},
+					function(responseTxt, statusTxt, xhr)
 					{
-						// update page controls.
-						var nextPage = page + 1;
-						var prevPage = page - 1;
-						
-						if (itemcount <= pagesize)
+						if(statusTxt == "success")
 						{
-							$("#lblCategoriesPrevPage").html("Previous");
-							$("#lblCategoriesPageNumber").html("Page: 1");
-							$("#lblCategoriesNextPage").html("Next");
-						}
-						else if (page <= 1)
-						{
-							$("#lblCategoriesPrevPage").html("Previous");
-							$("#lblCategoriesPageNumber").html("Page: 1");
-							$("#lblCategoriesNextPage").html('<a href="#" onclick="ShowPageCategories( ' + nextPage + ')">Next</a>');
-						}
-						else if (page * pagesize >= itemcount)
-						{
-							$("#lblCategoriesPrevPage").html('<a href="#" onclick="ShowPageCategories( ' + prevPage + ')">Previous</a>')
-							$("#lblCategoriesPageNumber").html("Page: " + page);
-							$("#lblCategoriesNextPage").html("Next");
-						}
-						else
-						{
-							$("#lblCategoriesPrevPage").html('<a href="#" onclick="ShowPageCategories( ' + prevPage + ')">Previous</a>')
-							$("#lblCategoriesPageNumber").html("Page: " + page);
-							$("#lblCategoriesNextPage").html('<a href="#" onclick="ShowPageCategories( ' + nextPage + ')">Next</a>');
+							// update page controls.
+							var nextPage = page + 1;
+							var prevPage = page - 1;
+							
+							if ($("#inputJsParamsCategoryItemCount").val() <= $("#inputJsParamsCategoryPageSize").val())
+							{
+								$("#lblCategoriesPrevPage").html("Previous");
+								$("#lblCategoriesPageNumber").html("Page: 1");
+								$("#lblCategoriesNextPage").html("Next");
+							}
+							else if (page <= 1)
+							{
+								$("#lblCategoriesPrevPage").html("Previous");
+								$("#lblCategoriesPageNumber").html("Page: 1");
+								$("#lblCategoriesNextPage").html('<a href="#" onclick="ShowPageCategories( ' + nextPage + ')">Next</a>');
+							}
+							else if (page * $("#inputJsParamsCategoryPageSize").val() >= $("#inputJsParamsCategoryItemCount").val())
+							{
+								$("#lblCategoriesPrevPage").html('<a href="#" onclick="ShowPageCategories( ' + prevPage + ')">Previous</a>')
+								$("#lblCategoriesPageNumber").html("Page: " + page);
+								$("#lblCategoriesNextPage").html("Next");
+							}
+							else
+							{
+								$("#lblCategoriesPrevPage").html('<a href="#" onclick="ShowPageCategories( ' + prevPage + ')">Previous</a>')
+								$("#lblCategoriesPageNumber").html("Page: " + page);
+								$("#lblCategoriesNextPage").html('<a href="#" onclick="ShowPageCategories( ' + nextPage + ')">Next</a>');
+							}
 						}
 					}
-				}
-			);
+				);
+			});
 			
 			// store current page number for other controls to use.
 			$("#inputJsParamsCategoryPage").val(page);
@@ -221,52 +230,51 @@ unset($categoryManager);
 			// grab and parse stored page data.
 			catId = parseInt(catId);
 			page = parseInt(page);
-			var pagesize = parseInt($("#inputJsParamsCapPageSize").val());
 			
 			$("#divCapsPageControls").prop("hidden", false);
 			$("#divCapsByCategory").prop("hidden", false);
 			$("#divCapDetails").prop("hidden", true);
 			$("#txtCapsHeader").html("Caps");
 			
-			// update the current page.
-			$("#divCapsByCategory").load("../Includes/Ajax/HomeCaps.ajax.php", {c:catId, p:page},
-				function(responseTxt, statusTxt, xhr)
-				{
-					if(statusTxt == "success")
+			$( document ).ready(function() {
+				// update the current page.
+				$("#divCapsByCategory").load("../Includes/Ajax/HomeCaps.ajax.php", {c:catId, p:page},
+					function(responseTxt, statusTxt, xhr)
 					{
-						var itemcount = parseInt($("#inputJsParamsCapItemCount").val());
-						
-						// update page controls.
-						var nextPage = page + 1;
-						var prevPage = page - 1;
-						
-						if (itemcount <= pagesize)
-						{
-							$("#lblCapsPrevPage").html("Previous");
-							$("#lblCapsPageNumber").html("Page: 1");
-							$("#lblCapsNextPage").html("Next");
-						}
-						else if (page <= 1)
-						{
-							$("#lblCapsPrevPage").html("Previous");
-							$("#lblCapsPageNumber").html("Page: 1");
-							$("#lblCapsNextPage").html('<a href="#" onclick="ShowPageCaps( ' + catId + ',' + nextPage + ')">Next</a>');
-						}
-						else if (page * pagesize >= itemcount)
-						{
-							$("#lblCapsPrevPage").html('<a href="#" onclick="ShowPageCaps( ' + catId + ',' + prevPage + ')">Previous</a>')
-							$("#lblCapsPageNumber").html("Page: " + page);
-							$("#lblCapsNextPage").html("Next");
-						}
-						else
-						{
-							$("#lblCapsPrevPage").html('<a href="#" onclick="ShowPageCaps( ' + catId + ',' + prevPage + ')">Previous</a>')
-							$("#lblCapsPageNumber").html("Page: " + page);
-							$("#lblCapsNextPage").html('<a href="#" onclick="ShowPageCaps( ' + catId + ',' + nextPage + ')">Next</a>');
+						if(statusTxt == "success")
+						{							
+							// update page controls.
+							var nextPage = page + 1;
+							var prevPage = page - 1;
+							
+							if ($("#inputJsParamsCapItemCount").val() <= $("#inputJsParamsCapPageSize").val())
+							{
+								$("#lblCapsPrevPage").html("Previous");
+								$("#lblCapsPageNumber").html("Page: 1");
+								$("#lblCapsNextPage").html("Next");
+							}
+							else if (page <= 1)
+							{
+								$("#lblCapsPrevPage").html("Previous");
+								$("#lblCapsPageNumber").html("Page: 1");
+								$("#lblCapsNextPage").html('<a href="#" onclick="ShowPageCaps( ' + catId + ',' + nextPage + ')">Next</a>');
+							}
+							else if (page * $("#inputJsParamsCapPageSize").val() >= $("#inputJsParamsCapItemCount").val())
+							{
+								$("#lblCapsPrevPage").html('<a href="#" onclick="ShowPageCaps( ' + catId + ',' + prevPage + ')">Previous</a>')
+								$("#lblCapsPageNumber").html("Page: " + page);
+								$("#lblCapsNextPage").html("Next");
+							}
+							else
+							{
+								$("#lblCapsPrevPage").html('<a href="#" onclick="ShowPageCaps( ' + catId + ',' + prevPage + ')">Previous</a>')
+								$("#lblCapsPageNumber").html("Page: " + page);
+								$("#lblCapsNextPage").html('<a href="#" onclick="ShowPageCaps( ' + catId + ',' + nextPage + ')">Next</a>');
+							}
 						}
 					}
-				}
-			);
+				);
+			});
 		};
 		
 		// show a page of caps, given a categoryId. If categoryId is -1, show page of all caps.
@@ -275,16 +283,18 @@ unset($categoryManager);
 			// grab and parse stored page data.
 			capId = parseInt(capId);
 			
-			// update the current page.
-			$("#divCapDetails").load("../Includes/Ajax/HomeCaps.ajax.php", {d:capId},
-				function(responseTxt, statusTxt, xhr)
-				{
-					$("#divCapsPageControls").prop("hidden", true);
-					$("#divCapsByCategory").prop("hidden", true);
-					$("#divCapDetails").prop("hidden", false);
-					$("#txtCapsHeader").html("Cap Details");
-				}
-			);
+			$( document ).ready(function() {
+				// update the current page.
+				$("#divCapDetails").load("../Includes/Ajax/HomeCaps.ajax.php", {d:capId},
+					function(responseTxt, statusTxt, xhr)
+					{
+						$("#divCapsPageControls").prop("hidden", true);
+						$("#divCapsByCategory").prop("hidden", true);
+						$("#divCapDetails").prop("hidden", false);
+						$("#txtCapsHeader").html("Cap Details");
+					}
+				);
+			});
 		};
 		
 		// add a cap to the cart
@@ -293,19 +303,17 @@ unset($categoryManager);
 			var capId = parseInt($("#lblAddCapId").html());
 			var qty = parseInt($("#inputAddCapQuantity").val());
 			
-			$("#divShoppingCart").load("../Includes/Ajax/HomeCart.ajax.php", {a:capId, aq:qty},
-				function(responseTxt, statusTxt, xhr)
-				{
-					$("#divCapsPageControls").prop("hidden", false);
-					$("#divCapsByCategory").prop("hidden", false);
-					$("#divCapDetails").prop("hidden", true);
-					$("#txtCapsHeader").html("Caps");
-				}
-			);
-			
-			var itemcount = parseInt($("#inputJsParamsCartItemCount").val());
-			itemcount += 1;
-			$("#inputJsParamsCartItemCount").val(itemcount);
+			$( document ).ready(function() {
+				$("#divShoppingCart").load("../Includes/Ajax/HomeCart.ajax.php", {a:capId, aq:qty},
+					function(responseTxt, statusTxt, xhr)
+					{
+						$("#divCapsPageControls").prop("hidden", false);
+						$("#divCapsByCategory").prop("hidden", false);
+						$("#divCapDetails").prop("hidden", true);
+						$("#txtCapsHeader").html("Caps");
+					}
+				);
+			});
 			
 			ShowPageCart(1);
 			
@@ -460,6 +468,7 @@ unset($categoryManager);
                     <div class="row" style="margin-top: 4px">
 						<div class="container-fluid" id="divShoppingCart">
                         	<!-- create flow list of items in cart, paginated, with totals at bottom -->
+                            <input type="number" hidden id="inputJsParamsCartItemCount" value="<?php echo $cartItemCount ?>" />
                         </div>
                     </div>
                     
@@ -483,7 +492,6 @@ unset($categoryManager);
                     
                     <input type="number" hidden id="inputJsParamsCartPage" value="1" />
                     <input type="number" hidden id="inputJsParamsCartPageSize" value="<?php echo $cartPageSize ?>" />
-                    <input type="number" hidden id="inputJsParamsCartItemCount" value="<?php echo $cartItemCount ?>" />
                     
                     <br/>
                     
@@ -491,11 +499,11 @@ unset($categoryManager);
                     	<!-- show buttons for clearing cart and doing checkout, checkout only available if logged in. -->
                         <div class="col-xs-0 col-sm-1 col-md-1"></div>
                         <div class="col-xs-6 col-sm-3 col-md-3">
-                        	<input type="button" value="Clear" onclick="ClearCart()" />
+                        	<input type="button" class="btn btn-primary" value="Clear" onclick="ClearCart()" />
                         </div>
                         <div class="col-xs-0 col-sm-3 col-md-3"></div>
                         <div class="col-xs-6 col-sm-3 col-md-3">
-                        	<input disabled id="btnCheckout" type="button" value="Checkout" onclick="location.assign('http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/checkout.php')" />
+                        	<input disabled id="btnCheckout" type="button" class="btn btn-primary" value="Checkout" onclick="location.assign('http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/checkout.php')" />
                         </div>
                     </div>
                     <br/> 
