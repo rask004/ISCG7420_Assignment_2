@@ -37,8 +37,7 @@ elseif (isset($_REQUEST["c"]))
 {
 	$_SESSION[\Common\Security::$SessionCartArrayKey] = array();
 	
-	echo '<p>Your Cart is Empty.</p>';
-	exit;
+	echo '<p><label>There are no items in your shopping cart.</label></p>';
 }
 
 // delete one cart item.

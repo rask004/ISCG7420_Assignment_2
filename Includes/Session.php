@@ -6,8 +6,6 @@
  * Time: 5:38 PM
  */
  
- ini_set("display_errors", "1");
- 
  include_once("Common.php");
 
 //if (session_status() == PHP_SESSION_NONE) 

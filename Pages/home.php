@@ -52,11 +52,10 @@ unset($categoryManager);
 				{
 					$("#inputJsParamsCartItemCount").val(0);	// cart is now empty.
 					$("#inputJsParamsCartPage").val(1);			// placeholder for current page.
-					$("#lblCartPrevPage").html("");
-					$("#lblCartPageNumber").html("");			// no cart items, so no pages to paginate.
-					$("#lblCartNextPage").html("");
 				}
 			);
+			
+			ShowPageCart(1);
 		};
 		
 		// show a page of the cart.
@@ -304,6 +303,10 @@ unset($categoryManager);
 				}
 			);
 			
+			var itemcount = parseInt($("#inputJsParamsCartItemCount").val());
+			itemcount += 1;
+			$("#inputJsParamsCartItemCount").val(itemcount);
+			
 			ShowPageCart(1);
 			
 		}
@@ -409,17 +412,6 @@ unset($categoryManager);
                         </div>
 						<div hidden class="container-fluid" id="divCapDetails">
                         	<!-- show details of a product, option to add to shopping cart. -->
-                            
-                            <div class="row">
-                            	<div class="col-xs-12 col-sm-12 col-md-12">
-                                	<img id="imgCapDetails" src="" alt="NO IMAGE" />
-                                </div>
-                            </div>
-                            <div class="row">
-                            	<div class="col-xs-12 col-sm-12 col-md-12">
-                                	<label id="lblCapDetailsName"></label>
-                                </div>
-                            </div>
                         </div>
                         <br/>
                         
@@ -499,7 +491,7 @@ unset($categoryManager);
                     	<!-- show buttons for clearing cart and doing checkout, checkout only available if logged in. -->
                         <div class="col-xs-0 col-sm-1 col-md-1"></div>
                         <div class="col-xs-6 col-sm-3 col-md-3">
-                        	<input type="button" value="Clear" />
+                        	<input type="button" value="Clear" onclick="ClearCart()" />
                         </div>
                         <div class="col-xs-0 col-sm-3 col-md-3"></div>
                         <div class="col-xs-6 col-sm-3 col-md-3">
