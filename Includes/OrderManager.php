@@ -21,8 +21,6 @@ class OrderManager
 		$this->_data_manager = new \DataLayer\DataManager;
 	}
 	
-	//TODO: add functionality for managing order (item) records
-	
 	/* 
 		generate a new order.
 	*/

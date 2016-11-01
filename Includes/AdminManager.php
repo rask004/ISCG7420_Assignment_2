@@ -24,10 +24,8 @@ class AdminManager
 		$this->_data_manager = new \DataLayer\DataManager;
 	}
 	
-	// TODO: add functionality for managing customers and administrators./
-	
 	/*
-		check that a supplied login matches an actual customer
+		check that a supplied login matches an actual admin
 	*/
 	function findMatchingLogin($login)
 	{
@@ -40,8 +38,8 @@ class AdminManager
 	}
 	
 	/*
-		retrieve a customer using their id.
-		can return an empty array if customer does not exist.
+		retrieve a admin using their id.
+		can return an empty array if admin does not exist.
 	*/
 	function findAdmin($id)
 	{
@@ -49,8 +47,8 @@ class AdminManager
 	}
 	
 	/*
-		retrieve a customer using their login.
-		can return an empty array if customer does not exist.
+		retrieve a admin using their login.
+		can return an empty array if admin does not exist.
 	*/
 	function findAdminByLogin($login)
 	{
@@ -58,11 +56,11 @@ class AdminManager
 	}
 	
 	/*
-		check that a supplied login and password matches an actual customer
+		check that a supplied login and password matches an actual admin
 	*/
 	function checkMatchingPasswordForAdminLogin($login, $password)
 	{
-		// there is no match if there is no customer.
+		// there is no match if there is no admin.
 		if (!$this->findMatchingLogin($login))
 		{
 			return false;

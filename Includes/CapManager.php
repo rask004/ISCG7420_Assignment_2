@@ -20,8 +20,6 @@ class CapManager
 		$this->_data_manager = new \DataLayer\DataManager;
 	}
 	
-	// TODO: add functionality for managing retrieving cap records and single caps.
-	
 	/*
 		Retrieve a single cap.
 	*/

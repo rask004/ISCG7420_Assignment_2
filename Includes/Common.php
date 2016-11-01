@@ -10,6 +10,9 @@ namespace Common;
 
 // Commonly shared constants and values.
 
+/*
+	Security constraints and shared functions.
+*/
 class Security
 {
 	public static $SessionUserLoginKey = "UserLogin";
@@ -19,12 +22,16 @@ class Security
 	
 	public static $SessionCartArrayKey = "ShoppingCart";
 	
+	// maximum size of salts.
 	private static $_CryptoSaltLength = 16;
 	
+	// maximum size of hashes
 	private static $_CryptoPassMaxLength = 48;
 	private static $_CryptoRandomAlphaNumeric = 'abcdefghijklmnopqrstuvwxyzQAZXSWEDCVFRTGBNHYUJMKILOP1234567890!@#^&_+,.' ;
 	
-	
+	/*
+		generate a random salt.
+	*/
 	public static function getRandomSalt()
 	{
 		$salt = '';
@@ -37,6 +44,9 @@ class Security
 		return $salt;
 	}
 	
+	/*
+		create a randomised, hidden password.
+	*/
 	public static function getRandomPassword()
 	{
 		$pass = '';
@@ -49,6 +59,9 @@ class Security
 		return $pass;
 	}
 	
+	/*
+		generate a hash using the HMAC approach, with a salt and an SHA algorithm.
+	*/
 	public static function generatePasswordHash($password, $salt)
 	{
 		$hash = hash_hmac( 'sha256', $password, $salt);
@@ -56,11 +69,16 @@ class Security
 	}
 }
 
+/*
+	Common shared constraints.
+*/
 class Constants
 {
+	// submission keywords for the register/profile page.
 	public static $RegistrationSubmitKeyword = "Register";
 	public static $ProfileUpdateKeyword = "ProfileUpdate";
 	
+	// Validation Regex patterns.
 	public static $ValidationCharsGenericNameRegex = "/^[a-zA-Z',.]*/";
 	
 	public static $ValidationCharsLoginRegex = "/^[a-zA-Z0-9_]*/";
@@ -71,20 +89,25 @@ class Constants
 	
 	public static $ValidationStreetAddressRegex = "#^(?:[0-9]+/)?[0-9]+[A-Za-z]?\s[A-Za-z']+(?:\s[A-Za-z']+)+#";
 	
+	//default emails.
 	public static $EmailAdminDefault = "AskewR04@myunitec.ac.nz";
 	
+	// default query string keys.
 	public static $QueryStringEmailErrorKey = "EmailError";
 	
+	// static messages
 	public static  $AdminMessageSuccessfulUpload = "Success, file uploaded";
 	
 	public static  $AdminMessageFailedUpload = "Error, cannot upload file";
 	
 	public static  $AdminMessageSuccessfulDelete = "Success, file deleted";
 	
+	// static file upload data
 	public static  $AdminFileuploadFolder = "uploaded_pictures";
 	
 	public static  $AdminPermittedFileuploadExtensions = array("png","jpeg","jpg");
 	
+	// static pagination data
 	public static  $OrdersTablePageSize = 10;
 	
 	public static  $CheckoutTablePageSize = 3;

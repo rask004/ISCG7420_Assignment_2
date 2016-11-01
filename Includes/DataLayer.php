@@ -8,22 +8,17 @@
 
 namespace DataLayer;
 
-
-ini_set('display_errors','1');
-
-
 require_once('Session.php');
 
-/*
- *	Database interaction object.
- *  User: Roland
- 
- *  Completed: 17/10/2016 14:24 PM
- */
+// Database interaction object
 class DataManager
 {
+	// Stores the mysqli connection
 	private $_conn;
 	
+	/*
+		construct helper function, build any tables if not present.
+	*/
 	private function _buildTables()
 	{
 		$this->_openConnection();
@@ -102,6 +97,9 @@ class DataManager
 		$this->_closeConnection();
 	}
 	
+	/*
+		helper method, open and prepare connection.
+	*/
 	private function _openConnection()
 	{
 		$this->_conn = new \mysqli("localhost", "askewr04", "29101978", "askewr04mysql3");
@@ -115,11 +113,17 @@ class DataManager
 		$this->_conn->set_charset('utf8');	
 	}
 	
+	/*
+		helper method, close the connection.
+	*/
 	private function _closeConnection()
 	{
 		$this->_conn->close();
 	}
 	
+	/*
+		constructor
+	*/
 	function __construct()
 	{
 		$this->_buildTables();
