@@ -5,6 +5,8 @@
  * User: Roland
  * Date: 28/10/2016
  * Time: 8:00 PM
+ *
+ *  Ajax page for Orders.
  */
 
 include_once('../Session.php');

@@ -542,14 +542,16 @@ unset($categoryManager);
     </div>
     
     <script type="text/javascript">
+		// load initial pages for each section.
     	ShowPageCart(1);
 		ShowPageCategories(1);
-		ShowPageCaps(-1,1);
+		ShowPageCaps(-1,1);		// initially, load all caps. 
     </script>
 
     <?php include_once("../Includes/footer.php"); ?>
     
     <?php
+		// enable or disable checkout button depending on if customer is logged in or there are items in the cart.
 		if(count($_SESSION[\Common\Security::$SessionCartArrayKey]) == 0)
 		{
 			echo '<script type="text/javascript">$("#btnCheckout").prop("disabled", true);</script>';

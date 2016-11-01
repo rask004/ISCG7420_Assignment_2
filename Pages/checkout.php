@@ -36,11 +36,16 @@ if (isset( $_POST ) && isset($_POST['submit']))
 			unset($_SESSION[\Common\Security::$SessionCartArrayKey][$id]);
 		}
 		
+		if (count($_SESSION[\Common\Security::$SessionCartArrayKey]) == 0) 
+		{
+			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/home.php");
+			exit;	
+		}
+		
 	}
 	elseif($_POST['submit'] == 'Clear')
 	{
 		// clear the cart and return to home.
-		unset($_SESSION[\Common\Security::$SessionCartArrayKey]);
 		$_SESSION[\Common\Security::$SessionCartArrayKey] = array();
 		header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/home.php");
 		exit;
@@ -69,9 +74,6 @@ $retrievedCaps = array();
 $page_size = \Common\Constants::$CheckoutTablePageSize;
 
 $cart_count = count($_SESSION[\Common\Security::$SessionCartArrayKey]);
-
-
-
 
 ?>
 
@@ -138,6 +140,7 @@ $cart_count = count($_SESSION[\Common\Security::$SessionCartArrayKey]);
 
 <body>
 	<?php
+		// only members can see the orders page
         include_once("../Includes/navbar.member.php");
     ?>
     
@@ -207,7 +210,7 @@ $cart_count = count($_SESSION[\Common\Security::$SessionCartArrayKey]);
                         <div class="col-xs-0 col-sm-3 col-md-3">
                         </div>
                         <div class="col-xs-6 col-sm-2 col-md-2">
-                             <input class="btn btn-primary" type="submit" Value="Checkout" name="submit" />
+                             <input id="btnCheckout" class="btn btn-primary" type="submit" Value="Checkout" name="submit" />
                         </div>
                         <div class="col-xs-0 col-sm-2 col-md-2">
                         </div>
