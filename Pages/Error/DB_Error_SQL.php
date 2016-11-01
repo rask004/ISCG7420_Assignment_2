@@ -9,6 +9,7 @@
 include_once('../../Includes/Common.php');
 include_once('../../Includes/Session.php');
 
+// If no error, redirect to home.
 if( !(isset( $_SESSION["last_Error"]) && $_SESSION["last_Error"] == "DB_Error_Generic"))
 {
 	header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/home.php");
@@ -26,6 +27,7 @@ if( !(isset( $_SESSION["last_Error"]) && $_SESSION["last_Error"] == "DB_Error_Ge
     <link rel="stylesheet" type="text/css" href="../../css/Common.css">
     <script type="text/javascript" src="../../js/jquery.js"></script>
     <script type="text/javascript">
+		// show error page for a while, then try to load home page
 		function doCountdown()
 		{
 			var count = $("#lblCountdown").html();

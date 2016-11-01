@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Created by Dreamweaver.
+ * User: Roland
+ * Date: 28/10/2016
+ * Time: 8:00 PM
+ */
+
 include_once('../Session.php');
 include_once("../Common.php");
 include_once('../OrderManager.php');
@@ -28,7 +35,7 @@ if (!isset($_REQUEST["p"]))
 }
 else 
 {
-	
+	// required for loading orders and pagination.
 	$ordersManager = new \BusinessLayer\OrderManager;
 
 	$page = (integer) ($_REQUEST["p"] + 0);
@@ -43,8 +50,10 @@ else
 	$start = ($page - 1) * \Common\Constants::$OrdersTablePageSize;
 	$id = $_SESSION[\Common\Security::$SessionUserIdKey];
 	
+	// table headers
 	echo '<tr><th>Id</th><th>Date Placed</th><th>Status</th><th>Total Items</th><th>Total Cost ($)</th></tr>';
 	
+	// pagination: use database LIMIT command to retrieve subpage of data.
 	$order_summaries = $ordersManager->GetAllOrderSummariesForCustomer($id, $start, $pagesize);
 	
 	foreach($order_summaries as $summary)
@@ -54,6 +63,7 @@ else
 		"</td><td>". $summary['totalQuantity'] ."</td><td>". number_format((float) $summary['totalPrice'], 2, '.', '') ."</td><td></tr>";
 	}
 	
+	// placeholders to retain page layout
 	if( count($order_summaries) < $pagesize)
 	{
 		$c = $pagesize - count($order_summaries);

@@ -3,10 +3,14 @@
 include_once('../Session.php');
 include_once("../CategoryManager.php");
 include_once('../Common.php');
-
-/*
-	AJAX page for showing homp page categories
-*/
+/**
+ * Created by Dreamweaver.
+ * User: Roland
+ * Date: 28/10/2016
+ * Time: 7:00 PM
+ *
+ * AJAX page for showing home page categories
+ */
 
 // check for malformed AJAX
 if (!isset($_REQUEST["p"]))

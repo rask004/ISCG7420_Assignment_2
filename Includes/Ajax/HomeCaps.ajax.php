@@ -4,9 +4,14 @@ include_once('../Session.php');
 include_once("../CapManager.php");
 include_once('../Common.php');
 
-/*
-	AJAX page for showing home page caps
-*/
+/**
+ * Created by Dreamweaver.
+ * User: Roland
+ * Date: 28/10/2016
+ * Time: 7:00 PM
+ *
+ * AJAX page for showing home page caps
+ */
 
 // check for malformed AJAX
 if (isset($_REQUEST["p"]) && isset($_REQUEST["c"]) )

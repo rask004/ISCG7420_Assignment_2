@@ -13,7 +13,7 @@ include_once('../Includes/AdminManager.php');
 
 $bad_login_message = "";
 
-// TODO: check query string for email error message.
+// in case of email error, notify visitor of successful registration but email failure.
 if(isset($_SERVER["QUERY_STRING"][\Common\Constants::$QueryStringEmailErrorKey]))
 {
 	$ErrorMsg = "Customer was registered but could not send confirmation email. Please contact admin at ". $senderEmail ." immediately.";
@@ -27,17 +27,20 @@ if (isset($_POST['inputLogin']) && isset($_POST['inputPassword']))
 	
 	if ($customerManager->checkMatchingPasswordForCustomerLogin($_POST['inputLogin'], $_POST['inputPassword']))
 	{
+		// successful member login
 		$customer = $customerManager->findCustomerByLogin($_POST['inputLogin']);
 		
 		$_SESSION[\Common\Security::$SessionAuthenticationKey] = 1;
    		$_SESSION[\Common\Security::$SessionUserLoginKey]  = $customer['login'];
     	$_SESSION[\Common\Security::$SessionUserIdKey] = $customer['id'];
 		
+		// prevent accidential misuse of member business layer objects.
 		unset($customerManager);
 		unset($customer);
 	}
 	elseif ($adminManager->checkMatchingPasswordForAdminLogin($_POST['inputLogin'], $_POST['inputPassword']))
 	{
+		// successful admin login
 		$admin = $adminManager->findAdminByLogin($_POST['inputLogin']);
 		
 		$_SESSION[\Common\Security::$SessionAuthenticationKey] = 1;
@@ -45,6 +48,7 @@ if (isset($_POST['inputLogin']) && isset($_POST['inputPassword']))
     	$_SESSION[\Common\Security::$SessionUserIdKey] = $admin['id'];
 		$_SESSION[\Common\Security::$SessionAdminCheckKey] = 1;
 		
+		// prevent accidential misuse of admin business layer objects.
 		unset($adminManager);
 		unset($admin);
 	}
@@ -87,7 +91,10 @@ if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\
 </head>
 
 <body>
-    <?php include_once("../Includes/navbar.visitor.php"); ?>
+    <?php 
+		// assume visiting user is visitor - as only visitor needs to login.
+		include_once("../Includes/navbar.visitor.php"); 
+	?>
 
     <div class="container-fluid PageContainer">
 
@@ -163,7 +170,7 @@ if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\
                     <br/>
                     <div>
                     <p style="text-align:center">
-                    	<?= $bad_login_message ?>
+                    	<?php echo $bad_login_message; ?>
                     </p>
                     </div>
                     <br/>

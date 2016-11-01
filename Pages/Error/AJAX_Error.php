@@ -26,6 +26,7 @@ if( !(isset( $_SESSION["last_Error"]) && $_SESSION["last_Error"] == "AJAX_Error"
     <link rel="stylesheet" type="text/css" href="../../css/Common.css">
     <script type="text/javascript" src="../../js/jquery.js"></script>
     <script type="text/javascript">
+		// show error page for a while, then try to load home page
 		function doCountdown()
 		{
 			var count = $("#lblCountdown").html();
@@ -85,7 +86,7 @@ if( !(isset( $_SESSION["last_Error"]) && $_SESSION["last_Error"] == "AJAX_Error"
                 
                 An email of this error has been sent to the Administration team.
                 
-                Be aware that any hacking of the AJAX query system will not be tolerated, and customers found responsible for any such hacking will have their accounts permanently disabled.
+                Be aware that any hacking of the website will not be tolerated, and customers found responsible for any such hacking will have their accounts permanently disabled.
                 
             </div>
         </div>

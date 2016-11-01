@@ -25,6 +25,7 @@ if (!isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) || $_SESSION[
     exit;
 }
 
+// get details required for pagination.
 $page_size = \Common\Constants::$OrdersTablePageSize;
 
 $order_count = $ordersManager->GetCountOfOrderSummariesByCustomer($_SESSION[\Common\Security::$SessionUserIdKey]);
@@ -43,8 +44,11 @@ $order_count = $ordersManager->GetCountOfOrderSummariesByCustomer($_SESSION[\Com
     <link rel="stylesheet" type="text/css" href="../css/Common.css">
     <script type="text/javascript" src="../js/jquery.js"></script>
     <script type="text/javascript">
-		function OrdersAjax(page, pagesize, itemcount)
+		// ajax function, retrieve orders page, setup pagination controls
+		function OrdersAjax(page)
 		{
+			page = parseInt(page);
+			
 			$("#tblOrderSummaries").load("../Includes/Ajax/Orders.ajax.php", {p:page},
 				function(responseTxt, statusTxt, xhr)
 				{
@@ -53,38 +57,39 @@ $order_count = $ordersManager->GetCountOfOrderSummariesByCustomer($_SESSION[\Com
 						var nextPage = page + 1;
 						var prevPage = page - 1;
 						
-						
+						var itemcount = parseInt($("#inputJsParamsOrdersItemCount").val());
+						var pagesize = parseInt($("#inputJsParamsOrdersPageSize").val());						
 						if (itemcount <= pagesize)
 						{
 							$("#lblPrevPage").html("Previous");
-							$("#lblPrevPage").css("PageLinkDisabled");
+							$("#lblPrevPage").prop("class", "label label-primary PageLinkDisabled");
 							$("#lblPageNumber").html("Page: 1");
 							$("#lblNextPage").html("Next");
-							$("#lblNextPage").css("PageLinkDisabled");
+							$("#lblNextPage").prop("class", "label label-primary PageLinkDisabled");
 						}
 						else if (page <= 1)
 						{
 							$("#lblPrevPage").html("Previous");
-							$("#lblPrevPage").css("PageLinkDisabled");
+							$("#lblPrevPage").prop("class", "label label-primary PageLinkDisabled");
 							$("#lblPageNumber").html("Page: 1");
-							$("#lblNextPage").html('<a href="#" class="PageLinkActive" onclick="OrdersAjax( ' + nextPage + ', ' + pagesize + ', ' + itemcount + ')">Next</a>');
-							$("#lblNextPage").css("PageLinkActive");
+							$("#lblNextPage").html('<a href="#" class="PageLinkActive" onclick="OrdersAjax( ' + nextPage + ')">Next</a>');
+							$("#lblNextPage").prop("class", "label label-primary PageLinkActive");
 						}
 						else if (page * pagesize >= itemcount)
 						{
-							$("#lblPrevPage").html('<a href="#" class="PageLinkActive" onclick="OrdersAjax( ' + prevPage + ', ' + pagesize + ', ' + itemcount + ')">Previous</a>');
-							$("#lblPrevPage").css("PageLinkActive");
+							$("#lblPrevPage").html('<a href="#" class="PageLinkActive" onclick="OrdersAjax( ' + prevPage + ')">Previous</a>');
+							$("#lblPrevPage").prop("class", "label label-primary PageLinkActive");
 							$("#lblPageNumber").html("Page: " + page);
 							$("#lblNextPage").html("Next");
-							$("#lblNextPage").css("PageLinkDisabled");
+							$("#lblNextPage").prop("class", "label label-primary PageLinkDisabled");
 						}
 						else
 						{
-							$("#lblPrevPage").html('<a href="#" class="PageLinkActive" onclick="OrdersAjax( ' + prevPage + ', ' + pagesize + ', ' + itemcount + ')">Previous</a>');
-							$("#lblPrevPage").css("PageLinkActive");
+							$("#lblPrevPage").html('<a href="#" class="PageLinkActive" onclick="OrdersAjax( ' + prevPage + ')">Previous</a>');
+							$("#lblPrevPage").prop("class", "label label-primary PageLinkActive");
 							$("#lblPageNumber").html("Page: " + page);
-							$("#lblNextPage").html('<a href="#" class="PageLinkActive" onclick="OrdersAjax( ' + nextPage + ', ' + pagesize + ', ' + itemcount + ')">Next</a>');
-							$("#lblNextSPage").css("PageLinkActive");
+							$("#lblNextPage").html('<a href="#" class="PageLinkActive" onclick="OrdersAjax( ' + nextPage + ')">Next</a>');
+							$("#lblNextSPage").prop("class", "label label-primary PageLinkActive");
 						}
 					}
 				}
@@ -95,6 +100,7 @@ $order_count = $ordersManager->GetCountOfOrderSummariesByCustomer($_SESSION[\Com
 
 <body>
     <?php
+		// only members should be here - so only use members navbar.
         include_once("../Includes/navbar.member.php");
     ?>
 
@@ -140,21 +146,27 @@ $order_count = $ordersManager->GetCountOfOrderSummariesByCustomer($_SESSION[\Com
                     	<div class="col-xs-0 col-sm-1 col-md-1">
                         </div>
                         <div class="col-xs-12 col-sm-4 col-md-4">
-                        	<label class="label label-primary PageLinkDisabled" id="lblPrevPage"></label>
+                        	<label class="label label-primary" id="lblPrevPage"></label>
                         </div>
                         <div class="col-xs-12 col-sm-3 col-md-3">
-                        	<label class="label label-primary PageLinkDisabled" id="lblPageNumber"></label>
+                        	<label class="label label-primary PageLinkActive" id="lblPageNumber"></label>
                         </div>
                         <div class="col-xs-12 col-sm-3 col-md-3">
-                        	<label class="label label-primary PageLinkDisabled" id="lblNextPage"></label>
+                        	<label class="label label-primary" id="lblNextPage"></label>
                         </div>
                     </div>
+                    
+                    <!-- storage of pagination details. -->
+                    <input type="number" hidden id="inputJsParamsOrdersPage" value="1" />
+                    <input type="number" hidden id="inputJsParamsOrdersPageSize" value="<?php echo $page_size ?>" />
+                    <input type="number" hidden id="inputJsParamsOrdersItemCount" value="<?php echo $order_count ?>" />
                     
                 </div>
                 
                 <br/>
                 <br/>
                 
+                <!-- auto-sliding message to show when an order is successfully placed. -->
                 <div hidden id="divCheckoutsuccessMsg" class="alert alert-success" role="alert">
                   <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                   <strong>Success!</strong> You order has been placed!
@@ -166,8 +178,9 @@ $order_count = $ordersManager->GetCountOfOrderSummariesByCustomer($_SESSION[\Com
 
     </div>
     
+    <!-- show first page of orders, and set auto-slide time for successful order placement message. -->
     <script type="text/javascript">
-		OrdersAjax(1, <?php echo $page_size ?>, <?php echo $order_count ?> );
+		OrdersAjax(1 );
 		window.setTimeout(function() 
 			{
 				$(".alert").fadeTo(500, 0).slideUp(500, function()
@@ -180,6 +193,7 @@ $order_count = $ordersManager->GetCountOfOrderSummariesByCustomer($_SESSION[\Com
     <?php include_once("../Includes/footer.php"); ?>
     
     <?php 
+		// show successful order placement message if requested.
 		if (isset($_REQUEST) && isset($_REQUEST['s']) && $_REQUEST['s'] = 1)
 		{
 			echo '<script type="text/javascript">$("#divCheckoutsuccessMsg").prop("hidden", false);</script>';

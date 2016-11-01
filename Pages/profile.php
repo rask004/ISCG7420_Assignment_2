@@ -4,12 +4,17 @@
  * User: Roland
  * Date: 11/10/2016
  * Time: 10:13 PM
+ *
+ *	NOTE: This page is both the register new customer page, AND the update member profile page.
  */
+ 
+ ini_set("display_errors","1");
  
 include_once('../Includes/Session.php');
 include_once('../Includes/Common.php');
 include_once("../Includes/CustomerManager.php");
-	
+
+// for adding and updating customers.
 $customerManager = new \BusinessLayer\CustomerManager;
 
 $PostRegisterKey = \Common\Constants::$RegistrationSubmitKeyword;
@@ -21,14 +26,15 @@ if (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey || $_POST["
 	
 	foreach( $_POST as $key => $value)
 	{
-		// prevent any sql injection by removing key symbols.
+		// prevent any sql injection by removing key SQL symbols.
+		// Note that password will be HMAC-parsed as strict string text, so can ignore password.
 		if ($key != "txtPassword")
 		{
 			$_POST[$key] = str_replace(array("(", ")", ";", "%", "=", "<", ">"), "", $value);	
 		}
 	}
 	
-	// new customer validation, server side
+	// for customer validation, server side
 	$isValid = true;
 	
 	// check if email or login is in use.
@@ -96,8 +102,9 @@ if (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey || $_POST["
 	if ($isValid && (empty($regex_output) || !($regex_output[0] === $_POST["txtAddress"]) ))
 	{
 		$isValid = false;		
-		$ErrorMsg = "Invalid address. Must be in form '[flat number/]numbers[letter] name suffix' first number cannot be zero.";
+		$ErrorMsg = "Invalid address. Must be in form '[flat number/]numbers[letter] name suffix'. The first number cannot be zero.";
 	}
+	// filter_var for email is simpler than regex.
 	if ($isValid && !filter_var($_POST["txtEmail"], FILTER_VALIDATE_EMAIL))
 	{
 		$isValid = false;
@@ -117,13 +124,14 @@ if (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey || $_POST["
 				$_POST["txtEmail"], $_POST["txtHomePhone"], $_POST["txtWorkPhone"], $_POST["txtMobilePhone"], $_POST["txtAddress"],
 				$_POST["txtSuburb"], $_POST["txtCity"]))	
 			{
-				// request first available admin, obtain email
-				
+				// simpler to use a default admin email				
 				$senderEmail = \Common\Constants::$EmailAdminDefault;
 				$receiverEmail = $_POST["txtEmail"];
 				$subject = "Quality Caps, Registered Customer";
 				$body = "Dear Customer,\r\n\r\n\r\nWelcome to Quality Caps!\r\n\r\nYour Details are:\r\n\tLogin\t\t\t".$_POST["txtLogin"]."\r\n\tPassword\t\t".$_POST["txtPassword"]."\r\n\r\nYoursSincerely,\r\n\r\nThe QualityCapsTeam\r\n";
 				
+				// mail method provided in tutorial slides did not seem to work.
+				// this method borrowed from stackoverflow. appears to work.
 				$headers = "From: ". $senderEmail. "\r\n";
 				$headers .= "Reply-To: ". $senderEmail. "\r\n";
 				$headers .= "Content-Type: text/html; charset=TIS-620 \n";
@@ -185,6 +193,7 @@ if (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey || $_POST["
 	}	
 }
 
+// redirect admin users to the admin page.
 if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && isset($_SESSION[\Common\Security::$SessionAdminCheckKey]))
 {
     header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/AdminFiles.php");
@@ -195,6 +204,7 @@ if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && isset($_SES
 // setup page for logged in user (Profile) or visitor (Registration)
 if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
 {
+	// if this is a logged in user, then initially all fields are disabled, until user indicates they want to edit profile details.
     $isDisabled = 'disabled';
 	
 	$customer = $customerManager->findCustomer($_SESSION[\Common\Security::$SessionUserIdKey]);
@@ -206,6 +216,7 @@ if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\
 }
 else
 {
+	// otherwise assume this is a registering visitor - so permit full data entry as per normal registering.
     $isDisabled = '';
 }
 
@@ -217,6 +228,7 @@ else
     <meta charset="utf-8">
     <title>Quality Caps -
         <?php
+		// set correct browser tab title.
         if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
         {
             echo 'Profile';
@@ -235,6 +247,9 @@ else
     <script type="text/javascript" src="../js/jquery.js"></script>
     <script type="text/javascript">
 	
+		// for customer update form.
+		// pressing edit allows changes to the form and shows reset button.
+		// pressing reset undos current and disables further changes, and shows edit button.
 		function change_form() 
 		{
 			if($("#btnEditForm").val() == "Edit")
@@ -272,6 +287,9 @@ else
 			}
 		}
 		
+		// toggles allowing password changes. Only for updating a member's profile.
+		// toggle on to allow entering a new password, for updating.
+		// toggle off to clear any new password entry, disable password editing and retain old password.
 		function profile_password_toggle() 
 		{
 				if($("#btnChangeProfilePassword").val() == "Change Password")
@@ -292,6 +310,7 @@ else
 
 <body>
     <?php
+	// load correct navbar for visitor or logged in user.
     if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
     {
         include_once("../Includes/navbar.member.php");
@@ -319,6 +338,7 @@ else
                             <div class="col-xs-12 col-sm-4 col-md-6 DecoHeader">
                                 <H3>
                                     <?php
+										// show correct title
                                         if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
                                         {
                                             echo 'Profile';
@@ -336,6 +356,16 @@ else
 
                         <br/>
                         <br/>
+                        
+                        <!-- 
+                        	for each data entry field, if registering as new customer,  it should be initially blank.
+                            	also password should show password label and blank field.
+                        	otherwise fill each entry field with the relevant member data, and show
+                            	password editing button.
+                                
+                            if visitor submitted for registering, but submission was rejected, retain all entered data
+                            	so visitor can edit errors without re-entering all details.
+                        -->
 
                         <div class="row" style="margin-top: 4px">
                             <div class="col-xs-0 col-sm-1 col-md-2">
@@ -346,19 +376,24 @@ else
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 
                                 <input class="form-control" style="float: left; width:100%" id="txtFirstName"
-                                       name="txtFirstName" 
-									   	<?php 
+                                        name="txtFirstName" 
+									    <?php 
+											// show customer details for logged in user
 											if(isset($customer)) 
 											{ 
 												echo 'value="' . $customer["firstName"] . '"';
 											} 
+											// otherwise show either nothing, or if a previous submissin failed, the value that was submitted.
 											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey))
 											{
 												echo 'value="' .$_POST["txtFirstName"]. '"';
 											}
 										?>
-                                       <?= $isDisabled ?>
-                                       required maxlength="32" type="text" />
+                                        
+                                        <?php 
+											echo $isDisabled;
+										?>
+                                        required maxlength="32" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -383,7 +418,12 @@ else
 												echo 'value="' . $_POST["txtLastName"] . '"';
 											}
 										?>
-                                       <?= $isDisabled ?> required maxlength="32" type="text" />
+                                       
+									   <?php 
+											echo $isDisabled;
+										?>
+                                        
+                                         required maxlength="32" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -408,7 +448,12 @@ else
 												echo 'value="' . $_POST["txtEmail"] . '"';
 											}
 										?>
-									   <?= $isDisabled ?> required minlength="5" maxlength="100" type="text" />
+                                       
+									   <?php 
+											echo $isDisabled;
+										?>
+                                        
+                                         required minlength="5" maxlength="100" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -435,7 +480,12 @@ else
 												echo 'value="' . $_POST["txtLogin"] . '"';
 											}
 										?>
-									   <?= $isDisabled ?> required minlength="8" maxlength="32" type="text" />
+                                       
+									   <?php 
+											echo $isDisabled;
+										?>
+                                        
+                                         required minlength="8" maxlength="32" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -445,6 +495,8 @@ else
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
                             <?php
+							// show either password toggle button and password update field, for logged in user,
+							// or password label and new password field for visitor.
                             if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
                             {
 								echo '<div class="col-xs-12 col-sm-4 col-md-4">' .
@@ -460,12 +512,14 @@ else
 							else
 							{
 								$password = "";
+								// in case new customer submission is rejected, retain the given password for visitor to edit.
 								if (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey))
 								{
 									$password .= $_POST["txtPassword"];
 								}
 								echo '<div class="col-xs-12 col-sm-4 col-md-4">' .
-									 '<label style="float: left" for="txtPassword">Password:</label>' .
+									 '<label class="label label-default" style="margin-top:4px; float: left; font-size:0.9em" ' .
+									 'for="txtPassword">Password:</label>' .
 									 '</div>' .
 									 '<div class="col-xs-12 col-sm-6 col-md-4">' .
 										 '<input class="form-control" style="float: left; width:100%" id="txtPassword"' .
@@ -502,7 +556,12 @@ else
 												echo 'value="' . $_POST["txtHomePhone"] . '"';
 											}
 										?>
-									   <?= $isDisabled ?> minlength="8" maxlength="13"  type="text" />
+                                       
+									   <?php 
+											echo $isDisabled;
+										?>
+                                        
+                                         minlength="8" maxlength="13"  type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -527,7 +586,12 @@ else
 												echo 'value="' . $_POST["txtWorkPhone"] . '"';
 											}
 										?>
-									   <?= $isDisabled ?> minlength="8" maxlength="13" type="text" />
+                                       
+									   <?php 
+											echo $isDisabled;
+										?>
+                                        
+                                         minlength="8" maxlength="13" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -552,7 +616,12 @@ else
 												echo 'value="' . $_POST["txtMobilePhone"] . '"';
 											}
 										?>
-									   <?= $isDisabled ?> minlength="9" maxlength="14" type="text" />
+                                       
+									   <?php 
+											echo $isDisabled;
+										?>
+                                        
+                                         minlength="9" maxlength="14" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -579,7 +648,12 @@ else
 												echo 'value="' . $_POST["txtAddress"] . '"';
 											}
 										?>
-									   <?= $isDisabled ?> required  minlength="3" maxlength="48" type="text" />
+                                       
+									   <?php 
+											echo $isDisabled;
+										?>
+                                        
+                                         required  minlength="3" maxlength="48" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -604,7 +678,12 @@ else
 												echo 'value="' . $_POST["txtSuburb"] . '"';
 											}
 										?>
-									   <?= $isDisabled ?> required maxlength="24" type="text" />
+                                       
+									   <?php 
+											echo $isDisabled;
+										?>
+                                        
+                                         required maxlength="24" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -629,7 +708,12 @@ else
 												echo 'value="' . $_POST["txtCity"] . '"';
 											}
 										?>
-									   <?= $isDisabled ?> required maxlength="24" type="text" />
+                                       
+									   <?php 
+											echo $isDisabled;
+										?>
+                                        
+                                         required maxlength="24" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -667,7 +751,13 @@ else
                             ?>
                             <div class="col-xs-6 col-sm-3 col-md-3">
                                 <input class="btn btn-primary" style="float: right;" id="submit" name="submit"
-                                    <?= $isDisabled ?> value="<?= $submitValue ?>" type="submit" />
+                                    
+                                       
+									   <?php 
+											echo $isDisabled;
+										?>
+                                        
+                                         value="<?php echo $submitValue; ?>" type="submit" />
                             </div>
                             <div class="col-xs-0 col-sm-2 col-md-2">
 								

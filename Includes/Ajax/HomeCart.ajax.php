@@ -4,9 +4,14 @@ include_once('../Session.php');
 include_once("../CapManager.php");
 include_once('../Common.php');
 
-/*
-
-*/
+/**
+ * Created by Dreamweaver.
+ * User: Roland
+ * Date: 28/10/2016
+ * Time: 7:00 PM
+ *
+ * AJAX page for showing home page cart
+ */
 
 // check for malformed AJAX
 if (!isset($_REQUEST["c"]) && !isset($_REQUEST["p"]) && !isset($_REQUEST["d"]) && !isset($_REQUEST["a"]) && !isset($_REQUEST["aq"]) )
@@ -35,7 +40,8 @@ elseif (isset($_REQUEST["c"]))
 {
 	$_SESSION[\Common\Security::$SessionCartArrayKey] = array();
 	
-	echo '<p><label>There are no items in your shopping cart.</label></p>';
+	// disable checkout
+	echo '<script type="text/javascript">$("#btnCheckout").prop("disabled", true);</script>';
 }
 
 // delete one cart item.
@@ -44,6 +50,15 @@ elseif (isset($_REQUEST["d"]))
 	$id = (integer) ($_REQUEST["d"] + 0);
 	
 	unset($_SESSION[\Common\Security::$SessionCartArrayKey][$id]);
+	
+	$cart = $_SESSION[\Common\Security::$SessionCartArrayKey];
+	$itemcount = count($cart);	
+	
+	// if cart is empty, disable checkout.
+	if ($itemcount == 0)
+	{
+		echo '<script type="text/javascript">$("#btnCheckout").prop("disabled", true);</script>';
+	}
 }
 
 // add a cart item, with a quantity to add by.
@@ -58,7 +73,7 @@ elseif( isset($_REQUEST["a"]) && isset($_REQUEST["aq"]) )
 		$_SESSION[\Common\Security::$SessionCartArrayKey][$id] = 0;	
 	}
 	
-	$_SESSION[\Common\Security::$SessionCartArrayKey][$id] += $qty;
+	$_SESSION[\Common\Security::$SessionCartArrayKey][$id] += $qty;	
 }
 
 // update cart page
@@ -156,6 +171,16 @@ if (isset($_REQUEST["p"]))
 			
 				$c -= 1;	
 			}
+		}
+		
+		// if cart is empty, disable checkout. else enable
+		if ($itemcount > 0)
+		{
+			echo '<script type="text/javascript">$("#btnCheckout").prop("disabled", false);</script>';
+		}
+		else
+		{
+			echo '<script type="text/javascript">$("#btnCheckout").prop("disabled", true);</script>';
 		}
 	}
 }

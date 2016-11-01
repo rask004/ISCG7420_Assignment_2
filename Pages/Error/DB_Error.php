@@ -26,6 +26,7 @@ if( !(isset( $_SESSION["last_Error"]) && $_SESSION["last_Error"] == "DB_connecti
     <link rel="stylesheet" type="text/css" href="../../css/Common.css">
     <script type="text/javascript" src="../../js/jquery.js"></script>
     <script type="text/javascript">
+		// show error page for a while, then try to load home page
 		function doCountdown()
 		{
 			var count = $("#lblCountdown").html();

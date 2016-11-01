@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: Roland
+ * User: Roland Askew, 1461498
  * Date: 11/10/2016
  * Time: 10:16 PM
  */
@@ -32,6 +32,7 @@ if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && isset($_SES
 
 <body>
     <?php
+		// show correct navbar, depending on whether or not user is logged in.
         if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
         {
             include_once("../Includes/navbar.member.php");
@@ -66,6 +67,8 @@ if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && isset($_SES
 
                     <br/>
                     <br/>
+                    
+                    <!-- show contact details -->
 
                     <div class="row" style="margin-top: 4px">
                         <div class="col-xs-0 col-sm-1 col-md-2">
