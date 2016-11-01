@@ -238,12 +238,15 @@ unset($categoryManager);
 					function(responseTxt, statusTxt, xhr)
 					{
 						if(statusTxt == "success")
-						{							
+						{
+							var pagesize =  parseInt($("#inputJsParamsCapPageSize").val());
+							var itemcount = parseInt($("#inputJsParamsCapItemCount").val());
+														
 							// update page controls.
 							var nextPage = page + 1;
 							var prevPage = page - 1;
 							
-							if ($("#inputJsParamsCapItemCount").val() <= $("#inputJsParamsCapPageSize").val())
+							if (itemcount <= pagesize)
 							{
 								$("#lblCapsPrevPage").html("Previous");
 								$("#lblCapsPrevPage").prop("class", "label label-primary PageLinkDisabled");
@@ -259,7 +262,7 @@ unset($categoryManager);
 								$("#lblCapsNextPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCaps( ' + catId + ',' + nextPage + ')">Next</a>');
 								$("#lblCapsNextPage").prop("class", "label label-primary PageLinkActive");
 							}
-							else if (page * $("#inputJsParamsCapPageSize").val() >= $("#inputJsParamsCapItemCount").val())
+							else if (page * pagesize >= itemcount)
 							{
 								$("#lblCapsPrevPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCaps( ' + catId + ',' + prevPage + ')">Previous</a>');
 								$("#lblCapsPrevPage").prop("class", "label label-primary PageLinkActive");

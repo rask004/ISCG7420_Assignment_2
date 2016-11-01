@@ -46,7 +46,7 @@ if (isset($_REQUEST["p"]) && isset($_REQUEST["c"]) )
 		$capCount = $CapManager->GetCapsByCategoryCount($categoryId);
 	}
 	
-	echo '<script type="text/javascript">$("#inputJsParamsCapItemCount").val('.$capCount.')</script>';
+	echo '<script type="text/javascript">$("#inputJsParamsCapItemCount").val("'.$capCount.'")</script>';
 	
 	$c = 0;
 	
