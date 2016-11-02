@@ -13,43 +13,43 @@ require_once('DataLayer.php');
 // Orders management business object.
 class OrderManager
 {
-	private $_data_manager;	
+	private $_dataManager;	
 	
 	function __construct()
 	{
-		$this->_data_manager = new \DataLayer\DataManager;
+		$this->_dataManager = new \DataLayer\DataManager;
 	}
 	
 	/* 
 		generate a new order.
 	*/
-	function PlaceOrder($customer_id, array $caps_with_quantities)
+	function PlaceOrder($customerId, array $capsWithQuantities)
 	{
-		$this->_data_manager->InsertOrder($customer_id, $caps_with_quantities);
+		$this->_dataManager->InsertOrder($customerId, $capsWithQuantities);
 	}
 	
 	/* 
 		retrieve all orders for a customer
 	*/
-	function GetAllOrdersForCustomer($customer_id, $start_index, $number_of_items)
+	function GetAllOrdersForCustomer($customerId, $startIndex, $numberOfIitems)
 	{
-		return $this->_data_manager->SelectOrdersWithItemsByCustomer($customer_id, $start_index, $number_of_items);
+		return $this->_dataManager->SelectOrdersWithItemsByCustomer($customerId, $startIndex, $numberOfIitems);
 	}
 	
 	/* 
 		retrieve all order summaries for a customer
 	*/
-	function GetAllOrderSummariesForCustomer($customer_id, $start_index, $number_of_items)
+	function GetAllOrderSummariesForCustomer($customerId, $startIndex, $numberOfIitems)
 	{
-		return $this->_data_manager->SelectOrderSummariesByCustomer($customer_id, $start_index, $number_of_items);
+		return $this->_dataManager->SelectOrderSummariesByCustomer($customerId, $startIndex, $numberOfIitems);
 	}
 	
 	/* 
 		retrieve count of order summaries for a customer
 	*/
-	function GetCountOfOrderSummariesByCustomer($customer_id)
+	function GetCountOfOrderSummariesByCustomer($customerId)
 	{
-		return $this->_data_manager->GetCountOfOrderSummariesByCustomer($customer_id);
+		return $this->_dataManager->GetCountOfOrderSummariesByCustomer($customerId);
 	}
 	
 }

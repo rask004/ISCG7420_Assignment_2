@@ -14,18 +14,18 @@ require_once('Common.php');
 // Customer management business object.
 class CustomerManager
 {
-	private $_data_manager;	
+	private $_dataManager;	
 	
 	function __construct()
 	{
-		$this->_data_manager = new \DataLayer\DataManager;
+		$this->_dataManager = new \DataLayer\DataManager;
 	}
 	
 	/*
 		Register a new customer.
 	*/
-	function RegisterCustomer($first_name, $last_name, $login, $password, $email, $home_number, 
-									$work_number, $mobile_number, $street_address, $suburb, $city)
+	function RegisterCustomer($firstName, $lastName, $login, $password, $email, $homeNumber, 
+									$workNumber, $mobileNumber, $streetAddress, $suburb, $city)
 	{
 		if ($this->findMatchingLogin($login) || $this->findMatchingEmail($email))
 		{
@@ -33,15 +33,15 @@ class CustomerManager
 		}
 		
 		$salt = \Common\SecurityConstraints::getRandomSalt();
-		while ($this->_data_manager->MatchesUsedSalt($salt))
+		while ($this->_dataManager->MatchesUsedSalt($salt))
 		{
 			$salt = \Common\SecurityConstraints::getRandomSalt();
 		}
 		
 		$hash = \Common\SecurityConstraints::generatePasswordHash($password, $salt);
 		
-		$this->_data_manager->InsertCustomer($first_name, $last_name, $login, $salt, $hash, $email, $home_number, $work_number,
-										$mobile_number, $street_address, $suburb, $city);
+		$this->_dataManager->InsertCustomer($firstName, $lastName, $login, $salt, $hash, $email, $homeNumber, $workNumber,
+										$mobileNumber, $streetAddress, $suburb, $city);
 										
 		return true;
 	}
@@ -51,16 +51,16 @@ class CustomerManager
 		The customer must exist.
 		The password hash and salt are NOT updated here. See "UpdatePassword(...)" for password changes.
 	*/
-	function UpdateProfile($first_name, $last_name, $login, $email, $home_number, 
-									$work_number, $mobile_number, $street_address, $suburb, $city, $id)
+	function UpdateProfile($firstName, $lastName, $login, $email, $homeNumber, 
+									$workNumber, $mobileNumber, $streetAddress, $suburb, $city, $id)
 	{
 		if ($this->findMatchingLogin($login) || $this->findMatchingEmail($email))
 		{
 			return false;	
 		}
 		
-		$this->_data_manager->UpdateCustomerButNotPassword($first_name, $last_name, $login, $email, $home_number, 
-									$work_number, $mobile_number, $street_address, $suburb, $city, $id);
+		$this->_dataManager->UpdateCustomerButNotPassword($firstName, $lastName, $login, $email, $homeNumber, 
+									$workNumber, $mobileNumber, $streetAddress, $suburb, $city, $id);
 		
 		return true;
 	}
@@ -71,14 +71,14 @@ class CustomerManager
 	function UpdatePassword($password, $id)
 	{
 		$salt = \Common\SecurityConstraints::getRandomSalt();
-		while ($this->_data_manager->MatchesUsedSalt($salt))
+		while ($this->_dataManager->MatchesUsedSalt($salt))
 		{
 			$salt = \Common\SecurityConstraints::getRandomSalt();
 		}
 		
 		$hash = \Common\SecurityConstraints::generatePasswordHash($password, $salt);
 		
-		if (!$this->_data_manager->UpdateCustomerPasswordOnly($salt, $hash, $id))
+		if (!$this->_dataManager->UpdateCustomerPasswordOnly($salt, $hash, $id))
 		{
 			return false;	
 		}
@@ -91,7 +91,7 @@ class CustomerManager
 	*/
 	function findMatchingEmail($email)
 	{
-		if ($this->_data_manager->MatchCustomerByEmail($email))
+		if ($this->_dataManager->MatchCustomerByEmail($email))
 		{
 			return true;
 		}
@@ -104,7 +104,7 @@ class CustomerManager
 	*/
 	function findMatchingLogin($login)
 	{
-		if ($this->_data_manager->MatchCustomerByLogin($login))
+		if ($this->_dataManager->MatchCustomerByLogin($login))
 		{
 			return true;
 		}
@@ -118,7 +118,7 @@ class CustomerManager
 	*/
 	function findCustomer($id)
 	{
-		return $this->_data_manager->SelectSingleCustomer($id);
+		return $this->_dataManager->SelectSingleCustomer($id);
 	}
 	
 	/*
@@ -127,7 +127,7 @@ class CustomerManager
 	*/
 	function findCustomerByLogin($login)
 	{
-		return $this->_data_manager->SelectSingleCustomerByLogin($login);
+		return $this->_dataManager->SelectSingleCustomerByLogin($login);
 	}
 	
 	/*
@@ -141,13 +141,13 @@ class CustomerManager
 			return false;
 		}
 		
-		$data = $this->_data_manager->RequestCustomerPasswordSaltAndHash($login);
+		$data = $this->_dataManager->RequestCustomerPasswordSaltAndHash($login);
 		$salt = $data['passwordsalt'];
-		$expected_hash = $data['passwordhash'];
+		$expectedHash = $data['passwordhash'];
 		
-		$comparison_hash = \Common\SecurityConstraints::generatePasswordHash($password, $salt);
+		$comparisonHash = \Common\SecurityConstraints::generatePasswordHash($password, $salt);
 		
-		if ($comparison_hash === $expected_hash)
+		if ($comparisonHash === $expectedHash)
 		{
 			return true;	
 		}

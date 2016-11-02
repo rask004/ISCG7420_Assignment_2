@@ -13,11 +13,11 @@ require_once('DataLayer.php');
 // Caps business object.
 class CapManager
 {
-	private $_data_manager;	
+	private $_dataManager;	
 	
 	function __construct()
 	{
-		$this->_data_manager = new \DataLayer\DataManager;
+		$this->_dataManager = new \DataLayer\DataManager;
 	}
 	
 	/*
@@ -25,7 +25,7 @@ class CapManager
 	*/
 	function GetSingleCap($capId)
 	{
-		return $this->_data_manager->SelectSingleCap($capId);
+		return $this->_dataManager->SelectSingleCap($capId);
 	}
 	
 	/*
@@ -33,7 +33,7 @@ class CapManager
 	*/
 	function GetCapsByCategorywithLimit($categoryId, $firstCapIndex, $numberOfCaps)
 	{
-		return $this->_data_manager->SelectCapsbyCategoryIdWithLimit($categoryId, $firstCapIndex, $numberOfCaps);
+		return $this->_dataManager->SelectCapsbyCategoryIdWithLimit($categoryId, $firstCapIndex, $numberOfCaps);
 	}
 	
 	/*
@@ -41,7 +41,7 @@ class CapManager
 	*/
 	function GetAllCaps($firstCapIndex, $numberOfCaps)
 	{
-		return $this->_data_manager->SelectAllCaps($firstCapIndex, $numberOfCaps);
+		return $this->_dataManager->SelectAllCaps($firstCapIndex, $numberOfCaps);
 	}
 	
 	/*
@@ -49,7 +49,7 @@ class CapManager
 	*/
 	function GetCapsByCategoryCount($categoryId)
 	{
-		return $this->_data_manager->SelectCountOfCapsbyCategoryId($categoryId);
+		return $this->_dataManager->SelectCountOfCapsbyCategoryId($categoryId);
 	}
 	
 	/*
@@ -57,6 +57,6 @@ class CapManager
 	*/
 	function GetAllCapsCount()
 	{
-		return $this->_data_manager->SelectCountOfAllCaps();
+		return $this->_dataManager->SelectCountOfAllCaps();
 	}
 }

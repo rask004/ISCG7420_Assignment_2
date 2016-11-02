@@ -137,14 +137,14 @@ class DataManager
 		Only the cap Id and quantity is required for each order item. thus for simplicity, treat 
 			capIds as array keys and quantities as array values.
 	*/
-	public function InsertOrder( $customer_id, array $cap_quantity_list) 
+	public function InsertOrder( $customerId, array $cap_quantity_list) 
 	{		
 		// there must be caps to generate orderitems from. if not, do nothing.
 		if ( count( $cap_quantity_list) > 0 ) 
 		{		
 			$this->_OpenConnection();
 			
-			$id = (integer) $customer_id;
+			$id = (integer) $customerId;
 			
 			// need to know the orderid. request a new order id first.
 			$result = $this->_conn->query("SHOW TABLE STATUS LIKE 'CustomerOrder'");
@@ -155,7 +155,7 @@ class DataManager
 			
 			$this->_conn->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
 			// create the customer order.
-			$sql = "insert into CustomerOrder (id, userId, datePlaced) values (".$next_order_id.",".$customer_id.",'".$now->format('Y-m-d H:i:s')."');";
+			$sql = "insert into CustomerOrder (id, userId, datePlaced) values (".$next_order_id.",".$customerId.",'".$now->format('Y-m-d H:i:s')."');";
 			if (!$this->_conn->query($sql))
 			{
 				$this->_conn->rollback();
@@ -206,19 +206,19 @@ class DataManager
 	/*
 		generate a new customer. It is assumed the login and email are unique, but this is not constrained.
 	*/
-	public function InsertCustomer($first_name, $last_name, $login, $salt, $password_hash, $email, $home_number, 
-									$work_number, $mobile_number, $street_address, $suburb, $city)
+	public function InsertCustomer($firstName, $lastName, $login, $salt, $password_hash, $email, $homeNumber, 
+									$workNumber, $mobileNumber, $streetAddress, $suburb, $city)
 	{
 		$this->_OpenConnection();	
 		
-		$first_name = $this->_conn->real_escape_string($first_name);	
-		$last_name = $this->_conn->real_escape_string($last_name);	
+		$firstName = $this->_conn->real_escape_string($firstName);	
+		$lastName = $this->_conn->real_escape_string($lastName);	
 		$login = $this->_conn->real_escape_string($login);	
 		$email = $this->_conn->real_escape_string($email);	
-		$home_number = $this->_conn->real_escape_string($home_number);	
-		$work_number = $this->_conn->real_escape_string($work_number);	
-		$mobile_number = $this->_conn->real_escape_string($mobile_number);	
-		$street_address = $this->_conn->real_escape_string($street_address);	
+		$homeNumber = $this->_conn->real_escape_string($homeNumber);	
+		$workNumber = $this->_conn->real_escape_string($workNumber);	
+		$mobileNumber = $this->_conn->real_escape_string($mobileNumber);	
+		$streetAddress = $this->_conn->real_escape_string($streetAddress);	
 		$suburb = $this->_conn->real_escape_string($suburb);	
 		$city = $this->_conn->real_escape_string($city);	
 		$password_hash = $this->_conn->real_escape_string($password_hash);	
@@ -228,8 +228,8 @@ class DataManager
 		
 		$sql =  "insert into SiteUser (userType, firstName, lastName, login, passwordsalt, passwordhash, emailAddress," .
 				" homenumber, worknumber, mobilenumber, streetaddress, suburb, city) values " .
-				"('C', '".$first_name."','".$last_name."','".$login."','".$salt."','".$password_hash."','".$email.
-				"','" .$home_number."','".$work_number."','".$mobile_number."','".$street_address."','".$suburb."','".$city."');";
+				"('C', '".$firstName."','".$lastName."','".$login."','".$salt."','".$password_hash."','".$email.
+				"','" .$homeNumber."','".$workNumber."','".$mobileNumber."','".$streetAddress."','".$suburb."','".$city."');";
 		$this->_conn->query($sql);
 		
 		if (!$this->_conn->commit())
@@ -249,28 +249,28 @@ class DataManager
 		update an existing customer. It is assumed the login and email are unique, but this is not constrained.
 		The password is not updated here.
 	*/
-	public function UpdateCustomerButNotPassword($first_name, $last_name, $login, $email, $home_number, 
-									$work_number, $mobile_number, $street_address, $suburb, $city, $id)
+	public function UpdateCustomerButNotPassword($firstName, $lastName, $login, $email, $homeNumber, 
+									$workNumber, $mobileNumber, $streetAddress, $suburb, $city, $id)
 	{
 		$this->_OpenConnection();
 		
-		$first_name = $this->_conn->real_escape_string($first_name);	
-		$last_name = $this->_conn->real_escape_string($last_name);	
+		$firstName = $this->_conn->real_escape_string($firstName);	
+		$lastName = $this->_conn->real_escape_string($lastName);	
 		$login = $this->_conn->real_escape_string($login);	
 		$email = $this->_conn->real_escape_string($email);	
-		$home_number = $this->_conn->real_escape_string($home_number);	
-		$work_number = $this->_conn->real_escape_string($work_number);	
-		$mobile_number = $this->_conn->real_escape_string($mobile_number);	
-		$street_address = $this->_conn->real_escape_string($street_address);	
+		$homeNumber = $this->_conn->real_escape_string($homeNumber);	
+		$workNumber = $this->_conn->real_escape_string($workNumber);	
+		$mobileNumber = $this->_conn->real_escape_string($mobileNumber);	
+		$streetAddress = $this->_conn->real_escape_string($streetAddress);	
 		$suburb = $this->_conn->real_escape_string($suburb);	
 		$city = $this->_conn->real_escape_string($city);	
 		$id = (integer) $id;
 			
 		$this->_conn->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
 		
-		$sql =  "update SiteUser set firstName='".$first_name."', set lastName='".$last_name."', set login='".$login."'," .
-		" set emailAddress='".$email."', set homenumber='".$home_number."', set worknumber='".$work_number."', set mobilenumber='".$mobile_number."',". 
-		" set streetaddress='".$street_address."', set suburb='".$suburb."', set city='".$city."' " .
+		$sql =  "update SiteUser set firstName='".$firstName."', set lastName='".$lastName."', set login='".$login."'," .
+		" set emailAddress='".$email."', set homenumber='".$homeNumber."', set worknumber='".$workNumber."', set mobilenumber='".$mobileNumber."',". 
+		" set streetaddress='".$streetAddress."', set suburb='".$suburb."', set city='".$city."' " .
 		" where userType='C' AND id=" . $id . ";";
 		$this->_conn->query($sql);
 		
@@ -579,23 +579,23 @@ class DataManager
 	/*
 		get all categories with associated products. use LIMIT.
 	*/
-	public function SelectAvailableCategoriesWithLimit( $limit_start,  $limit_length)
+	public function SelectAvailableCategoriesWithLimit( $firstItemIndex,  $numberOfItems)
 	{
-		$limit_start = (integer) $limit_start;
-		$limit_length = (integer) $limit_length;
+		$firstItemIndex = (integer) $firstItemIndex;
+		$numberOfItems = (integer) $numberOfItems;
 		
-		if ($limit_length < 1 ) 
+		if ($numberOfItems < 1 ) 
 		{
-			$limit_length = 1;
+			$numberOfItems = 1;
 		}
-		if ($limit_start < 0 ) 
+		if ($firstItemIndex < 0 ) 
 		{
-			$limit_start = 0;
+			$firstItemIndex = 0;
 		}
 		
 		$this->_OpenConnection();	
 		
-		if (!$query_result = $this->_conn->query("SELECT c.id, c.name, cp.imageUrl FROM `cap` cp, `category` c WHERE cp.categoryId = c.id group by c.id ".  			"order by id, name LIMIT " . $limit_start . ", " . $limit_length . ";"))
+		if (!$query_result = $this->_conn->query("SELECT c.id, c.name, cp.imageUrl FROM `cap` cp, `category` c WHERE cp.categoryId = c.id group by c.id ".  			"order by id, name LIMIT " . $firstItemIndex . ", " . $numberOfItems . ";"))
 		{
 			$this->_conn->rollback();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
@@ -656,25 +656,25 @@ class DataManager
 	/*
 		get all products for a category, using the categoryId. use LIMIT.
 	*/
-	public function SelectCapsbyCategoryIdWithLimit( $categoryId,  $limit_start,  $limit_length)
+	public function SelectCapsbyCategoryIdWithLimit( $categoryId,  $firstItemIndex,  $numberOfItems)
 	{
-		$limit_start = (integer) $limit_start;
-		$limit_length = (integer) $limit_length;
+		$firstItemIndex = (integer) $firstItemIndex;
+		$numberOfItems = (integer) $numberOfItems;
 		$categoryId = (integer) $categoryId;
 		
-		if ($limit_length < 1) 
+		if ($numberOfItems < 1) 
 		{
-			$limit_length = 1;
+			$numberOfItems = 1;
 		}
-		if ($limit_start < 0 ) 
+		if ($firstItemIndex < 0 ) 
 		{
-			$limit_start = 0;
+			$firstItemIndex = 0;
 		}
 		
 		$this->_OpenConnection();	
 		
 		if (!$query_result = $this->_conn->query("Select * from `cap` WHERE `categoryId` = " . $categoryId . " order by categoryId, id LIMIT "
-		. $limit_start . ", " . $limit_length . ";"))
+		. $firstItemIndex . ", " . $numberOfItems . ";"))
 		{
 			$this->_conn->rollback();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
@@ -736,11 +736,11 @@ class DataManager
 	/*
 		get all products for a category, using the categoryId. use LIMIT.
 	*/
-	public function SelectAllCaps($limit_start,  $limit_length)
+	public function SelectAllCaps($firstItemIndex,  $numberOfItems)
 	{
 		$this->_OpenConnection();	
 		
-		if (!$query_result = $this->_conn->query("Select * from `cap` order by id LIMIT ".$limit_start.", ".$limit_length.";"))
+		if (!$query_result = $this->_conn->query("Select * from `cap` order by id LIMIT ".$firstItemIndex.", ".$numberOfItems.";"))
 		{
 			$this->_conn->rollback();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
@@ -835,17 +835,17 @@ class DataManager
 	/*
 		get all orders and orderitems for a customer. use LIMIT.
 	*/
-	public function SelectOrdersWithItemsByCustomer( $customerId,  $limit_start,  $limit_length)
+	public function SelectOrdersWithItemsByCustomer( $customerId,  $firstItemIndex,  $numberOfItems)
 	{
-		$limit_start = (integer) $limit_start;
-		$limit_length = (integer) $limit_length;
+		$firstItemIndex = (integer) $firstItemIndex;
+		$numberOfItems = (integer) $numberOfItems;
 		$customerId = (integer) $customerId;
 		
 		$this->_OpenConnection();	
 		
 		if (!$query_result = $this->_conn->query("Select id, userId, status, datePlaced, capId, quantity from `CustomerOrder` co JOIN `OrderItem`" .
 						" oi ON oi.`OrderId`=co.`id` WHERE userId=" . $customerId . " order by status, datePlaced, capId, quantity limit " .
-						$limit_start . ", " . $limit_length . ";"))
+						$firstItemIndex . ", " . $numberOfItems . ";"))
 		{
 			$this->_conn->rollback();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
@@ -877,10 +877,10 @@ class DataManager
 	/*
 		get all orders and orderitems for a customer. use LIMIT.
 	*/
-	public function SelectOrderSummariesByCustomer( $customerId,  $limit_start,  $limit_length)
+	public function SelectOrderSummariesByCustomer( $customerId,  $firstItemIndex,  $numberOfItems)
 	{
-		$limit_start = (integer) $limit_start;
-		$limit_length = (integer) $limit_length;
+		$firstItemIndex = (integer) $firstItemIndex;
+		$numberOfItems = (integer) $numberOfItems;
 		$customerId = (integer) $customerId;
 		
 		$this->_OpenConnection();	
@@ -888,7 +888,7 @@ class DataManager
 		if (!$query_result = $this->_conn->query("SELECT co.id as id, co.status as status, co.datePlaced as datePlaced, ".
 		" sum(oi.quantity) as totalQuantity, sum(oi.quantity * c.price) as totalPrice FROM `orderitem` oi, `customerorder` co, ".
 		" `cap` c WHERE userId=" . $customerId . " and oi.orderid = co.id AND c.id = oi.capId group by orderId " .
-		" order by co.status, co.datePlaced, co.id limit " . $limit_start . ", " . $limit_length . ";"))
+		" order by co.status, co.datePlaced, co.id limit " . $firstItemIndex . ", " . $numberOfItems . ";"))
 		{
 			$this->_conn->rollback();
 			$_SESSION["last_Error"] = "DB_Error_Generic";

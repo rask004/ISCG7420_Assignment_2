@@ -17,11 +17,11 @@ require_once('Common.php');
 
 class AdminManager
 {
-	private $_data_manager;	
+	private $_dataManager;	
 	
 	function __construct()
 	{
-		$this->_data_manager = new \DataLayer\DataManager;
+		$this->_dataManager = new \DataLayer\DataManager;
 	}
 	
 	/*
@@ -29,7 +29,7 @@ class AdminManager
 	*/
 	function findMatchingLogin($login)
 	{
-		if ($this->_data_manager->MatchAdminByLogin($login));
+		if ($this->_dataManager->MatchAdminByLogin($login));
 		{
 			return true;
 		}
@@ -43,7 +43,7 @@ class AdminManager
 	*/
 	function findAdmin($id)
 	{
-		return $this->_data_manager->SelectSingleAdmin($id);
+		return $this->_dataManager->SelectSingleAdmin($id);
 	}
 	
 	/*
@@ -52,7 +52,7 @@ class AdminManager
 	*/
 	function findAdminByLogin($login)
 	{
-		return $this->_data_manager->SelectSingleAdminByLogin($login);
+		return $this->_dataManager->SelectSingleAdminByLogin($login);
 	}
 	
 	/*
@@ -66,13 +66,13 @@ class AdminManager
 			return false;
 		}
 		
-		$data = $this->_data_manager->RequestAdminPasswordSaltAndHash($login);
+		$data = $this->_dataManager->RequestAdminPasswordSaltAndHash($login);
 		$salt = $data['passwordsalt'];
-		$expected_hash = $data['passwordhash'];
+		$expectedHash = $data['passwordhash'];
 		
-		$comparison_hash = \Common\SecurityConstraints::generatePasswordHash($password, $salt);
+		$comparisonHash = \Common\SecurityConstraints::generatePasswordHash($password, $salt);
 		
-		if ($comparison_hash === $expected_hash)
+		if ($comparisonHash === $expectedHash)
 		{
 			return true;	
 		}
