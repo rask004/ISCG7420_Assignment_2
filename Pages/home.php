@@ -532,7 +532,8 @@ unset($categoryManager);
                         </div>
                         <div class="col-xs-0 col-sm-3 col-md-3"></div>
                         <div class="col-xs-6 col-sm-3 col-md-3">
-                        	<input disabled id="btnCheckout" type="button" class="btn btn-primary" value="Checkout" onclick="location.assign('http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/checkout.php')" />
+                        	<input disabled id="btnCheckout" type="button" class="btn btn-primary" value="Checkout" 
+                            	onclick="location.assign('http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/checkout.php')" />
                         </div>
                     </div>
                     <br/> 
@@ -556,7 +557,8 @@ unset($categoryManager);
 		{
 			echo '<script type="text/javascript">$("#btnCheckout").prop("disabled", true);</script>';
 		}
-		elseif (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] == 1)
+		elseif (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) 
+				&& $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] == 1)
 		{
 			echo '<script type="text/javascript">$("#btnCheckout").prop("disabled", false);</script>';
 		}

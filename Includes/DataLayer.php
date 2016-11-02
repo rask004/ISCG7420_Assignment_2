@@ -8,6 +8,8 @@
 
 namespace DataLayer;
 
+ ini_set("display_errors","1");
+
 require_once('Session.php');
 
 // Database interaction object

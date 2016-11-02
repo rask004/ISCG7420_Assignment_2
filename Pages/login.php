@@ -16,41 +16,41 @@ $bad_login_message = "";
 // in case of email error, notify visitor of successful registration but email failure.
 if(isset($_SERVER["QUERY_STRING"][\Common\Constants::$QueryStringEmailErrorKey]))
 {
-	$ErrorMsg = "Customer was registered but could not send confirmation email. Please contact admin at ". $senderEmail ." immediately.";
+	$errorMsg = "Customer was registered but could not send confirmation email. Please contact admin at ". $senderEmail ." immediately.";
 }
 
 // process postback - for testing, currently expect a particular user and pass (not real user).
 if (isset($_POST['inputLogin']) && isset($_POST['inputPassword']))
 {	
-	$customerManager = new \BusinessLayer\CustomerManager;
-	$adminManager = new \BusinessLayer\AdminManager;
+	$CustomerManager = new \BusinessLayer\CustomerManager;
+	$AdminManager = new \BusinessLayer\AdminManager;
 	
-	if ($customerManager->checkMatchingPasswordForCustomerLogin($_POST['inputLogin'], $_POST['inputPassword']))
+	if ($CustomerManager->CheckMatchingPasswordForCustomerLogin($_POST['inputLogin'], $_POST['inputPassword']))
 	{
 		// successful member login
-		$customer = $customerManager->findCustomerByLogin($_POST['inputLogin']);
+		$Customer = $CustomerManager->FindCustomerByLogin($_POST['inputLogin']);
 		
 		$_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] = 1;
-   		$_SESSION[\Common\SecurityConstraints::$sessionUserLoginKey]  = $customer['login'];
-    	$_SESSION[\Common\SecurityConstraints::$SessionUserIdKey] = $customer['id'];
+   		$_SESSION[\Common\SecurityConstraints::$sessionUserLoginKey]  = $Customer['login'];
+    	$_SESSION[\Common\SecurityConstraints::$SessionUserIdKey] = $Customer['id'];
 		
 		// prevent accidential misuse of member business layer objects.
-		unset($customerManager);
-		unset($customer);
+		unset($CustomerManager);
+		unset($Customer);
 	}
-	elseif ($adminManager->checkMatchingPasswordForAdminLogin($_POST['inputLogin'], $_POST['inputPassword']))
+	elseif ($AdminManager->CheckMatchingPasswordForAdminLogin($_POST['inputLogin'], $_POST['inputPassword']))
 	{
 		// successful admin login
-		$admin = $adminManager->findAdminByLogin($_POST['inputLogin']);
+		$Admin = $AdminManager->FindAdminByLogin($_POST['inputLogin']);
 		
 		$_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] = 1;
-   		$_SESSION[\Common\SecurityConstraints::$sessionUserLoginKey]  = $admin['login'];
-    	$_SESSION[\Common\SecurityConstraints::$SessionUserIdKey] = $admin['id'];
+   		$_SESSION[\Common\SecurityConstraints::$sessionUserLoginKey]  = $Admin['login'];
+    	$_SESSION[\Common\SecurityConstraints::$SessionUserIdKey] = $Admin['id'];
 		$_SESSION[\Common\SecurityConstraints::$SessionAdminCheckKey] = 1;
 		
 		// prevent accidential misuse of admin business layer objects.
-		unset($adminManager);
-		unset($admin);
+		unset($AdminManager);
+		unset($Admin);
 	}
 	else
 	{
@@ -178,9 +178,9 @@ if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && 
 	                    <p>
 							<?php 
 								// only show errors if a message is given.
-								if (isset($ErrorMsg))
+								if (isset($errorMsg))
 								{
-									echo $ErrorMsg;	
+									echo $errorMsg;	
 								}
 							?>
                         </p>

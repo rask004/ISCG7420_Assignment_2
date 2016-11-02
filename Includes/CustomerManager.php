@@ -8,6 +8,8 @@
  
 namespace BusinessLayer;
 
+ ini_set("display_errors","1");
+
 require_once('DataLayer.php');
 require_once('Common.php');
 
@@ -27,7 +29,7 @@ class CustomerManager
 	function RegisterCustomer($firstName, $lastName, $login, $password, $email, $homeNumber, 
 									$workNumber, $mobileNumber, $streetAddress, $suburb, $city)
 	{
-		if ($this->findMatchingLogin($login) || $this->findMatchingEmail($email))
+		if ($this->FindMatchingLogin($login) || $this->FindMatchingEmail($email))
 		{
 			return false;	
 		}
@@ -54,7 +56,7 @@ class CustomerManager
 	function UpdateProfile($firstName, $lastName, $login, $email, $homeNumber, 
 									$workNumber, $mobileNumber, $streetAddress, $suburb, $city, $id)
 	{
-		if ($this->findMatchingLogin($login) || $this->findMatchingEmail($email))
+		if ($this->FindMatchingLogin($login) || $this->FindMatchingEmail($email))
 		{
 			return false;	
 		}
@@ -89,7 +91,7 @@ class CustomerManager
 	/*
 		check that a supplied email matches an actual customer
 	*/
-	function findMatchingEmail($email)
+	function FindMatchingEmail($email)
 	{
 		if ($this->_dataManager->MatchCustomerByEmail($email))
 		{
@@ -102,7 +104,7 @@ class CustomerManager
 	/*
 		check that a supplied login matches an actual customer
 	*/
-	function findMatchingLogin($login)
+	function FindMatchingLogin($login)
 	{
 		if ($this->_dataManager->MatchCustomerByLogin($login))
 		{
@@ -116,7 +118,7 @@ class CustomerManager
 		retrieve a customer using their id.
 		can return an empty array if customer does not exist.
 	*/
-	function findCustomer($id)
+	function FindCustomer($id)
 	{
 		return $this->_dataManager->SelectSingleCustomer($id);
 	}
@@ -125,7 +127,7 @@ class CustomerManager
 		retrieve a customer using their login.
 		can return an empty array if customer does not exist.
 	*/
-	function findCustomerByLogin($login)
+	function FindCustomerByLogin($login)
 	{
 		return $this->_dataManager->SelectSingleCustomerByLogin($login);
 	}
@@ -133,10 +135,10 @@ class CustomerManager
 	/*
 		check that a supplied login and password matches an actual customer
 	*/
-	function checkMatchingPasswordForCustomerLogin($login, $password)
+	function CheckMatchingPasswordForCustomerLogin($login, $password)
 	{
 		// there is no match if there is no customer.
-		if (!$this->findMatchingLogin($login))
+		if (!$this->FindMatchingLogin($login))
 		{
 			return false;
 		}

@@ -70,16 +70,16 @@ if( !(isset( $_SESSION["last_Error"]) && $_SESSION["last_Error"] == "DB_Error_Ge
 				
 					if (!isset($_SESSION["Error_MSG"]))
 					{
-						$DB_Error_Msg = $_SESSION["Error_MSG"];
+						$dbErrorMsg = $_SESSION["Error_MSG"];
 					}
 					else
 					{
-						$DB_Error_Msg = "NO MESSAGE";
+						$dbErrorMsg = "NO MESSAGE";
 					}
 					
 					$receiverEmail = \Common\Constants::$EmailAdminDefault;
 					$subject = "Quality Caps ERROR, Database query";
-					$body = "An Error was experienced during a database query.\r\nError Message : " . $DB_Error_Msg . "\r\n\r\n";
+					$body = "An Error was experienced during a database query.\r\nError Message : " . $dbErrorMsg . "\r\n\r\n";
 					$headers = "Content-Type: text/html; charset=TIS-620 \n";
 					$headers .= "MIME-Version: 1.0 \r\n";
 					

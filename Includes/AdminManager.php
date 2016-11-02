@@ -8,6 +8,7 @@
 
 namespace BusinessLayer;
 
+ ini_set("display_errors","1");
 
 require_once('DataLayer.php');
 require_once('Common.php');
@@ -27,7 +28,7 @@ class AdminManager
 	/*
 		check that a supplied login matches an actual admin
 	*/
-	function findMatchingLogin($login)
+	function FindMatchingLogin($login)
 	{
 		if ($this->_dataManager->MatchAdminByLogin($login));
 		{
@@ -41,7 +42,7 @@ class AdminManager
 		retrieve a admin using their id.
 		can return an empty array if admin does not exist.
 	*/
-	function findAdmin($id)
+	function FindAdmin($id)
 	{
 		return $this->_dataManager->SelectSingleAdmin($id);
 	}
@@ -50,7 +51,7 @@ class AdminManager
 		retrieve a admin using their login.
 		can return an empty array if admin does not exist.
 	*/
-	function findAdminByLogin($login)
+	function FindAdminByLogin($login)
 	{
 		return $this->_dataManager->SelectSingleAdminByLogin($login);
 	}
@@ -58,10 +59,10 @@ class AdminManager
 	/*
 		check that a supplied login and password matches an actual admin
 	*/
-	function checkMatchingPasswordForAdminLogin($login, $password)
+	function CheckMatchingPasswordForAdminLogin($login, $password)
 	{
 		// there is no match if there is no admin.
-		if (!$this->findMatchingLogin($login))
+		if (!$this->FindMatchingLogin($login))
 		{
 			return false;
 		}

@@ -41,7 +41,7 @@ else
 	
 	$cart = $_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey];
 	
-	$capsManager = new \BusinessLayer\CapManager;
+	$CapsManager = new \BusinessLayer\CapManager;
 
 	$page = (integer) ($_REQUEST["p"] + 0);
 	
@@ -62,14 +62,14 @@ else
 	$c = 1;
 	
 	// store pages to show.
-	$page_items = array();
+	$pageItems = array();
 
 	foreach($cart as $capId=>$qty)
 	{
 		// if item is in current page, store it.
 		if($c >= $start && $c <= $end)
 		{
-			$page_items[$capId] = $qty;	
+			$pageItems[$capId] = $qty;	
 		}
 		
 		$c += 1;
@@ -80,9 +80,9 @@ else
 	}
 
 	// now display the pages
-	foreach($page_items as $capId=>$qty)
+	foreach($pageItems as $capId=>$qty)
 	{
-		$cap = $capsManager->GetSingleCap($capId);
+		$cap = $CapsManager->GetSingleCap($capId);
 		$price = number_format((float)$cap["price"], 2, '.', '');
 		$name = $cap["name"];
 		$total = number_format((float) ($price * $qty), 2, '.', '');

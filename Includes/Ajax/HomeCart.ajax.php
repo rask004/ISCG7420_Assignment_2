@@ -52,10 +52,10 @@ elseif (isset($_REQUEST["d"]))
 	unset($_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey][$id]);
 	
 	$cart = $_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey];
-	$itemcount = count($cart);	
+	$itemCount = count($cart);	
 	
 	// if cart is empty, disable checkout.
-	if ($itemcount == 0)
+	if ($itemCount == 0)
 	{
 		echo '<script type="text/javascript">$("#btnCheckout").prop("disabled", true);</script>';
 	}
@@ -80,11 +80,11 @@ elseif( isset($_REQUEST["a"]) && isset($_REQUEST["aq"]) )
 if (isset($_REQUEST["p"]))
 {
 	$cart = $_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey];
-	$itemcount = count($cart);	
+	$itemCount = count($cart);	
 	
-	echo '<input type="number" hidden id="inputJsParamsCartItemCount" value="'.$itemcount.'" />';
+	echo '<input type="number" hidden id="inputJsParamsCartItemCount" value="'.$itemCount.'" />';
 	
-	if ($itemcount == 0)
+	if ($itemCount == 0)
 	{
 		echo '<p><label>There are no items in your shopping cart.</label></p>';
 	}
@@ -92,7 +92,7 @@ if (isset($_REQUEST["p"]))
 	{
 		
 		$page = (integer) ($_REQUEST["p"] + 0);
-		$pagesize = \Common\Constants::$HomeCartTablePageSize;	
+		$pageSize = \Common\Constants::$HomeCartTablePageSize;	
 		$capsManager = new \BusinessLayer\CapManager;
 		
 		// cannot have a page of 0 or less.
@@ -101,7 +101,7 @@ if (isset($_REQUEST["p"]))
 			$page = 1;
 		}
 		// if an item has been deleted, may need to go back one page.
-		elseif(($page - 1) * $pagesize >= $itemcount)
+		elseif(($page - 1) * $pageSize >= $itemCount)
 		{
 			$page -= 1;
 		}
@@ -114,14 +114,14 @@ if (isset($_REQUEST["p"]))
 		$c = 1;
 		
 		// store pages to show.
-		$page_items = array();
+		$pageItems = array();
 	
 		foreach($cart as $capId=>$qty)
 		{
 			// if item is in current page, store it.
 			if($c >= $start && $c <= $end)
 			{
-				$page_items[$capId] = $qty;	
+				$pageItems[$capId] = $qty;	
 			}
 			
 			$c += 1;
@@ -132,7 +132,7 @@ if (isset($_REQUEST["p"]))
 		}
 	
 		// now display the pages
-		foreach($page_items as $capId=>$qty)
+		foreach($pageItems as $capId=>$qty)
 		{
 			$cap = $capsManager->GetSingleCap($capId);
 			$price = number_format((float)$cap["price"], 2, '.', '');
@@ -159,9 +159,9 @@ if (isset($_REQUEST["p"]))
 		}
 		
 		// if not enough items to fill the page, create empty placeholders.
-		if (count( $page_items) < (\Common\Constants::$HomeCartTablePageSize) )
+		if (count( $pageItems) < (\Common\Constants::$HomeCartTablePageSize) )
 		{
-			$c = (\Common\Constants::$HomeCartTablePageSize) - (count( $page_items));
+			$c = (\Common\Constants::$HomeCartTablePageSize) - (count( $pageItems));
 			
 			while ($c >0)
 			{
@@ -174,7 +174,9 @@ if (isset($_REQUEST["p"]))
 		}
 		
 		// if cart is empty, disable checkout. else enable
-		if ($itemcount > 0)
+		if ($itemCount > 0
+			&& isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) 
+			&& $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] == 1)
 		{
 			echo '<script type="text/javascript">$("#btnCheckout").prop("disabled", false);</script>';
 		}

@@ -40,16 +40,16 @@ else
 
 	$page = (integer) ($_REQUEST["p"] + 0);
 	
-	$pagesize = \Common\Constants::$HomeCategoriesTablePageSize;
+	$pageSize = \Common\Constants::$HomeCategoriesTablePageSize;
 	
 	if ($page < 1)
 	{
 		$page = 1;
 	}
 	
-	$start = ($page - 1) * $pagesize;
+	$start = ($page - 1) * $pageSize;
 	
-	$categories = $categoryManager->RetrieveCategoriesForHomePage($start, $pagesize);
+	$categories = $categoryManager->RetrieveCategoriesForHomePage($start, $pageSize);
 	
 	echo '<div class="row">';
 	

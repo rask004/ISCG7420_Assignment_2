@@ -21,7 +21,7 @@ if (isset($_REQUEST["p"]) && isset($_REQUEST["c"]) )
 	$CapManager = new \BusinessLayer\CapManager;
 	$categoryId = (integer) ($_REQUEST["c"] + 0);
 	$page = (integer) ($_REQUEST["p"] + 0);
-	$pagesize = \Common\Constants::$HomeCapsTablePageSize;
+	$pageSize = \Common\Constants::$HomeCapsTablePageSize;
 	$pagewidth = \Common\Constants::$HomeCapsTablePageWidth;
 	
 	if ($page < 1)
@@ -29,7 +29,7 @@ if (isset($_REQUEST["p"]) && isset($_REQUEST["c"]) )
 		$page = 1;
 	}
 	
-	$start = ($page - 1) * $pagesize;
+	$start = ($page - 1) * $pageSize;
 	
 	$caps = array();
 	
@@ -37,12 +37,12 @@ if (isset($_REQUEST["p"]) && isset($_REQUEST["c"]) )
 	
 	if ($categoryId < 0)
 	{
-		$caps = $CapManager->GetAllCaps($start, $pagesize);
+		$caps = $CapManager->GetAllCaps($start, $pageSize);
 		$capCount = $CapManager->GetAllCapsCount();
 	}
 	else
 	{
-		$caps = $CapManager->GetCapsByCategorywithLimit($categoryId, $start, $pagesize);
+		$caps = $CapManager->GetCapsByCategorywithLimit($categoryId, $start, $pageSize);
 		$capCount = $CapManager->GetCapsByCategoryCount($categoryId);
 	}
 	

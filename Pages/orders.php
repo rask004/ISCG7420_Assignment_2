@@ -26,9 +26,9 @@ if (!isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) ||
 }
 
 // get details required for pagination.
-$page_size = \Common\Constants::$OrdersTablePageSize;
+$pageSize = \Common\Constants::$OrdersTablePageSize;
 
-$order_count = $ordersManager->GetCountOfOrderSummariesByCustomer($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]);
+$orderCount = $ordersManager->GetCountOfOrderSummariesByCustomer($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]);
 
 ?>
 
@@ -158,8 +158,8 @@ $order_count = $ordersManager->GetCountOfOrderSummariesByCustomer($_SESSION[\Com
                     
                     <!-- storage of pagination details. -->
                     <input type="number" hidden id="inputJsParamsOrdersPage" value="1" />
-                    <input type="number" hidden id="inputJsParamsOrdersPageSize" value="<?php echo $page_size ?>" />
-                    <input type="number" hidden id="inputJsParamsOrdersItemCount" value="<?php echo $order_count ?>" />
+                    <input type="number" hidden id="inputJsParamsOrdersPageSize" value="<?php echo $pageSize ?>" />
+                    <input type="number" hidden id="inputJsParamsOrdersItemCount" value="<?php echo $orderCount ?>" />
                     
                 </div>
                 

@@ -15,13 +15,13 @@ include_once('../Includes/Common.php');
 include_once("../Includes/CustomerManager.php");
 
 // for adding and updating customers.
-$customerManager = new \BusinessLayer\CustomerManager;
+$CustomerManager = new \BusinessLayer\CustomerManager;
 
-$PostRegisterKey = \Common\Constants::$RegistrationSubmitKeyword;
-$PostUpdateProfileKey = \Common\Constants::$ProfileUpdateKeyword;
+$postRegisterKey = \Common\Constants::$RegistrationSubmitKeyword;
+$postUpdateProfileKey = \Common\Constants::$ProfileUpdateKeyword;
 
 // postback, when submitting new customer or updating profile.
-if (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey || $_POST["submit"] == $PostUpdateProfileKey))
+if (isset($_POST["submit"]) && ($_POST["submit"] == $postRegisterKey || $_POST["submit"] == $postUpdateProfileKey))
 {
 	
 	foreach( $_POST as $key => $value)
@@ -38,77 +38,77 @@ if (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey || $_POST["
 	$isValid = true;
 	
 	// check if email or login is in use.
-	if ($customerManager->findMatchingEmail($_POST["txtEmail"]) || $customerManager->findMatchingLogin($_POST["txtLogin"]))
+	if ($CustomerManager->FindMatchingEmail($_POST["txtEmail"]) || $CustomerManager->FindMatchingLogin($_POST["txtLogin"]))
 	{
 		$isValid = false;
-		$ErrorMsg = "Supplied login, or email, is already in use. Try a different login name, or email.";
+		$errorMsg = "Supplied login, or email, is already in use. Try a different login name, or email.";
 	}	
 	// use regex for identifying valid entries, and if contact numbers are missing.
 	if ($isValid && empty($_POST["txtHomePhone"]) && empty($_POST["txtWorkPhone"]) && empty($_POST["txtMobilePhone"]) )
 	{
 		$isValid = false;
-		$ErrorMsg = "At least one phone number must be given.";
+		$errorMsg = "At least one phone number must be given.";
 	}
 	$regex_output = array();
 	preg_match(\Common\Constants::$ValidationCharsGenericNameRegex, $_POST["txtFirstName"], $regex_output);
 	if ($isValid && (empty($regex_output) || !($regex_output[0] === $_POST["txtFirstName"])) )
 	{
 		$isValid = false;
-		$ErrorMsg = "Invalid first Name. Use letters, full stops, commas, or apostrophes only.";
+		$errorMsg = "Invalid first Name. Use letters, full stops, commas, or apostrophes only.";
 	}
 	preg_match(\Common\Constants::$ValidationCharsGenericNameRegex, $_POST["txtLastName"], $regex_output);
 	if ($isValid && (empty($regex_output) || !($regex_output[0] === $_POST["txtLastName"])) )
 	{
 		$isValid = false;	
-		$ErrorMsg = "Invalid last Name. Use letters, full stops, commas, or apostrophes only.";
+		$errorMsg = "Invalid last Name. Use letters, full stops, commas, or apostrophes only.";
 	}
 	preg_match(\Common\Constants::$ValidationCharsLoginRegex, $_POST["txtLogin"], $regex_output);
 	if ($isValid && (empty($regex_output) || !($regex_output[0] === $_POST["txtLogin"])) )
 	{
 		$isValid = false;	
-		$ErrorMsg = "Invalid login. Use letters, numbers and underscores only.";
+		$errorMsg = "Invalid login. Use letters, numbers and underscores only.";
 	}
 	preg_match(\Common\Constants::$ValidationLandlineRegex, $_POST["txtHomePhone"], $regex_output);
 	if ($isValid && !empty($_POST["txtHomePhone"]) && (empty($regex_output) || !($regex_output[0] === $_POST["txtHomePhone"])) )
 	{
 		$isValid = false;	
-		$ErrorMsg = "Invalid home phone. Try a number in the form '0N-NNN-NNNN' or similar pattern. first digit must be a zero.";
+		$errorMsg = "Invalid home phone. Try a number in the form '0N-NNN-NNNN' or similar pattern. first digit must be a zero.";
 	}
 	preg_match(\Common\Constants::$ValidationLandlineRegex, $_POST["txtWorkPhone"], $regex_output);
 	if ($isValid && !empty($_POST["txtWorkPhone"]) && (empty($regex_output) || !($regex_output[0] === $_POST["txtWorkPhone"])) )
 	{
 		$isValid = false;	
-		$ErrorMsg = "Invalid work phone. Try a number in the form '0N-NNN-NNNN' or similar pattern. first digit must be a zero.";
+		$errorMsg = "Invalid work phone. Try a number in the form '0N-NNN-NNNN' or similar pattern. first digit must be a zero.";
 	}
 	preg_match(\Common\Constants::$ValidationCellPhoneRegex, $_POST["txtMobilePhone"], $regex_output);
 	if ($isValid && !empty($_POST["txtMobilePhone"]) && (empty($regex_output) || !($regex_output[0] === $_POST["txtMobilePhone"])) )
 	{
 		$isValid = false;
-		$ErrorMsg = "Invalid mobile phone. Try a number in the form '0NN-NNN-NNNN' or similar pattern. first digit must be a zero.";	
+		$errorMsg = "Invalid mobile phone. Try a number in the form '0NN-NNN-NNNN' or similar pattern. first digit must be a zero.";	
 	}
 	preg_match(\Common\Constants::$ValidationCharsGenericNameRegex, $_POST["txtSuburb"], $regex_output);
 	if ($isValid && (empty($regex_output) || !($regex_output[0] === $_POST["txtSuburb"]) ))
 	{
 		$isValid = false;		
-		$ErrorMsg = "Invalid suburb. Use letters, full stops, commas, or apostrophes only.";
+		$errorMsg = "Invalid suburb. Use letters, full stops, commas, or apostrophes only.";
 	}
 	preg_match(\Common\Constants::$ValidationCharsGenericNameRegex, $_POST["txtCity"], $regex_output);
 	if ($isValid && (empty($regex_output) || !($regex_output[0] === $_POST["txtCity"]) ))
 	{
 		$isValid = false;		
-		$ErrorMsg = "Invalid city. Use letters, full stops, commas, or apostrophes only.";
+		$errorMsg = "Invalid city. Use letters, full stops, commas, or apostrophes only.";
 	}
 	preg_match(\Common\Constants::$ValidationStreetAddressRegex, $_POST["txtAddress"], $regex_output);
 	if ($isValid && (empty($regex_output) || !($regex_output[0] === $_POST["txtAddress"]) ))
 	{
 		$isValid = false;		
-		$ErrorMsg = "Invalid address. Must be in form '[flat number/]numbers[letter] name suffix'. The first number cannot be zero.";
+		$errorMsg = "Invalid address. Must be in form '[flat number/]numbers[letter] name suffix'. The first number cannot be zero.";
 	}
 	// filter_var for email is simpler than regex.
 	if ($isValid && !filter_var($_POST["txtEmail"], FILTER_VALIDATE_EMAIL))
 	{
 		$isValid = false;
-		$ErrorMsg = "Invalid email. Must be in form 'name@site.domain', e.g. 'xli@yourunitec.ac.nz' or 'jnx@yourunitec.com'.";
+		$errorMsg = "Invalid email. Must be in form 'name@site.domain', e.g. 'xli@yourunitec.ac.nz' or 'jnx@yourunitec.com'.";
 	}
 	
 	// if valid, do registration / update profile and send email.
@@ -116,11 +116,11 @@ if (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey || $_POST["
 	{
 		include_once("../Includes/BusinessLayer.php");
 	
-		$customerManager = new \BusinessLayer\CustomerManager;
+		$CustomerManager = new \BusinessLayer\CustomerManager;
 	
-		if ($_POST["submit"] == $PostRegisterKey)
+		if ($_POST["submit"] == $postRegisterKey)
 		{
-			if($customerManager->RegisterCustomer($_POST["txtFirstName"], $_POST["txtLastName"], $_POST["txtLogin"], $_POST["txtPassword"],
+			if($CustomerManager->RegisterCustomer($_POST["txtFirstName"], $_POST["txtLastName"], $_POST["txtLogin"], $_POST["txtPassword"],
 				$_POST["txtEmail"], $_POST["txtHomePhone"], $_POST["txtWorkPhone"], $_POST["txtMobilePhone"], $_POST["txtAddress"],
 				$_POST["txtSuburb"], $_POST["txtCity"]))	
 			{
@@ -149,21 +149,21 @@ if (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey || $_POST["
 			}
 			else
 			{
-				$ErrorMsg = "ERROR: could not register new customer. Please contact admin at ". $senderEmail ." immediately.";
+				$errorMsg = "ERROR: could not register new customer. Please contact admin at ". $senderEmail ." immediately.";
 			}
 		}
-		elseif ($_POST["submit"] == $PostUpdateProfileKey)
+		elseif ($_POST["submit"] == $postUpdateProfileKey)
 		{
-			if($customerManager->UpdateProfile($_POST["txtFirstName"], $_POST["txtLastName"], $_POST["txtLogin"],
+			if($CustomerManager->UpdateProfile($_POST["txtFirstName"], $_POST["txtLastName"], $_POST["txtLogin"],
 				$_POST["txtEmail"], $_POST["txtHomePhone"], $_POST["txtWorkPhone"], $_POST["txtMobilePhone"], $_POST["txtAddress"],
 				$_POST["txtSuburb"], $_POST["txtCity"], $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey] ))
 			{
 				// indicate primary update of profile worked.
 				$successfulProfileUpdate = true;
 				
-				if(!$customerManager->UpdatePassword($_POST["txtPassword"], $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]))
+				if(!$CustomerManager->UpdatePassword($_POST["txtPassword"], $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]))
 				{
-					$ErrorMsg = "ERROR: Updated profile but could not change password. Please contact admin at ". $senderEmail ." immediately.";
+					$errorMsg = "ERROR: Updated profile but could not change password. Please contact admin at ". $senderEmail ." immediately.";
 				}
 				else
 				{
@@ -181,13 +181,13 @@ if (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey || $_POST["
 					
 					if (!mail($receiverEmail, $subject, $body, $headers))
 					{
-						$ErrorMsg = "Customer was registered but could not send confirmation email. Please contact admin at ". $senderEmail ." immediately.";
+						$errorMsg = "Customer was registered but could not send confirmation email. Please contact admin at ". $senderEmail ." immediately.";
 					}
 				}
 			}
 			else
 			{
-				$ErrorMsg = "ERROR: could not update profile. Please contact admin at ". $senderEmail ." immediately.";
+				$errorMsg = "ERROR: could not update profile. Please contact admin at ". $senderEmail ." immediately.";
 			}
 		}
 	}	
@@ -207,10 +207,10 @@ if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && 
 	// if this is a logged in user, then initially all fields are disabled, until user indicates they want to edit profile details.
     $isDisabled = 'disabled';
 	
-	$customer = $customerManager->findCustomer($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]);
+	$customer = $CustomerManager->FindCustomer($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]);
 	if (empty($customer))
 	{
-		$ErrorMsg = "ERROR: could not retrieve logged in customer information. Try logging out and back in. If problem persists, contact admin at " .
+		$errorMsg = "ERROR: could not retrieve logged in customer information. Try logging out and back in. If problem persists, contact admin at " .
 			\Common\Constants::$EmailAdminDefault . " Immediately";	
 	}
 }
@@ -384,7 +384,7 @@ else
 												echo 'value="' . $customer["firstName"] . '"';
 											} 
 											// otherwise show either nothing, or if a previous submissin failed, the value that was submitted.
-											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey))
+											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $postRegisterKey))
 											{
 												echo 'value="' .$_POST["txtFirstName"]. '"';
 											}
@@ -413,7 +413,7 @@ else
 											{ 
 												echo 'value="' . $customer["lastName"] . '"';
 											} 
-											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey))
+											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $postRegisterKey))
 											{
 												echo 'value="' . $_POST["txtLastName"] . '"';
 											}
@@ -443,7 +443,7 @@ else
 											{ 
 												echo 'value="' . $customer["emailAddress"] . '"';
 											} 
-											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey))
+											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $postRegisterKey))
 											{
 												echo 'value="' . $_POST["txtEmail"] . '"';
 											}
@@ -475,7 +475,7 @@ else
 											{ 
 												echo 'value="' . $customer["login"] . '"';
 											} 											 
-											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey))
+											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $postRegisterKey))
 											{
 												echo 'value="' . $_POST["txtLogin"] . '"';
 											}
@@ -513,7 +513,7 @@ else
 							{
 								$password = "";
 								// in case new customer submission is rejected, retain the given password for visitor to edit.
-								if (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey))
+								if (isset($_POST["submit"]) && ($_POST["submit"] == $postRegisterKey))
 								{
 									$password .= $_POST["txtPassword"];
 								}
@@ -551,7 +551,7 @@ else
 											{ 
 												echo 'value="' . $customer["homeNumber"] . '"';
 											} 											 
-											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey))
+											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $postRegisterKey))
 											{
 												echo 'value="' . $_POST["txtHomePhone"] . '"';
 											}
@@ -581,7 +581,7 @@ else
 											{ 
 												echo 'value="' . $customer["workNumber"] . '"';
 											} 											 
-											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey))
+											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $postRegisterKey))
 											{
 												echo 'value="' . $_POST["txtWorkPhone"] . '"';
 											}
@@ -611,7 +611,7 @@ else
 											{ 
 												echo 'value="' . $customer["mobileNumber"] . '"';
 											} 											 
-											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey))
+											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $postRegisterKey))
 											{
 												echo 'value="' . $_POST["txtMobilePhone"] . '"';
 											}
@@ -643,7 +643,7 @@ else
 											{ 
 												echo 'value="' . $customer["streetAddress"] . '"';
 											} 											 
-											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey))
+											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $postRegisterKey))
 											{
 												echo 'value="' . $_POST["txtAddress"] . '"';
 											}
@@ -673,7 +673,7 @@ else
 											{ 
 												echo 'value="' . $customer["suburb"] . '"';
 											} 											 
-											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey))
+											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $postRegisterKey))
 											{
 												echo 'value="' . $_POST["txtSuburb"] . '"';
 											}
@@ -703,7 +703,7 @@ else
 											{ 
 												echo 'value="' . $customer["city"] . '"';
 											} 											 
-											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey))
+											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $postRegisterKey))
 											{
 												echo 'value="' . $_POST["txtCity"] . '"';
 											}
@@ -770,9 +770,9 @@ else
 	                    <p>
 							<?php 
 								// only show errors if a message is given.
-								if (isset($ErrorMsg))
+								if (isset($errorMsg))
 								{
-									echo $ErrorMsg;	
+									echo $errorMsg;	
 								}
 							?>
                         </p>
@@ -790,7 +790,7 @@ else
     <?php include_once("../Includes/footer.php"); ?>
     <?php 
 		// make div for error message more visible
-		if (isset($ErrorMsg))
+		if (isset($errorMsg))
 		{
 			echo '<script type="text/javascript">'.
 				'$("#divErrorMessage").prop'."('border', 'solid black 2px');".

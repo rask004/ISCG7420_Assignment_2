@@ -42,7 +42,7 @@ else
 
 	$page = (integer) ($_REQUEST["p"] + 0);
 	
-	$pagesize = \Common\Constants::$OrdersTablePageSize;
+	$pageSize = \Common\Constants::$OrdersTablePageSize;
 	
 	if ($page < 1)
 	{
@@ -56,9 +56,9 @@ else
 	echo '<tr><th>Id</th><th>Date Placed</th><th>Status</th><th>Total Items</th><th>Total Cost ($)</th></tr>';
 	
 	// pagination: use database LIMIT command to retrieve subpage of data.
-	$order_summaries = $ordersManager->GetAllOrderSummariesForCustomer($id, $start, $pagesize);
+	$orderSummaries = $ordersManager->GetAllOrderSummariesForCustomer($id, $start, $pageSize);
 	
-	foreach($order_summaries as $summary)
+	foreach($orderSummaries as $summary)
 	{
 		$date_parts = explode(" ", $summary['datePlaced']);
 		echo "<tr><td>". $summary['id'] ."</td><td>". $date_parts[0] ."</td><td>". $summary['status'] .
@@ -66,9 +66,9 @@ else
 	}
 	
 	// placeholders to retain page layout
-	if( count($order_summaries) < $pagesize)
+	if( count($orderSummaries) < $pageSize)
 	{
-		$c = $pagesize - count($order_summaries);
+		$c = $pageSize - count($orderSummaries);
 		
 		while( $c > 0)
 		{

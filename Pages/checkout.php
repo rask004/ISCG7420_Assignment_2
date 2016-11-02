@@ -71,9 +71,9 @@ $capsManager = new \BusinessLayer\CapManager;
 
 $retrievedCaps = array();
 
-$page_size = \Common\Constants::$CheckoutTablePageSize;
+$pageSize = \Common\Constants::$CheckoutTablePageSize;
 
-$cart_count = count($_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey]);
+$cartCount = count($_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey]);
 
 ?>
 
@@ -107,26 +107,34 @@ $cart_count = count($_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey]
 						if (itemcount <= pagesize)
 						{
 							$("#lblPrevPage").html("Previous");
+							$("#lblPrevPage").prop("class","label label-primary PageLinkDisabled");
 							$("#lblPageNumber").html("Page: 1");
 							$("#lblNextPage").html("Next");
+							$("#lblNextPage").prop("class","label label-primary PageLinkDisabled");
 						}
 						else if (page <= 1)
 						{
 							$("#lblPrevPage").html("Previous");
+							$("#lblPrevPage").prop("class","label label-primary PageLinkDisabled");
 							$("#lblPageNumber").html("Page: 1");
-							$("#lblNextPage").html('<a href="#" onclick="CheckoutAjaxPage( ' + nextPage + ')">Next</a>');
+							$("#lblNextPage").html('<a href="#" class="PageLinkActive" onclick="CheckoutAjaxPage( ' + nextPage + ')">Next</a>');
+							$("#lblNextPage").prop("class","label label-primary PageLinkActive");
 						}
 						else if (page * pagesize >= itemcount)
 						{
-							$("#lblPrevPage").html('<a href="#" onclick="CheckoutAjaxPage( ' + prevPage + ')">Previous</a>')
+							$("#lblPrevPage").html('<a href="#" onclick="CheckoutAjaxPage( ' + prevPage + ')">Previous</a>');
+							$("#lblPrevPage").prop("class","label label-primary PageLinkActive");
 							$("#lblPageNumber").html("Page: " + page);
 							$("#lblNextPage").html("Next");
+							$("#lblNextPage").prop("class","label label-primary PageLinkDisabled");
 						}
 						else
 						{
-							$("#lblPrevPage").html('<a href="#" onclick="CheckoutAjaxPage( ' + prevPage + ')">Previous</a>')
+							$("#lblPrevPage").html('<a href="#" onclick="CheckoutAjaxPage( ' + prevPage + ')">Previous</a>');
+							$("#lblPrevPage").prop("class","label label-primary PageLinkActive");
 							$("#lblPageNumber").html("Page: " + page);
 							$("#lblNextPage").html('<a href="#" onclick="CheckoutAjaxPage( ' + nextPage + ')">Next</a>');
+							$("#lblNextPage").prop("class","label label-primary PageLinkActive");
 						}
 						
 						$("#inputJsParamsPage").val(page);
@@ -193,8 +201,8 @@ $cart_count = count($_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey]
                     </div>
                     
                     <input type="number" hidden id="inputJsParamsPage" value="1"/>
-                    <input type="number" hidden id="inputJsParamsPageSize" value="<?php echo $page_size ?>"/>
-                    <input type="number" hidden id="inputJsParamsItemCount" value="<?php echo $cart_count ?>"/>
+                    <input type="number" hidden id="inputJsParamsPageSize" value="<?php echo $pageSize ?>"/>
+                    <input type="number" hidden id="inputJsParamsItemCount" value="<?php echo $cartCount ?>"/>
                     
                     <br/>
                     <br/>

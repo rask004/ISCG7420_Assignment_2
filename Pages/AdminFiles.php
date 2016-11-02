@@ -6,8 +6,7 @@
  * Date: 17/10/2016
  * Time: 19:24 PM
  */
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
+ini_set('display_errors', "1");
 
 include_once('../Includes/Session.php');
 include_once('../Includes/Common.php');
@@ -33,11 +32,11 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
 				// only delete files that actually exist.
 				if (file_exists($filepath) && unlink( "../" . \Common\Constants::$AdminFileuploadFolder ."/" . $_POST["file_to_delete"]))
 				{
-					$file_delete_success = 1;
+					$fileDeleteSuccess = 1;
 				}
 				else 
 				{
-					$file_delete_error = 1;
+					$fileDeleteError = 1;
 				}
 					
 			}
@@ -45,43 +44,43 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
 		else
 		{
 			// in case try to upload without file.
-			$error_msg = "No file specified";
+			$errorMsg = "No file specified";
 			
-			$safe_to_upload = true;
+			$_safeToUpload = true;
 			
 			if(isset($_FILES["file_upload"]) && isset($_FILES["file_upload"]["tmp_name"]))
 			{					
 				// check for file error.			
 				if ($_FILES["file_upload"]["error"] != 0)
 				{
-					$safe_to_upload = false;
-					$error_msg = "Error Number: " . $_FILES["file_upload"]["error"];
+					$_safeToUpload = false;
+					$errorMsg = "Error Number: " . $_FILES["file_upload"]["error"];
 				}
 				elseif($_FILES["file_upload"]["size"] > 124768)
 				{
-					$safe_to_upload = false;
-					$error_msg = "File too big. Must be under 125KB.";
+					$_safeToUpload = false;
+					$errorMsg = "File too big. Must be under 125KB.";
 				}
-				$file_type_array = explode("/", $_FILES["file_upload"]["type"]);
+				$fileTypeArray = explode("/", $_FILES["file_upload"]["type"]);
 				
-				if ($file_type_array[0] != "image")
+				if ($fileTypeArray[0] != "image")
 				{
-					$safe_to_upload = false;
-					$error_msg = "File not identified as an image.";
+					$_safeToUpload = false;
+					$errorMsg = "File not identified as an image.";
 				}
-				elseif(!in_array($file_type_array[1], \Common\Constants::$AdminPermittedFileuploadExtensions))
+				elseif(!in_array($fileTypeArray[1], \Common\Constants::$AdminPermittedFileuploadExtensions))
 				{
-					$safe_to_upload = false;
-					$error_msg = "File must be in JPG or PNG format.";
+					$_safeToUpload = false;
+					$errorMsg = "File must be in JPG or PNG format.";
 				}
 				
 			}
 			else
 			{
-				$safe_to_upload = false;
+				$_safeToUpload = false;
 			}
 			
-			if ($safe_to_upload)
+			if ($_safeToUpload)
 			{
 				$file_parts = explode('.',$_FILES['file_upload']['name']);
 				$ext = $file_parts[count($file_parts) - 1];
@@ -91,17 +90,17 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
 					$file_upload_name
 					))
 				{
-					$file_upload_error = 1;
-					$error_msg = "failed to move tmp file to final location.";
+					$fileUploadError = 1;
+					$errorMsg = "failed to move tmp file to final location.";
 				}
 				else
 				{
-					$file_upload_success = 1;
+					$fileUploadSuccess = 1;
 				}
 			}
 			else
 			{
-				$file_upload_error = 1;
+				$fileUploadError = 1;
 			}
 		}
 	}
@@ -258,21 +257,21 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
                         	<div class="col-xs-8 col-sm-8 col-md-8" style="background-color:#979797; text-align:center">
                             	<b><label style="font-size:2em" id="InfoMsg" >
                                 	    <?php
-											if(isset($file_delete_success))
+											if(isset($fileDeleteSuccess))
 											{
 												echo "SUCCESS, file deleted: ". $_POST["file_to_delete"];
 											}
-											elseif(isset($file_upload_success))
+											elseif(isset($fileUploadSuccess))
 											{
 												echo "SUCCESS, file uploaded. ";	
 											}
-											elseif(isset($file_delete_error))
+											elseif(isset($fileDeleteError))
 											{
 												echo "ERROR, failed to delete file: ". $_POST["file_to_delete"];
 											}
-											elseif(isset($file_upload_error))
+											elseif(isset($fileUploadError))
 											{
-												echo "ERROR, failed to upload file: ". $error_msg;	
+												echo "ERROR, failed to upload file: ". $errorMsg;	
 											}
 											else
 											{
