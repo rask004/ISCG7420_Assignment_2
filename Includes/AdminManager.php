@@ -70,7 +70,7 @@ class AdminManager
 		$salt = $data['passwordsalt'];
 		$expected_hash = $data['passwordhash'];
 		
-		$comparison_hash = \Common\Security::generatePasswordHash($password, $salt);
+		$comparison_hash = \Common\SecurityConstraints::generatePasswordHash($password, $salt);
 		
 		if ($comparison_hash === $expected_hash)
 		{

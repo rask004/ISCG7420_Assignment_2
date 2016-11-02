@@ -32,13 +32,13 @@ class CustomerManager
 			return false;	
 		}
 		
-		$salt = \Common\Security::getRandomSalt();
+		$salt = \Common\SecurityConstraints::getRandomSalt();
 		while ($this->_data_manager->matchesUsedSalt($salt))
 		{
-			$salt = \Common\Security::getRandomSalt();
+			$salt = \Common\SecurityConstraints::getRandomSalt();
 		}
 		
-		$hash = \Common\Security::generatePasswordHash($password, $salt);
+		$hash = \Common\SecurityConstraints::generatePasswordHash($password, $salt);
 		
 		$this->_data_manager->insertCustomer($first_name, $last_name, $login, $salt, $hash, $email, $home_number, $work_number,
 										$mobile_number, $street_address, $suburb, $city);
@@ -70,13 +70,13 @@ class CustomerManager
 	*/
 	function UpdatePassword($password, $id)
 	{
-		$salt = \Common\Security::getRandomSalt();
+		$salt = \Common\SecurityConstraints::getRandomSalt();
 		while ($this->_data_manager->matchesUsedSalt($salt))
 		{
-			$salt = \Common\Security::getRandomSalt();
+			$salt = \Common\SecurityConstraints::getRandomSalt();
 		}
 		
-		$hash = \Common\Security::generatePasswordHash($password, $salt);
+		$hash = \Common\SecurityConstraints::generatePasswordHash($password, $salt);
 		
 		if (!$this->_data_manager->updateCustomerPasswordOnly($salt, $hash, $id))
 		{
@@ -145,7 +145,7 @@ class CustomerManager
 		$salt = $data['passwordsalt'];
 		$expected_hash = $data['passwordhash'];
 		
-		$comparison_hash = \Common\Security::generatePasswordHash($password, $salt);
+		$comparison_hash = \Common\SecurityConstraints::generatePasswordHash($password, $salt);
 		
 		if ($comparison_hash === $expected_hash)
 		{

@@ -13,7 +13,8 @@
 session_start();
 
 // if no cart is present, create one
-if ( !(isset( $_SESSION[\Common\Security::$SessionCartArrayKey] ) && is_array($_SESSION[\Common\Security::$SessionCartArrayKey]) ) )
+if ( !(isset( $_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey] ) 
+	&& is_array($_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey]) ) )
 {
-	$_SESSION[\Common\Security::$SessionCartArrayKey] = array();
+	$_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey] = array();
 }

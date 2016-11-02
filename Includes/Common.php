@@ -13,7 +13,7 @@ namespace Common;
 /*
 	Security constraints and shared functions.
 */
-class Security
+class SecurityConstraints
 {
 	public static $SessionUserLoginKey = "UserLogin";
 	public static $SessionUserIdKey = "UserId";

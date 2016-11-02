@@ -9,7 +9,6 @@
 namespace BusinessLayer;
 
 require_once('DataLayer.php');
-require_once('Common.php');
 
 // Orders management business object.
 class OrderManager
