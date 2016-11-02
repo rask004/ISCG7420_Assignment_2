@@ -12,14 +12,14 @@ include_once('../Includes/CategoryManager.php');
 include_once('../Includes/CapManager.php');
 
 // only customers and visitors can visit home page. 
-if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && isset($_SESSION[\Common\Security::$SessionAdminCheckKey]))
+if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && isset($_SESSION[\Common\SecurityConstraints::$SessionAdminCheckKey]))
 {
     header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/AdminFiles.php");
     exit;
 }
 
 $cartPageSize = \Common\Constants::$HomeCartTablePageSize;
-$cartItemCount = count($_SESSION[\Common\Security::$SessionCartArrayKey]);
+$cartItemCount = count($_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey]);
 
 $categoryPageSize = \common\constants::$HomeCategoriesTablePageSize;
 $categoryManager = new \BusinessLayer\CategoryManager;
@@ -343,7 +343,7 @@ unset($categoryManager);
 
 <body>
     <?php
-    if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
+    if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] == 1)
     {
         include_once("../Includes/navbar.member.php");
     }
@@ -552,11 +552,11 @@ unset($categoryManager);
     
     <?php
 		// enable or disable checkout button depending on if customer is logged in or there are items in the cart.
-		if(count($_SESSION[\Common\Security::$SessionCartArrayKey]) == 0)
+		if(count($_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey]) == 0)
 		{
 			echo '<script type="text/javascript">$("#btnCheckout").prop("disabled", true);</script>';
 		}
-		elseif (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
+		elseif (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] == 1)
 		{
 			echo '<script type="text/javascript">$("#btnCheckout").prop("disabled", false);</script>';
 		}

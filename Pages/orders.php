@@ -12,14 +12,14 @@ include_once("../Includes/OrderManager.php");
 
 $ordersManager = new \BusinessLayer\OrderManager;
 
-if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && isset($_SESSION[\Common\Security::$SessionAdminCheckKey]))
+if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && isset($_SESSION[\Common\SecurityConstraints::$SessionAdminCheckKey]))
 {
     header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/AdminFiles.php");
     exit;
 }
 
 // non-authenticated users should not be here.
-if (!isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) || $_SESSION[\Common\Security::$SessionAuthenticationKey] != 1)
+if (!isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) || $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] != 1)
 {
     header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/home.php");
     exit;
@@ -28,7 +28,7 @@ if (!isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) || $_SESSION[
 // get details required for pagination.
 $page_size = \Common\Constants::$OrdersTablePageSize;
 
-$order_count = $ordersManager->GetCountOfOrderSummariesByCustomer($_SESSION[\Common\Security::$SessionUserIdKey]);
+$order_count = $ordersManager->GetCountOfOrderSummariesByCustomer($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]);
 
 ?>
 

@@ -38,7 +38,7 @@ if (!isset($_REQUEST["c"]) && !isset($_REQUEST["p"]) && !isset($_REQUEST["d"]) &
 // clear the cart.
 elseif (isset($_REQUEST["c"]))
 {
-	$_SESSION[\Common\Security::$SessionCartArrayKey] = array();
+	$_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey] = array();
 	
 	// disable checkout
 	echo '<script type="text/javascript">$("#btnCheckout").prop("disabled", true);</script>';
@@ -49,9 +49,9 @@ elseif (isset($_REQUEST["d"]))
 {
 	$id = (integer) ($_REQUEST["d"] + 0);
 	
-	unset($_SESSION[\Common\Security::$SessionCartArrayKey][$id]);
+	unset($_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey][$id]);
 	
-	$cart = $_SESSION[\Common\Security::$SessionCartArrayKey];
+	$cart = $_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey];
 	$itemcount = count($cart);	
 	
 	// if cart is empty, disable checkout.
@@ -68,18 +68,18 @@ elseif( isset($_REQUEST["a"]) && isset($_REQUEST["aq"]) )
 	$id = (integer) ($_REQUEST["a"] + 0);
 	$qty = (integer) ($_REQUEST["aq"] + 0);
 	
-	if ( !isset($_SESSION[\Common\Security::$SessionCartArrayKey][$id]))
+	if ( !isset($_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey][$id]))
 	{
-		$_SESSION[\Common\Security::$SessionCartArrayKey][$id] = 0;	
+		$_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey][$id] = 0;	
 	}
 	
-	$_SESSION[\Common\Security::$SessionCartArrayKey][$id] += $qty;	
+	$_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey][$id] += $qty;	
 }
 
 // update cart page
 if (isset($_REQUEST["p"]))
 {
-	$cart = $_SESSION[\Common\Security::$SessionCartArrayKey];
+	$cart = $_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey];
 	$itemcount = count($cart);	
 	
 	echo '<input type="number" hidden id="inputJsParamsCartItemCount" value="'.$itemcount.'" />';

@@ -156,12 +156,12 @@ if (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey || $_POST["
 		{
 			if($customerManager->UpdateProfile($_POST["txtFirstName"], $_POST["txtLastName"], $_POST["txtLogin"],
 				$_POST["txtEmail"], $_POST["txtHomePhone"], $_POST["txtWorkPhone"], $_POST["txtMobilePhone"], $_POST["txtAddress"],
-				$_POST["txtSuburb"], $_POST["txtCity"], $_SESSION[\Common\Security::$SessionUserIdKey] ))
+				$_POST["txtSuburb"], $_POST["txtCity"], $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey] ))
 			{
 				// indicate primary update of profile worked.
 				$successfulProfileUpdate = true;
 				
-				if(!$customerManager->UpdatePassword($_POST["txtPassword"], $_SESSION[\Common\Security::$SessionUserIdKey]))
+				if(!$customerManager->UpdatePassword($_POST["txtPassword"], $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]))
 				{
 					$ErrorMsg = "ERROR: Updated profile but could not change password. Please contact admin at ". $senderEmail ." immediately.";
 				}
@@ -194,7 +194,7 @@ if (isset($_POST["submit"]) && ($_POST["submit"] == $PostRegisterKey || $_POST["
 }
 
 // redirect admin users to the admin page.
-if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && isset($_SESSION[\Common\Security::$SessionAdminCheckKey]))
+if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && isset($_SESSION[\Common\SecurityConstraints::$SessionAdminCheckKey]))
 {
     header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/AdminFiles.php");
     exit;
@@ -202,12 +202,12 @@ if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && isset($_SES
 
 
 // setup page for logged in user (Profile) or visitor (Registration)
-if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
+if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] == 1)
 {
 	// if this is a logged in user, then initially all fields are disabled, until user indicates they want to edit profile details.
     $isDisabled = 'disabled';
 	
-	$customer = $customerManager->findCustomer($_SESSION[\Common\Security::$SessionUserIdKey]);
+	$customer = $customerManager->findCustomer($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]);
 	if (empty($customer))
 	{
 		$ErrorMsg = "ERROR: could not retrieve logged in customer information. Try logging out and back in. If problem persists, contact admin at " .
@@ -229,7 +229,7 @@ else
     <title>Quality Caps -
         <?php
 		// set correct browser tab title.
-        if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
+        if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] == 1)
         {
             echo 'Profile';
         }
@@ -311,7 +311,7 @@ else
 <body>
     <?php
 	// load correct navbar for visitor or logged in user.
-    if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
+    if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] == 1)
     {
         include_once("../Includes/navbar.member.php");
     }
@@ -339,7 +339,7 @@ else
                                 <H3>
                                     <?php
 										// show correct title
-                                        if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
+                                        if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] == 1)
                                         {
                                             echo 'Profile';
                                         }
@@ -497,7 +497,7 @@ else
                             <?php
 							// show either password toggle button and password update field, for logged in user,
 							// or password label and new password field for visitor.
-                            if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
+                            if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] == 1)
                             {
 								echo '<div class="col-xs-12 col-sm-4 col-md-4">' .
 									 '<input type="button" class="btn btn-warning" id="btnChangeProfilePassword" '.
@@ -727,7 +727,7 @@ else
 
                             </div>
                             <?php
-                            if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
+                            if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] == 1)
                             {
                                 $submitValue = 'Save';
 

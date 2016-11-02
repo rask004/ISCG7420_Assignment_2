@@ -25,7 +25,7 @@ class OrderManager
 	*/
 	function PlaceOrder($customer_id, array $caps_with_quantities)
 	{
-		$this->_data_manager->insertOrder($customer_id, $caps_with_quantities);
+		$this->_data_manager->InsertOrder($customer_id, $caps_with_quantities);
 	}
 	
 	/* 
@@ -33,7 +33,7 @@ class OrderManager
 	*/
 	function GetAllOrdersForCustomer($customer_id, $start_index, $number_of_items)
 	{
-		return $this->_data_manager->selectOrdersWithItemsByCustomer($customer_id, $start_index, $number_of_items);
+		return $this->_data_manager->SelectOrdersWithItemsByCustomer($customer_id, $start_index, $number_of_items);
 	}
 	
 	/* 
@@ -41,7 +41,7 @@ class OrderManager
 	*/
 	function GetAllOrderSummariesForCustomer($customer_id, $start_index, $number_of_items)
 	{
-		return $this->_data_manager->selectOrderSummariesByCustomer($customer_id, $start_index, $number_of_items);
+		return $this->_data_manager->SelectOrderSummariesByCustomer($customer_id, $start_index, $number_of_items);
 	}
 	
 	/* 

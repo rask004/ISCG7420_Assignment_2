@@ -39,7 +39,7 @@ else
 {
 	// assume there are items in the cart to show.
 	
-	$cart = $_SESSION[\Common\Security::$SessionCartArrayKey];
+	$cart = $_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey];
 	
 	$capsManager = new \BusinessLayer\CapManager;
 

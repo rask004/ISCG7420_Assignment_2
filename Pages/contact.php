@@ -9,7 +9,7 @@
 include_once('../Includes/Session.php');
 include_once('../Includes/Common.php');
 
-if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && isset($_SESSION[\Common\Security::$SessionAdminCheckKey]))
+if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && isset($_SESSION[\Common\SecurityConstraints::$SessionAdminCheckKey]))
 {
     header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/AdminFiles.php");
     exit;
@@ -33,7 +33,7 @@ if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && isset($_SES
 <body>
     <?php
 		// show correct navbar, depending on whether or not user is logged in.
-        if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
+        if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] == 1)
         {
             include_once("../Includes/navbar.member.php");
         }

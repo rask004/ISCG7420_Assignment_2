@@ -50,7 +50,7 @@ else
 	}
 	
 	$start = ($page - 1) * \Common\Constants::$OrdersTablePageSize;
-	$id = $_SESSION[\Common\Security::$SessionUserIdKey];
+	$id = $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey];
 	
 	// table headers
 	echo '<tr><th>Id</th><th>Date Placed</th><th>Status</th><th>Total Items</th><th>Total Cost ($)</th></tr>';

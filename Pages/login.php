@@ -30,9 +30,9 @@ if (isset($_POST['inputLogin']) && isset($_POST['inputPassword']))
 		// successful member login
 		$customer = $customerManager->findCustomerByLogin($_POST['inputLogin']);
 		
-		$_SESSION[\Common\Security::$SessionAuthenticationKey] = 1;
-   		$_SESSION[\Common\Security::$SessionUserLoginKey]  = $customer['login'];
-    	$_SESSION[\Common\Security::$SessionUserIdKey] = $customer['id'];
+		$_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] = 1;
+   		$_SESSION[\Common\SecurityConstraints::$sessionUserLoginKey]  = $customer['login'];
+    	$_SESSION[\Common\SecurityConstraints::$SessionUserIdKey] = $customer['id'];
 		
 		// prevent accidential misuse of member business layer objects.
 		unset($customerManager);
@@ -43,10 +43,10 @@ if (isset($_POST['inputLogin']) && isset($_POST['inputPassword']))
 		// successful admin login
 		$admin = $adminManager->findAdminByLogin($_POST['inputLogin']);
 		
-		$_SESSION[\Common\Security::$SessionAuthenticationKey] = 1;
-   		$_SESSION[\Common\Security::$SessionUserLoginKey]  = $admin['login'];
-    	$_SESSION[\Common\Security::$SessionUserIdKey] = $admin['id'];
-		$_SESSION[\Common\Security::$SessionAdminCheckKey] = 1;
+		$_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] = 1;
+   		$_SESSION[\Common\SecurityConstraints::$sessionUserLoginKey]  = $admin['login'];
+    	$_SESSION[\Common\SecurityConstraints::$SessionUserIdKey] = $admin['id'];
+		$_SESSION[\Common\SecurityConstraints::$SessionAdminCheckKey] = 1;
 		
 		// prevent accidential misuse of admin business layer objects.
 		unset($adminManager);
@@ -60,9 +60,9 @@ if (isset($_POST['inputLogin']) && isset($_POST['inputPassword']))
 }
 
 //  redirect already authenticated users - redirect to home or admin as appropriate.
-if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
+if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] == 1)
 {
-	if(isset($_SESSION[\Common\Security::$SessionAdminCheckKey]))
+	if(isset($_SESSION[\Common\SecurityConstraints::$SessionAdminCheckKey]))
 	{
 		header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/AdminFiles.php");
     	exit;

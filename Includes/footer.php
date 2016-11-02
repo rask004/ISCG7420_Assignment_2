@@ -36,7 +36,7 @@ include_once('../Includes/Common.php');
     	<!-- show greeting to vistor / member -->
         <span id="loginGreeting">
                 <?php
-                if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
+                if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] == 1)
                 {
                     echo 'Welcome back!';
                 }

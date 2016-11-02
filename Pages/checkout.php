@@ -11,14 +11,14 @@ include_once('../Includes/Common.php');
 include_once("../Includes/CapManager.php");
 include_once("../Includes/OrderManager.php");
 
-if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && isset($_SESSION[\Common\Security::$SessionAdminCheckKey]))
+if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && isset($_SESSION[\Common\SecurityConstraints::$SessionAdminCheckKey]))
 {
     header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/AdminFiles.php");
     exit;
 }
 
 // non-authenticated users should not be here.
-if (!isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) || $_SESSION[\Common\Security::$SessionAuthenticationKey] != 1)
+if (!isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) || $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] != 1)
 {
     header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/home.php");
     exit;
@@ -31,12 +31,12 @@ if (isset( $_POST ) && isset($_POST['submit']))
 	{
 		//remove the cart item
 		$id = $_POST['CapId'];
-		if (isset($_SESSION[\Common\Security::$SessionCartArrayKey][$id]))
+		if (isset($_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey][$id]))
 		{
-			unset($_SESSION[\Common\Security::$SessionCartArrayKey][$id]);
+			unset($_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey][$id]);
 		}
 		
-		if (count($_SESSION[\Common\Security::$SessionCartArrayKey]) == 0) 
+		if (count($_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey]) == 0) 
 		{
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/home.php");
 			exit;	
@@ -46,7 +46,7 @@ if (isset( $_POST ) && isset($_POST['submit']))
 	elseif($_POST['submit'] == 'Clear')
 	{
 		// clear the cart and return to home.
-		$_SESSION[\Common\Security::$SessionCartArrayKey] = array();
+		$_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey] = array();
 		header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/home.php");
 		exit;
 	}
@@ -54,13 +54,13 @@ if (isset( $_POST ) && isset($_POST['submit']))
 	{
 		// create new order with orderitems, show successful notice, then redirect to orders page.
 		$ordersManager = new \BusinessLayer\OrderManager;
-		$id = $_SESSION[\Common\Security::$SessionUserIdKey];
-		$cart = $_SESSION[\Common\Security::$SessionCartArrayKey];
+		$id = $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey];
+		$cart = $_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey];
 		
 		$ordersManager->PlaceOrder($id, $cart);
 		
 		// clear the cart after placing the order.
-		$_SESSION[\Common\Security::$SessionCartArrayKey] = array();
+		$_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey] = array();
 			 
 		header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/orders.php?s=1");
     	exit;
@@ -73,7 +73,7 @@ $retrievedCaps = array();
 
 $page_size = \Common\Constants::$CheckoutTablePageSize;
 
-$cart_count = count($_SESSION[\Common\Security::$SessionCartArrayKey]);
+$cart_count = count($_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey]);
 
 ?>
 

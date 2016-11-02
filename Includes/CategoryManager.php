@@ -24,12 +24,12 @@ class CategoryManager
 	// get categories with assigned caps, paginated, to show on home page. 
 	public function RetrieveCategoriesForHomePage($firstRecordIndex, $numberOfRecords)
 	{
-		return $this->_data_manager->selectAvailableCategoriesWithLimit($firstRecordIndex, $numberOfRecords);
+		return $this->_data_manager->SelectAvailableCategoriesWithLimit($firstRecordIndex, $numberOfRecords);
 	}
 	
 	// get count of all categories with assigned caps, paginated, to show on home page. 
 	public function RetrieveCountOfCategoriesForHomePage()
 	{
-		return $this->_data_manager->selectCountOfAvailableCategories();
+		return $this->_data_manager->SelectCountOfAvailableCategories();
 	}
 }

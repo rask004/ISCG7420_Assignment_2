@@ -29,7 +29,7 @@ class AdminManager
 	*/
 	function findMatchingLogin($login)
 	{
-		if ($this->_data_manager->matchAdminByLogin($login));
+		if ($this->_data_manager->MatchAdminByLogin($login));
 		{
 			return true;
 		}
@@ -43,7 +43,7 @@ class AdminManager
 	*/
 	function findAdmin($id)
 	{
-		return $this->_data_manager->selectSingleAdmin($id);
+		return $this->_data_manager->SelectSingleAdmin($id);
 	}
 	
 	/*
@@ -52,7 +52,7 @@ class AdminManager
 	*/
 	function findAdminByLogin($login)
 	{
-		return $this->_data_manager->selectSingleAdminByLogin($login);
+		return $this->_data_manager->SelectSingleAdminByLogin($login);
 	}
 	
 	/*
@@ -66,7 +66,7 @@ class AdminManager
 			return false;
 		}
 		
-		$data = $this->_data_manager->requestAdminPasswordSaltAndHash($login);
+		$data = $this->_data_manager->RequestAdminPasswordSaltAndHash($login);
 		$salt = $data['passwordsalt'];
 		$expected_hash = $data['passwordhash'];
 		

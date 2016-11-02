@@ -13,8 +13,8 @@ include_once('../Includes/Session.php');
 include_once('../Includes/Common.php');
 
 
-if (!(isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1
-	&& isset($_SESSION[\Common\Security::$SessionAdminCheckKey])))
+if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] == 1
+	&& isset($_SESSION[\Common\SecurityConstraints::$SessionAdminCheckKey])))
 {
     header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/logout.php");
     exit;

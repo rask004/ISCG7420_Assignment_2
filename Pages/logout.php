@@ -9,10 +9,10 @@
 include_once('../Includes/Session.php');
 
 // perform logout session actions here
-unset($_SESSION[\Common\Security::$SessionAuthenticationKey]);
-unset($_SESSION[\Common\Security::$SessionUserLoginKey]);
-unset($_SESSION[\Common\Security::$SessionUserIdKey]);
-unset($_SESSION[\Common\Security::$SessionAdminCheckKey]);
+unset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]);
+unset($_SESSION[\Common\SecurityConstraints::$sessionUserLoginKey]);
+unset($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]);
+unset($_SESSION[\Common\SecurityConstraints::$SessionAdminCheckKey]);
 
 // Now any restart of session will involve new session id. This is more secure.
 session_regenerate_id();

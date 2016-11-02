@@ -15,7 +15,7 @@ namespace Common;
 */
 class SecurityConstraints
 {
-	public static $SessionUserLoginKey = "UserLogin";
+	public static $sessionUserLoginKey = "UserLogin";
 	public static $SessionUserIdKey = "UserId";
 	public static $SessionAuthenticationKey = "IsAuthenticated";
 	public static $SessionAdminCheckKey = "IsAdmin";
@@ -23,11 +23,11 @@ class SecurityConstraints
 	public static $SessionCartArrayKey = "ShoppingCart";
 	
 	// maximum size of salts.
-	private static $_CryptoSaltLength = 16;
+	private static $_cryptoSaltLength = 16;
 	
 	// maximum size of hashes
-	private static $_CryptoPassMaxLength = 48;
-	private static $_CryptoRandomAlphaNumeric = 'abcdefghijklmnopqrstuvwxyzQAZXSWEDCVFRTGBNHYUJMKILOP1234567890!@#^&_+,.' ;
+	private static $_cryptoPassMaxLength = 48;
+	private static $_cryptoRandomAlphaNumeric = 'abcdefghijklmnopqrstuvwxyzQAZXSWEDCVFRTGBNHYUJMKILOP1234567890!@#^&_+,.' ;
 	
 	/*
 		generate a random salt.
@@ -35,10 +35,10 @@ class SecurityConstraints
 	public static function getRandomSalt()
 	{
 		$salt = '';
-		$max = strlen(self::$_CryptoRandomAlphaNumeric) - 1;
-		for($i = 0; $i < self::$_CryptoSaltLength; $i++)
+		$max = strlen(self::$_cryptoRandomAlphaNumeric) - 1;
+		for($i = 0; $i < self::$_cryptoSaltLength; $i++)
 		{
-			$salt .= self::$_CryptoRandomAlphaNumeric[rand(0, $max)];
+			$salt .= self::$_cryptoRandomAlphaNumeric[rand(0, $max)];
 		}
 		
 		return $salt;
@@ -50,10 +50,10 @@ class SecurityConstraints
 	public static function getRandomPassword()
 	{
 		$pass = '';
-		$max = strlen(self::$_CryptoRandomAlphaNumeric) - 1;
-		for($i = 0; $i < self::$_CryptoPassMaxLength; $i++)
+		$max = strlen(self::$_cryptoRandomAlphaNumeric) - 1;
+		for($i = 0; $i < self::$_cryptoPassMaxLength; $i++)
 		{
-			$pass .= self::$_CryptoRandomAlphaNumeric[rand(0, $max)];
+			$pass .= self::$_cryptoRandomAlphaNumeric[rand(0, $max)];
 		}
 		
 		return $pass;

@@ -25,7 +25,7 @@ class CapManager
 	*/
 	function GetSingleCap($capId)
 	{
-		return $this->_data_manager->selectSingleCap($capId);
+		return $this->_data_manager->SelectSingleCap($capId);
 	}
 	
 	/*
@@ -33,7 +33,7 @@ class CapManager
 	*/
 	function GetCapsByCategorywithLimit($categoryId, $firstCapIndex, $numberOfCaps)
 	{
-		return $this->_data_manager->selectCapsbyCategoryIdWithLimit($categoryId, $firstCapIndex, $numberOfCaps);
+		return $this->_data_manager->SelectCapsbyCategoryIdWithLimit($categoryId, $firstCapIndex, $numberOfCaps);
 	}
 	
 	/*
@@ -41,7 +41,7 @@ class CapManager
 	*/
 	function GetAllCaps($firstCapIndex, $numberOfCaps)
 	{
-		return $this->_data_manager->selectAllCaps($firstCapIndex, $numberOfCaps);
+		return $this->_data_manager->SelectAllCaps($firstCapIndex, $numberOfCaps);
 	}
 	
 	/*
@@ -49,7 +49,7 @@ class CapManager
 	*/
 	function GetCapsByCategoryCount($categoryId)
 	{
-		return $this->_data_manager->selectCountOfCapsbyCategoryId($categoryId);
+		return $this->_data_manager->SelectCountOfCapsbyCategoryId($categoryId);
 	}
 	
 	/*
@@ -57,6 +57,6 @@ class CapManager
 	*/
 	function GetAllCapsCount()
 	{
-		return $this->_data_manager->selectCountOfAllCaps();
+		return $this->_data_manager->SelectCountOfAllCaps();
 	}
 }
