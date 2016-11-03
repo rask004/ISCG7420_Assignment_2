@@ -8,8 +8,6 @@
  *	NOTE: This page is both the register new customer page, AND the update member profile page.
  */
  
- ini_set("display_errors","1");
- 
 include_once('../Includes/Session.php');
 include_once('../Includes/Common.php');
 include_once("../Includes/CustomerManager.php");
@@ -163,7 +161,7 @@ if (isset($_POST["submit"]) && @strcmp($_POST["submit"], $postRegisterKey) === 0
 				
 				$queryString = "";
 				//redirect to login page. present message about mail failure if mail not sent.
-				if (!mail($receiverEmail, $subject, $body, $headers))
+				if (!@mail($receiverEmail, $subject, $body, $headers))
 				{
 					$queryString .= "?". \Common\Constants::$QueryStringEmailErrorKey . "=1";
 				}
@@ -237,7 +235,7 @@ if (isset($_POST["submit"]) && @strcmp($_POST["submit"], $postRegisterKey) === 0
 					$headers .= "Content-Type: text/html; charset=TIS-620 \n";
 					$headers .= "MIME-Version: 1.0 \r\n";
 					
-					if (!mail($receiverEmail, $subject, $body, $headers))
+					if (!@mail($receiverEmail, $subject, $body, $headers))
 					{
 						$errorMsg = "Profile was updated but could not send confirmation email.".
 									" Please contact admin at ". $senderEmail .".";
