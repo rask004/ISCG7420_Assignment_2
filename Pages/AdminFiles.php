@@ -83,11 +83,10 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
 			{
 				$file_parts = explode('.',$_FILES['file_upload']['name']);
 				$ext = $file_parts[count($file_parts) - 1];
-				$file_upload_name = "../" . \Common\Constants::$AdminFileuploadFolder . "/" . sha1_file($_FILES['file_upload']['tmp_name']) . "." . $ext;
+				$new_file_name = sha1_file($_FILES['file_upload']['tmp_name']) . "." . $ext;
+				$file_upload_name = "../" . \Common\Constants::$AdminFileuploadFolder . "/" . $new_file_name;
 				
-				if (!move_uploaded_file($_FILES['file_upload']['tmp_name'],
-					$file_upload_name
-					))
+				if (!move_uploaded_file($_FILES['file_upload']['tmp_name'],	$file_upload_name ))
 				{
 					$fileUploadError = 1;
 					$errorMsg = "failed to move tmp file to final location.";
@@ -127,6 +126,7 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
 		{
 			$("#input_delete_filename_hidden").val("");
 			$("#input_submit_delete").prop("disabled", true);
+			$("#imgDeletePreview").prop("src", "");	
 		}
 	</script>
 </head>
@@ -220,7 +220,7 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
                                 <br/>
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-12">
-                                		<img style="width:50%;height:50%" id="imgDeletePreview" src="" alt="image selected to delete.">
+                                		<img style="width:50%;height:50%" id="imgDeletePreview" src="" alt="selected image will appear here.">
                                     </div>
 
                                 </div>
@@ -250,6 +250,19 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
 	                        <div class="col-xs-2 col-sm-2 col-md-2">
                             	
                             </div>
+                        	<div class="col-xs-8 col-sm-8 col-md-8" style="text-align:center">
+                            	Uploaded files will use a hash for the filename. Therefore, it is safe to upload different images with the same name,
+                                but you cannot upload identical images. There is no option to rename files once uploaded.
+                            </div>
+                            <div class="col-xs-2 col-sm-2 col-md-2">
+                            	
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="row">
+	                        <div class="col-xs-2 col-sm-2 col-md-2">
+                            	
+                            </div>
                         	<div class="col-xs-8 col-sm-8 col-md-8" style="background-color:#979797; text-align:center">
                             	<b><label style="font-size:2em" id="InfoMsg" >
                                 	    <?php
@@ -259,7 +272,13 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
 											}
 											elseif(isset($fileUploadSuccess))
 											{
-												echo "SUCCESS, file uploaded. ";	
+												$msg = "SUCCESS, file uploaded. ";
+												if(isset($new_file_name))
+												{
+													$msg .= "Filename: <p>" . $new_file_name . "</p>";		
+												}
+												
+												echo $msg;
 											}
 											elseif(isset($fileDeleteError))
 											{
