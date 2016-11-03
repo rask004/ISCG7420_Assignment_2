@@ -8,8 +8,6 @@
 
 namespace BusinessLayer;
 
- ini_set("display_errors","1");
-
 require_once('DataLayer.php');
 require_once('Common.php');
 

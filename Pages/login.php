@@ -5,15 +5,13 @@
  * Date: 11/10/2016
  * Time: 10:09 PM
  */
- 
- ini_set('display_errors','1');
 
 include_once('../Includes/Session.php');
 include_once('../Includes/Common.php');
 include_once('../Includes/CustomerManager.php');
 include_once('../Includes/AdminManager.php');
 
-$msg = "testmessage";
+$msg = "";
 $senderEmail = \Common\Constants::$EmailAdminDefault;
 
 // in case of email error, notify visitor of successful registration but email failure.
@@ -32,9 +30,7 @@ if (isset($_POST['inputLogin']) && isset($_POST['inputPassword']))
 	$AdminManager = new \BusinessLayer\AdminManager;
 	
 	if ($CustomerManager->CheckMatchingPasswordForCustomerLogin($_POST['inputLogin'], $_POST['inputPassword']))
-	{
-		echo '<p>' . 
-		
+	{		
 		// successful member login
 		$Customer = $CustomerManager->FindCustomerByLogin($_POST['inputLogin']);
 		
@@ -191,7 +187,7 @@ if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && 
     
     <?php
 		// if there is notification to show, show it.
-		if(isset($msg) )
+		if(isset($msg) && !empty($msg) )
 		{
 			// registration notifications override login warnings.
 			// besides, they should be mutually exclusive.

@@ -785,17 +785,21 @@ else
                         </div>
                         <br/>
                     </div>
+                    
+                    </form>
+                    
                     <br/>
-                    <div id="divErrorMessage" style="color:red; ">
-	                    <p>
+                    <div id="divErrorMessage" hidden style="background-color: red; border: solid black 2px;">
+	                    <label>
 							<?php 
 								// only show errors if a message is given.
 								if (isset($errorMsg))
 								{
+									echo '<script type="text/javascript">$("#divErrorMessage").prop("hidden", false);</script>';
 									echo $errorMsg;	
 								}
 							?>
-                        </p>
+                        </label>
                     </div>
                 </div>
                 <div id="divLeftSidebar" class="col-md-3">
@@ -805,24 +809,8 @@ else
         </div>
         
 
-    </form>
+    
 
     <?php include_once("../Includes/footer.php"); ?>
-    <?php 
-		// make div for error message more visible
-		if (isset($errorMsg))
-		{
-			echo '<script type="text/javascript">'.
-				'$("#divErrorMessage").prop'."('border', 'solid black 2px');".
-				'$("#divErrorMessage").prop'."('background-color', 'red');".
-				'</script>';
-		}
-		if (isset($successfulProfileUpdate))
-		{
-			echo '<script type="text/javascript">'.
-				'reset_form();'.
-				'</script>';
-		}
-	?>
 </body>
 </html>
