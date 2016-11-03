@@ -12,14 +12,14 @@ include_once('../Includes/CategoryManager.php');
 include_once('../Includes/CapManager.php');
 
 // only customers and visitors can visit home page. 
-if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && isset($_SESSION[\Common\Security::$SessionAdminCheckKey]))
+if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && isset($_SESSION[\Common\SecurityConstraints::$SessionAdminCheckKey]))
 {
     header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/AdminFiles.php");
     exit;
 }
 
 $cartPageSize = \Common\Constants::$HomeCartTablePageSize;
-$cartItemCount = count($_SESSION[\Common\Security::$SessionCartArrayKey]);
+$cartItemCount = count($_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey]);
 
 $categoryPageSize = \common\constants::$HomeCategoriesTablePageSize;
 $categoryManager = new \BusinessLayer\CategoryManager;
@@ -36,85 +36,89 @@ unset($categoryManager);
 <head>
     <meta charset="utf-8">
     <title>Quality Caps - Home Page</title>
-    <link rel="stylesheet" type="text/css" href="../css/jquery-ui.css">
-    <link rel="stylesheet" type="text/css" href="../css/jquery-ui.structure.css">
-    <link rel="stylesheet" type="text/css" href="../css/jquery-ui.theme.css">
-    <link rel="stylesheet" type="text/css" href="../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="../css/Common.css">
-    <script type="text/javascript" src="../js/jquery.js"></script>
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
     <script type="text/javascript">
 	
 		// clear the cart. 
-		function ClearCart()
+		function clearCart()
 		{
 			$( document ).ready(function() {
-				$("#divShoppingCart").load("../Includes/Ajax/HomeCart.ajax.php", {c:1},
+				$("#divShoppingCart").load("../Includes/Ajax/HomeCart.ajax.php", {c:1, p:1},
 					function(responseTxt, statusTxt, xhr)
 					{
 						$("#inputJsParamsCartItemCount").val(0);	// cart is now empty.
 						$("#inputJsParamsCartPage").val(1);			// placeholder for current page.
+						
+						$("#lblCartPrevPage").html("Previous");
+						$("#lblCartPrevPage").prop("class", "label label-primary PageLinkDisabled");
+						$("#lblCartPageNumber").html("Page: 1");
+						$("#lblCartNextPage").html("Next");
+						$("#lblCartNextPage").prop("class", "label label-primary PageLinkDisabled");
 					}
 				);
 			});
-			
-			ShowPageCart(1);
 		};
 		
-		// show a page of the cart.
-		function ShowPageCart(page)
+		// manage the cart page controls.
+		function updateCartPageControls(page)
 		{
-			// grab and parse stored page data.
 			page = parseInt(page);
+			var pagesize =  parseInt($("#inputJsParamsCartPageSize").val());
+			var itemcount = parseInt($("#inputJsParamsCartItemCount").val());
 			
+			// update page controls.
+			var nextPage = page + 1;
+			var prevPage = page - 1;
+			
+			if (itemcount <= pagesize)
+			{
+				$("#lblCartPrevPage").html("Previous");
+				$("#lblCartPrevPage").prop("class", "label label-primary PageLinkDisabled");
+				$("#lblCartPageNumber").html("Page: 1");
+				$("#lblCartNextPage").html("Next");
+				$("#lblCartNextPage").prop("class", "label label-primary PageLinkDisabled");
+			}
+			else if (page <= 1)
+			{
+				$("#lblCartPrevPage").html("Previous");
+				$("#lblCartPrevPage").prop("class", "label label-primary PageLinkDisabled");
+				$("#lblCartPageNumber").html("Page: 1");
+				$("#lblCartNextPage").html('<a href="#" class="PageLinkActive" onclick="showPageCart( ' + nextPage + ')">Next</a>');
+				$("#lblCartNextPage").prop("class", "label label-primary PageLinkActive");
+			}
+			else if (page * pagesize >= itemcount)
+			{
+				$("#lblCartPrevPage").html('<a href="#" class="PageLinkActive" onclick="showPageCart( ' + prevPage + ')">Previous</a>');
+				$("#lblCartPrevPage").prop("class", "label label-primary PageLinkActive");
+				$("#lblCartPageNumber").html("Page: " + page);
+				$("#lblCartNextPage").html("Next");
+				$("#lblCartNextPage").prop("class", "label label-primary PageLinkDisabled");
+			}
+			else
+			{
+				$("#lblCartPrevPage").html('<a href="#" class="PageLinkActive" onclick="showPageCart( ' + prevPage + ')">Previous</a>');
+				$("#lblCartPrevPage").prop("class", "label label-primary PageLinkActive");
+				$("#lblCartPageNumber").html("Page: " + page);
+				$("#lblCartNextPage").html('<a href="#" class="PageLinkActive" onclick="showPageCart( ' + nextPage + ')">Next</a>');
+				$("#lblCartNextPage").prop("class", "label label-primary PageLinkActive");
+			}
+			
+		}
+		
+		// show a page of the cart.
+		function showPageCart(page)
+		{			
 			$( document ).ready(function() {
-				// update the current page.
-				
-				//pagesize =  parseInt($("#inputJsParamsCartPageSize").val());
-				
-				// cannot use itemcount variable, from parsing inputJsParamsCartItemCount as integer - seems to produce wrong value.
-				// instead, use inputJsParamsCartItemCount element value directly
+				// update the current page.				
 			
 				$("#divShoppingCart").load("../Includes/Ajax/HomeCart.ajax.php", {p:page},
 					function(responseTxt, statusTxt, xhr)
 					{
 						if(statusTxt == "success")
 						{
-							// update page controls.
-							var nextPage = page + 1;
-							var prevPage = page - 1;
-							
-							if ($("#inputJsParamsCartItemCount").val() <= $("#inputJsParamsCartPageSize").val())
-							{
-								$("#lblCartPrevPage").html("Previous");
-								$("#lblCartPrevPage").css("PageLinkDisabled");
-								$("#lblCartPageNumber").html("Page: 1");
-								$("#lblCartNextPage").html("Next");
-								$("#lblCartNextPage").css("PageLinkDisabled");
-							}
-							else if (page <= 1)
-							{
-								$("#lblCartPrevPage").html("Previous");
-								$("#lblCartPrevPage").css("PageLinkDisabled");
-								$("#lblCartPageNumber").html("Page: 1");
-								$("#lblCartNextPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCart( ' + nextPage + ')">Next</a>');
-								$("#lblCartNextPage").css("PageLinkActive");
-							}
-							else if (page * $("#inputJsParamsCartPageSize").val() >= $("#inputJsParamsCartItemCount").val())
-							{
-								$("#lblCartPrevPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCart( ' + prevPage + ')">Previous</a>');
-								$("#lblCartPrevPage").css("PageLinkActive");
-								$("#lblCartPageNumber").html("Page: " + page);
-								$("#lblCartNextPage").html("Next");
-								$("#lblCartNextPage").css("PageLinkDisabled");
-							}
-							else
-							{
-								$("#lblCartPrevPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCart( ' + prevPage + ')">Previous</a>');
-								$("#lblCartPrevPage").css("PageLinkActive");
-								$("#lblCartPageNumber").html("Page: " + page);
-								$("#lblCartNextPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCart( ' + nextPage + ')">Next</a>');
-								$("#lblCartNextPage").css("PageLinkActive");
-							}
+							updateCartPageControls(page);
 						}
 					}
 				);
@@ -125,7 +129,7 @@ unset($categoryManager);
 		};
 		
 		// remove one cart item, given an item id.
-		function DeleteCartItem(id)
+		function deleteCartItem(id)
 		{
 			id = parseInt(id);
 			var page = parseInt($("#inputJsParamsCartPage").val());
@@ -145,53 +149,18 @@ unset($categoryManager);
 								$("#inputJsParamsCartPage").val(page);	
 							}
 							
-							// update page controls
-							var nextPage = $("#inputJsParamsCartPage").val() + 1;
-							var prevPage = $("#inputJsParamsCartPage").val() - 1;							
-							
-							if ($("#inputJsParamsCartItemCount").val() <= $("#inputJsParamsCartPageSize").val())
-							{
-								$("#lblCartPrevPage").html("Previous");
-								$("#lblCartPrevPage").css("PageLinkDisabled");
-								$("#lblCartPageNumber").html("Page: 1");
-								$("#lblCartNextPage").html("Next");
-								$("#lblCartNextPage").css("PageLinkDisabled");
-							}
-							else if ($("#inputJsParamsCartPage").val() <= 1)
-							{
-								$("#lblCartPrevPage").html("Previous");
-								$("#lblCartPrevPage").css("PageLinkDisabled");
-								$("#lblCartPageNumber").html("Page: 1");
-								$("#lblCartNextPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCart( ' + nextPage + ')">Next</a>');
-								$("#lblCartNextPage").css("PageLinkActive");
-							}
-							else if ($("#inputJsParamsCartPage").val() * $("#inputJsParamsCartPageSize").val() >= $("#inputJsParamsCartItemCount").val())
-							{
-								$("#lblCartPrevPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCart( ' + prevPage + ')">Previous</a>');
-								$("#lblCartPrevPage").css("PageLinkActive");
-								$("#lblCartPageNumber").html("Page: " + page);
-								$("#lblCartNextPage").html("Next");
-								$("#lblCartNextPage").css("PageLinkDisabled");
-							}
-							else
-							{
-								$("#lblCartPrevPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCart( ' + prevPage + ')">Previous</a>');
-								$("#lblCartPrevPage").css("PageLinkActive");
-								$("#lblCartPageNumber").html("Page: " + page);
-								$("#lblCartNextPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCart( ' + nextPage + ')">Next</a>');
-								$("#lblCartNextPage").css("PageLinkActive");
-							}
-							
 							$("#inputJsParamsCartPage").val(page);
 							$("#inputJsParamsCartItemCount").val(itemcount);
+							
+							updateCartPageControls(page);
 						}
 					}
 				);
-			});			
+			});
 		};
 		
 		// show a page of categories
-		function ShowPageCategories(page)
+		function showPageCategories(page)
 		{
 			// grab and parse stored page data.
 			page = parseInt(page);
@@ -210,31 +179,34 @@ unset($categoryManager);
 							if ($("#inputJsParamsCategoryItemCount").val() <= $("#inputJsParamsCategoryPageSize").val())
 							{
 								$("#lblCategoriesPrevPage").html("Previous");
-								$("#lblCategoriesPrevPage").css("PageLinkDisabled");
+								$("#lblCategoriesPrevPage").prop("class", "label label-primary PageLinkDisabled");
 								$("#lblCategoriesPageNumber").html("Page: 1");
 								$("#lblCategoriesNextPage").html("Next");
-								$("#lblCategoriesNextPage").css("PageLinkDisabled");
+								$("#lblCategoriesNextPage").prop("class", "label label-primary PageLinkDisabled");
 							}
 							else if (page <= 1)
 							{
 								$("#lblCategoriesPrevPage").html("Previous");
-								$("#lblCategoriesPrevPage").css("PageLinkDisabled");
+								$("#lblCategoriesPrevPage").prop("class", "label label-primary PageLinkDisabled");
 								$("#lblCategoriesPageNumber").html("Page: 1");
-								$("#lblCategoriesNextPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCategories( ' + nextPage + ')">Next</a>');
-								$("#lblCategoriesNextPage").css("PageLinkActive");
+								$("#lblCategoriesNextPage").html('<a href="#" class="PageLinkActive" onclick="showPageCategories( ' + nextPage + ')">Next</a>');
+								$("#lblCategoriesNextPage").prop("class", "label label-primary PageLinkActive");
 							}
 							else if (page * $("#inputJsParamsCategoryPageSize").val() >= $("#inputJsParamsCategoryItemCount").val())
 							{
-								$("#lblCategoriesPrevPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCategories( ' + prevPage + ')">Previous</a>');
+								$("#lblCategoriesPrevPage").html('<a href="#" class="PageLinkActive" onclick="showPageCategories( ' + prevPage + ')">Previous</a>');
+								$("#lblCategoriesPrevPage").prop("class", "label label-primary PageLinkActive");
 								$("#lblCategoriesPageNumber").html("Page: " + page);
 								$("#lblCategoriesNextPage").html("Next");
-								$("#lblCategoriesNextPage").css("PageLinkDisabled");
+								$("#lblCategoriesNextPage").prop("class", "label label-primary PageLinkDisabled");
 							}
 							else
 							{
-								$("#lblCategoriesPrevPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCategories( ' + prevPage + ')">Previous</a>');
+								$("#lblCategoriesPrevPage").html('<a href="#" class="PageLinkActive" onclick="showPageCategories( ' + prevPage + ')">Previous</a>');
+								$("#lblCategoriesPrevPage").prop("class", "label label-primary PageLinkActive");
 								$("#lblCategoriesPageNumber").html("Page: " + page);
-								$("#lblCategoriesNextPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCategories( ' + nextPage + ')">Next</a>');
+								$("#lblCategoriesNextPage").html('<a href="#" class="PageLinkActive" onclick="showPageCategories( ' + nextPage + ')">Next</a>');
+								$("#lblCategoriesNextPage").prop("class", "label label-primary PageLinkActive");
 							}
 						}
 					}
@@ -246,7 +218,7 @@ unset($categoryManager);
 		};
 		
 		// show a page of caps, given a categoryId. If categoryId is -1, show page of all caps.
-		function ShowPageCaps(catId, page)
+		function showPageCaps(catId, page)
 		{
 			// grab and parse stored page data.
 			catId = parseInt(catId);
@@ -263,38 +235,45 @@ unset($categoryManager);
 					function(responseTxt, statusTxt, xhr)
 					{
 						if(statusTxt == "success")
-						{							
+						{
+							var pagesize =  parseInt($("#inputJsParamsCapPageSize").val());
+							var itemcount = parseInt($("#inputJsParamsCapItemCount").val());
+														
 							// update page controls.
 							var nextPage = page + 1;
 							var prevPage = page - 1;
 							
-							if ($("#inputJsParamsCapItemCount").val() <= $("#inputJsParamsCapPageSize").val())
+							if (itemcount <= pagesize)
 							{
 								$("#lblCapsPrevPage").html("Previous");
-								$("#lblCapsPrevPage").css("PageLinkDisabled");
+								$("#lblCapsPrevPage").prop("class", "label label-primary PageLinkDisabled");
 								$("#lblCapsPageNumber").html("Page: 1");
 								$("#lblCapsNextPage").html("Next");
-								$("#lblCapsNextPage").css("PageLinkDisabled");
+								$("#lblCapsNextPage").prop("class", "label label-primary PageLinkDisabled");
 							}
 							else if (page <= 1)
 							{
 								$("#lblCapsPrevPage").html("Previous");
-								$("#lblCapsPrevPage").css("PageLinkDisabled");
+								$("#lblCapsPrevPage").prop("class", "label label-primary PageLinkDisabled");
 								$("#lblCapsPageNumber").html("Page: 1");
-								$("#lblCapsNextPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCaps( ' + catId + ',' + nextPage + ')">Next</a>');
+								$("#lblCapsNextPage").html('<a href="#" class="PageLinkActive" onclick="showPageCaps( ' + catId + ',' + nextPage + ')">Next</a>');
+								$("#lblCapsNextPage").prop("class", "label label-primary PageLinkActive");
 							}
-							else if (page * $("#inputJsParamsCapPageSize").val() >= $("#inputJsParamsCapItemCount").val())
+							else if (page * pagesize >= itemcount)
 							{
-								$("#lblCapsPrevPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCaps( ' + catId + ',' + prevPage + ')">Previous</a>')
+								$("#lblCapsPrevPage").html('<a href="#" class="PageLinkActive" onclick="showPageCaps( ' + catId + ',' + prevPage + ')">Previous</a>');
+								$("#lblCapsPrevPage").prop("class", "label label-primary PageLinkActive");
 								$("#lblCapsPageNumber").html("Page: " + page);
 								$("#lblCapsNextPage").html("Next");
-								$("#lblCapsNextPage").css("PageLinkDisabled");
+								$("#lblCapsNextPage").prop("class", "label label-primary PageLinkDisabled");
 							}
 							else
 							{
-								$("#lblCapsPrevPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCaps( ' + catId + ',' + prevPage + ')">Previous</a>')
+								$("#lblCapsPrevPage").html('<a href="#" class="PageLinkActive" onclick="showPageCaps( ' + catId + ',' + prevPage + ')">Previous</a>');
+								$("#lblCapsPrevPage").prop("class", "label label-primary PageLinkActive");
 								$("#lblCapsPageNumber").html("Page: " + page);
-								$("#lblCapsNextPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCaps( ' + catId + ',' + nextPage + ')">Next</a>');
+								$("#lblCapsNextPage").html('<a href="#" class="PageLinkActive" onclick="showPageCaps( ' + catId + ',' + nextPage + ')">Next</a>');
+								$("#lblCapsNextPage").prop("class", "label label-primary PageLinkActive");
 							}
 						}
 					}
@@ -303,7 +282,7 @@ unset($categoryManager);
 		};
 		
 		// show a page of caps, given a categoryId. If categoryId is -1, show page of all caps.
-		function ShowCapDetails(capId)
+		function showCapDetails(capId)
 		{
 			// grab and parse stored page data.
 			capId = parseInt(capId);
@@ -323,29 +302,32 @@ unset($categoryManager);
 		};
 		
 		// add a cap to the cart
-		function AddCapToCart()
+		function addCapToCart()
 		{
 			var capId = parseInt($("#lblAddCapId").html());
 			var qty = parseInt($("#inputAddCapQuantity").val());
+			var page = parseInt($("#inputJsParamsCartPage").val());
 			
 			$( document ).ready(function() {
-				$("#divShoppingCart").load("../Includes/Ajax/HomeCart.ajax.php", {a:capId, aq:qty},
+				$("#divShoppingCart").load("../Includes/Ajax/HomeCart.ajax.php", {a:capId, aq:qty, p:page},
 					function(responseTxt, statusTxt, xhr)
 					{
 						$("#divCapsPageControls").prop("hidden", false);
 						$("#divCapsByCategory").prop("hidden", false);
 						$("#divCapDetails").prop("hidden", true);
 						$("#txtCapsHeader").html("Caps");
+						
+						if(statusTxt == "success")
+						{
+							updateCartPageControls(page);
+						}
 					}
 				);
 			});
-			
-			ShowPageCart(1);
-			
 		}
 		
 		// reshow the caps page
-		function ReturnToCapListing()
+		function returnToCapListing()
 		{
 			$("#divCapsPageControls").prop("hidden", false);
 			$("#divCapsByCategory").prop("hidden", false);
@@ -358,7 +340,7 @@ unset($categoryManager);
 
 <body>
     <?php
-    if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
+    if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] == 1)
     {
         include_once("../Includes/navbar.member.php");
     }
@@ -406,13 +388,13 @@ unset($categoryManager);
                                     <div class="col-xs-0 col-sm-1 col-md-1">
                                     </div>
                                     <div class="col-xs-4 col-sm-3 col-md-3">
-                                        <label class="label label-primary PageLinkDisabled" id="lblCategoriesPrevPage"></label>
+                                        <label class="label label-primary" id="lblCategoriesPrevPage"></label>
                                     </div>
                                     <div class="col-xs-4 col-sm-4 col-md-4">
                                         <label class="label label-primary PageLinkDisabled" id="lblCategoriesPageNumber"></label>
                                     </div>
                                     <div class="col-xs-4 col-sm-3 col-md-3">
-                                        <label class="label label-primary PageLinkDisabled" id="lblCategoriesNextPage"></label>
+                                        <label class="label label-primary" id="lblCategoriesNextPage"></label>
                                     </div>
                                 </div>
                             </div>
@@ -456,7 +438,7 @@ unset($categoryManager);
                     </div>
                     <br/>
                     
-                    <div class="row">
+                    <div id="divCapsPageControls" class="row">
                         
                         <div class="col-xs-12 col-sm-12 col-md-12">
                         	<div class="container-fluid">
@@ -464,13 +446,13 @@ unset($categoryManager);
                                     <div class="col-xs-0 col-sm-1 col-md-1">
                                     </div>
                                     <div class="col-xs-4 col-sm-3 col-md-3">
-                                        <label class="label label-primary PageLinkDisabled" id="lblCapsPrevPage"></label>
+                                        <label class="label label-primary" id="lblCapsPrevPage"></label>
                                     </div>
                                     <div class="col-xs-4 col-sm-4 col-md-4">
                                         <label class="label label-primary PageLinkDisabled" id="lblCapsPageNumber"></label>
                                     </div>
                                     <div class="col-xs-4 col-sm-3 col-md-3">
-                                        <label class="label label-primary PageLinkDisabled" id="lblCapsNextPage"></label>
+                                        <label class="label label-primary" id="lblCapsNextPage"></label>
                                     </div>
                                 </div>
                             </div>
@@ -521,13 +503,13 @@ unset($categoryManager);
                                         
                                     </div>
                                     <div class="col-xs-4 col-sm-3 col-md-3">
-                                        <label class="label label-primary PageLinkDisabled" id="lblCartPrevPage"></label>
+                                        <label class="label label-primary" id="lblCartPrevPage"></label>
                                     </div>
                                     <div class="col-xs-4 col-sm-4 col-md-4">
                                         <label class="label label-primary PageLinkDisabled" id="lblCartPageNumber"></label>
                                     </div>
                                     <div class="col-xs-4 col-sm-3 col-md-3">
-                                        <label class="label label-primary PageLinkDisabled" id="lblCartNextPage"></label>
+                                        <label class="label label-primary" id="lblCartNextPage"></label>
                                     </div>
                                 </div>
                             </div>
@@ -543,11 +525,12 @@ unset($categoryManager);
                     	<!-- show buttons for clearing cart and doing checkout, checkout only available if logged in. -->
                         <div class="col-xs-0 col-sm-1 col-md-1"></div>
                         <div class="col-xs-6 col-sm-3 col-md-3">
-                        	<input type="button" class="btn btn-primary" value="Clear" onclick="ClearCart()" />
+                        	<input type="button" class="btn btn-primary" value="Clear" onclick="clearCart()" />
                         </div>
                         <div class="col-xs-0 col-sm-3 col-md-3"></div>
                         <div class="col-xs-6 col-sm-3 col-md-3">
-                        	<input disabled id="btnCheckout" type="button" class="btn btn-primary" value="Checkout" onclick="location.assign('http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/checkout.php')" />
+                        	<input disabled id="btnCheckout" type="button" class="btn btn-primary" value="Checkout" 
+                            	onclick="location.assign('http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/checkout.php')" />
                         </div>
                     </div>
                     <br/> 
@@ -557,19 +540,22 @@ unset($categoryManager);
     </div>
     
     <script type="text/javascript">
-    	ShowPageCart(1);
-		ShowPageCategories(1);
-		ShowPageCaps(-1,1);
+		// load initial pages for each section.
+    	showPageCart(1);
+		showPageCategories(1);
+		showPageCaps(-1,1);		// initially, load all caps. 
     </script>
 
     <?php include_once("../Includes/footer.php"); ?>
     
     <?php
-		if(count($_SESSION[\Common\Security::$SessionCartArrayKey]) == 0)
+		// enable or disable checkout button depending on if customer is logged in or there are items in the cart.
+		if(count($_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey]) == 0)
 		{
 			echo '<script type="text/javascript">$("#btnCheckout").prop("disabled", true);</script>';
 		}
-		elseif (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
+		elseif (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) 
+				&& $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] == 1)
 		{
 			echo '<script type="text/javascript">$("#btnCheckout").prop("disabled", false);</script>';
 		}

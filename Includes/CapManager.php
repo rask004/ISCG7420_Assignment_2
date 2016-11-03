@@ -13,21 +13,19 @@ require_once('DataLayer.php');
 // Caps business object.
 class CapManager
 {
-	private $_data_manager;	
+	private $_dataManager;	
 	
 	function __construct()
 	{
-		$this->_data_manager = new \DataLayer\DataManager;
+		$this->_dataManager = new \DataLayer\DataManager;
 	}
-	
-	// TODO: add functionality for managing retrieving cap records and single caps.
 	
 	/*
 		Retrieve a single cap.
 	*/
 	function GetSingleCap($capId)
 	{
-		return $this->_data_manager->selectSingleCap($capId);
+		return $this->_dataManager->SelectSingleCap($capId);
 	}
 	
 	/*
@@ -35,7 +33,7 @@ class CapManager
 	*/
 	function GetCapsByCategorywithLimit($categoryId, $firstCapIndex, $numberOfCaps)
 	{
-		return $this->_data_manager->selectCapsbyCategoryIdWithLimit($categoryId, $firstCapIndex, $numberOfCaps);
+		return $this->_dataManager->SelectCapsbyCategoryIdWithLimit($categoryId, $firstCapIndex, $numberOfCaps);
 	}
 	
 	/*
@@ -43,7 +41,7 @@ class CapManager
 	*/
 	function GetAllCaps($firstCapIndex, $numberOfCaps)
 	{
-		return $this->_data_manager->selectAllCaps($firstCapIndex, $numberOfCaps);
+		return $this->_dataManager->SelectAllCaps($firstCapIndex, $numberOfCaps);
 	}
 	
 	/*
@@ -51,7 +49,7 @@ class CapManager
 	*/
 	function GetCapsByCategoryCount($categoryId)
 	{
-		return $this->_data_manager->selectCountOfCapsbyCategoryId($categoryId);
+		return $this->_dataManager->SelectCountOfCapsbyCategoryId($categoryId);
 	}
 	
 	/*
@@ -59,6 +57,6 @@ class CapManager
 	*/
 	function GetAllCapsCount()
 	{
-		return $this->_data_manager->selectCountOfAllCaps();
+		return $this->_dataManager->SelectCountOfAllCaps();
 	}
 }

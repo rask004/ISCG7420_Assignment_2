@@ -14,22 +14,22 @@ require_once('DataLayer.php');
 
 class CategoryManager
 {
-	private $_data_manager;	
+	private $_dataManager;	
 	
 	function __construct()
 	{
-		$this->_data_manager = new \DataLayer\DataManager;
+		$this->_dataManager = new \DataLayer\DataManager;
 	}
 	
 	// get categories with assigned caps, paginated, to show on home page. 
 	public function RetrieveCategoriesForHomePage($firstRecordIndex, $numberOfRecords)
 	{
-		return $this->_data_manager->selectAvailableCategoriesWithLimit($firstRecordIndex, $numberOfRecords);
+		return $this->_dataManager->SelectAvailableCategoriesWithLimit($firstRecordIndex, $numberOfRecords);
 	}
 	
 	// get count of all categories with assigned caps, paginated, to show on home page. 
 	public function RetrieveCountOfCategoriesForHomePage()
 	{
-		return $this->_data_manager->selectCountOfAvailableCategories();
+		return $this->_dataManager->SelectCountOfAvailableCategories();
 	}
 }

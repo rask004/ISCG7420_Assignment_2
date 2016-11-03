@@ -1,127 +1,63 @@
 ﻿"use strict";       // more secure.
 
-var emailExp = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([com\co\.\in])+$/; // regex to validate email
-var NumericChars = "0123456789";
-var AlphaPeriodCommaApostropheSpace = "abcdefghijklmnopqrstuvwxyzQAZXSWEDCVFRTGBNHYUJMKILOP., '";
-var AlphaChars = "abcdefghijklmnopqrstuvwxyzQAZXSWEDCVFRTGBNHYUJMKILOP";
+var emailRegex = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([com\co\.\in])+$/; // regex to validate email
+var genericNameRegex = /^[a-zA-Z',.\s]*/;
+var loginRegex = /^[a-zA-Z0-9_]*/;
+var landlineRegex = /^0[0-9]{7,9}/;
+var cellPhoneRegex = /^0[0-9]{8,10}/;
+var addressRegex = /^[0-9a-zA-Z]+\s[a-zA-z\s]+/;
 
 
-// Administration Validation functions.
+// validation functions
 
-
-// Validate a string representing a name.
-function ValidateNameString(source, args) {
-
-    var char;
-    var textLength = args.Value.length;
-
-    for (var i = 0; i < textLength; i++) {
-        char = args.Value[i];
-        if (AlphaPeriodCommaApostropheSpace.indexOf(char) === -1) {
-            args.IsValid = false;
-            return false;
-        }
+// generic validation via regex.
+function validate(string, regex)
+{
+	if (!string.match(regex)) {
+        return false;
     }
 
-    args.IsValid = true;
     return true;
 }
 
+
 // Validate a string representing a name.
-function ValidateAlphanumeric(source, args) {
+function ValidateGenericNameString(string) {
 
-    var char;
-    var textLength = args.Value.length;
+    return validate(string, genericNameRegex);
+}
 
-    for (var i = 0; i < textLength; i++) {
-        char = args.Value[i];
-        if (AlphaChars.indexOf(char) === -1) {
-            args.IsValid = false;
-            return false;
-        }
-    }
+// Validate a string representing a login.
+function ValidateLoginString(string) {
 
-    args.IsValid = true;
-    return true;
+    return validate(string, loginRegex);
 }
 
 // Validate a string representing an Email
-function ValidateEmail(source, args) {
+function ValidateEmail(string) {
 
-    if (!textContent.match(emailExp)) {
-        args.IsValid = false;
-        return false;
-    }
-
-    args.IsValid = true;
-    return true;
+    return validate(string, emailRegex);
 }
 
 // Validate a string representing a Mobile contact Number
-function ValidateMobileNumber(source, args) {
+function ValidateCellNumber(string) {
 
-    if (args.Value[0] !== 0 ||
-        args.Value.substring(0,3) !== "+64") {
-        args.IsValid = false;
-        return false;
-    }
-
-    var subNumber;
-
-    if (args.Value.substring(0, 3) === "+64") {
-        subNumber = args.Value.substring(3);
-    } else {
-        subNumber = args.Value.substring(1);
-    }
-
-    if (subNumber.length < 7 || subNumber.length > 8) {
-        args.IsValid = false;
-        return false;
-    }
-
-    var char;
-    var textLength = subNumber.length;
-    var i = 0;
-
-    for (i = 0; i < textLength; i++) {
-        char = subNumber[i];
-        if (NumericChars.indexOf(char) === -1) {
-            args.IsValid = false;
-            return false;
-        }
-    }
-
-    args.IsValid = true;
-    return true;
-
+    return validate(string, cellPhoneRegex);
 }
 
 // Validate a string representing a Landline contact Number
-function ValidateLandlineNumber(source, args) {
+function ValidateLandlineNumber(string) {
 
-    if (args.Value[0] !== 0) {
-        args.IsValid = false;
-        return false;
-    }
+    return validate(string, landlineRegex);
+}
 
-    if (args.Value.length < 8 || args.Value.length > 10) {
-        args.IsValid = false;
-        return false;
-    }
+// Validate a string representing an address
+function ValidateAddress(string) {
 
-    var char;
-    var textLength = args.Value.length;
-    var i = 1;
+    return validate(string, addressRegex);
+}
 
-    for (i = 1; i < textLength; i++) {
-        char = args.Value[i];
-        if (NumericChars.indexOf(char) === -1) {
-            args.IsValid = false;
-            return false;
-        }
-    }
-
-    args.IsValid = true;
-    return true;
-
+// specific validation function for registration / profile update form.
+function customerFormValidation() {
+	
 }

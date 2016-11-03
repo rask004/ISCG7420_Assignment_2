@@ -9,6 +9,7 @@
 include_once('../../Includes/Common.php');
 include_once('../../Includes/Session.php');
 
+// If no error, redirect to home.
 if( !(isset( $_SESSION["last_Error"]) && $_SESSION["last_Error"] == "DB_Error_Generic"))
 {
 	header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/home.php");
@@ -22,10 +23,11 @@ if( !(isset( $_SESSION["last_Error"]) && $_SESSION["last_Error"] == "DB_Error_Ge
 <head>
     <meta charset="utf-8">
     <title>Quality Caps - ERROR, Database Connection</title>
-    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="../../css/Common.css">
-    <script type="text/javascript" src="../../js/jquery.js"></script>
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
     <script type="text/javascript">
+		// show error page for a while, then try to load home page
 		function doCountdown()
 		{
 			var count = $("#lblCountdown").html();
@@ -68,16 +70,16 @@ if( !(isset( $_SESSION["last_Error"]) && $_SESSION["last_Error"] == "DB_Error_Ge
 				
 					if (!isset($_SESSION["Error_MSG"]))
 					{
-						$DB_Error_Msg = $_SESSION["Error_MSG"];
+						$dbErrorMsg = $_SESSION["Error_MSG"];
 					}
 					else
 					{
-						$DB_Error_Msg = "NO MESSAGE";
+						$dbErrorMsg = "NO MESSAGE";
 					}
 					
 					$receiverEmail = \Common\Constants::$EmailAdminDefault;
 					$subject = "Quality Caps ERROR, Database query";
-					$body = "An Error was experienced during a database query.\r\nError Message : " . $DB_Error_Msg . "\r\n\r\n";
+					$body = "An Error was experienced during a database query.\r\nError Message : " . $dbErrorMsg . "\r\n\r\n";
 					$headers = "Content-Type: text/html; charset=TIS-620 \n";
 					$headers .= "MIME-Version: 1.0 \r\n";
 					

@@ -4,9 +4,14 @@ include_once('../Session.php');
 include_once("../CapManager.php");
 include_once('../Common.php');
 
-/*
-	AJAX page for showing home page caps
-*/
+/**
+ * Created by Dreamweaver.
+ * User: Roland
+ * Date: 28/10/2016
+ * Time: 7:00 PM
+ *
+ * AJAX page for showing home page caps
+ */
 
 // check for malformed AJAX
 if (isset($_REQUEST["p"]) && isset($_REQUEST["c"]) )
@@ -16,7 +21,7 @@ if (isset($_REQUEST["p"]) && isset($_REQUEST["c"]) )
 	$CapManager = new \BusinessLayer\CapManager;
 	$categoryId = (integer) ($_REQUEST["c"] + 0);
 	$page = (integer) ($_REQUEST["p"] + 0);
-	$pagesize = \Common\Constants::$HomeCapsTablePageSize;
+	$pageSize = \Common\Constants::$HomeCapsTablePageSize;
 	$pagewidth = \Common\Constants::$HomeCapsTablePageWidth;
 	
 	if ($page < 1)
@@ -24,7 +29,7 @@ if (isset($_REQUEST["p"]) && isset($_REQUEST["c"]) )
 		$page = 1;
 	}
 	
-	$start = ($page - 1) * $pagesize;
+	$start = ($page - 1) * $pageSize;
 	
 	$caps = array();
 	
@@ -32,16 +37,16 @@ if (isset($_REQUEST["p"]) && isset($_REQUEST["c"]) )
 	
 	if ($categoryId < 0)
 	{
-		$caps = $CapManager->GetAllCaps($start, $pagesize);
+		$caps = $CapManager->GetAllCaps($start, $pageSize);
 		$capCount = $CapManager->GetAllCapsCount();
 	}
 	else
 	{
-		$caps = $CapManager->GetCapsByCategorywithLimit($categoryId, $start, $pagesize);
+		$caps = $CapManager->GetCapsByCategorywithLimit($categoryId, $start, $pageSize);
 		$capCount = $CapManager->GetCapsByCategoryCount($categoryId);
 	}
 	
-	echo '<script type="text/javascript">$("#inputJsParamsCapItemCount").val('.$capCount.')</script>';
+	echo '<script type="text/javascript">$("#inputJsParamsCapItemCount").val("'.$capCount.'")</script>';
 	
 	$c = 0;
 	
@@ -67,7 +72,7 @@ if (isset($_REQUEST["p"]) && isset($_REQUEST["c"]) )
 		echo '<div class="row"><div class="col-xs-12 col-sm-12 col-md-12">'.
 			'<img style="width:160px; height:160px;" class="img-thumbnail" alt="no picture" src="'.$imgUrl.'" /></div></div><br/>'.
 			'<div class="row"><div class="col-xs-8 col-sm-8 col-md-8">'.
-			'<input type="button" class="btn btn-primary" value="'.$name.'" onclick="ShowCapDetails('.$id.');" /></div>'.
+			'<input type="button" class="btn btn-primary" value="'.$name.'" onclick="showCapDetails('.$id.');" /></div>'.
 			'<div class="col-xs-0 col-sm-0 col-md-1"></div>'.
 			'<div class="col-xs-12 col-sm-8 col-md-8"><label>$ '.$price.' </label></div></div>';
 			
@@ -118,9 +123,9 @@ elseif (isset( $_REQUEST["d"] ))
 			'<div class="row"><div class="col-xs-0 col-sm-2 col-md-2"></div>'.
 			'<div class="col-xs-6 col-sm-9 col-md-9">'.$description.'</div></div><br/>'.
 			'<div class="row"><div class="col-xs-0 col-sm-2 col-md-2"></div>'.
-			'<div class="col-xs-6 col-sm-3 col-md-3"><input type="button" class="btn btn-primary" value="Add To Cart" onclick="AddCapToCart()" /></div>'.
+			'<div class="col-xs-6 col-sm-3 col-md-3"><input type="button" class="btn btn-primary" value="Add To Cart" onclick="addCapToCart()" /></div>'.
 			'<div class="col-xs-0 col-sm-2 col-md-2"></div>'.
-			'<div class="col-xs-6 col-sm-4 col-md-4"><input type="button" class="btn btn-primary" value="Cancel" onclick="ReturnToCapListing()" /></div>';
+			'<div class="col-xs-6 col-sm-4 col-md-4"><input type="button" class="btn btn-primary" value="Cancel" onclick="returnToCapListing()" /></div>';
 	}
 }
 else

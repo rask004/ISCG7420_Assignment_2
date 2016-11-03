@@ -11,14 +11,14 @@ include_once('../Includes/Common.php');
 include_once("../Includes/CapManager.php");
 include_once("../Includes/OrderManager.php");
 
-if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && isset($_SESSION[\Common\Security::$SessionAdminCheckKey]))
+if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && isset($_SESSION[\Common\SecurityConstraints::$SessionAdminCheckKey]))
 {
     header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/AdminFiles.php");
     exit;
 }
 
 // non-authenticated users should not be here.
-if (!isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) || $_SESSION[\Common\Security::$SessionAuthenticationKey] != 1)
+if (!isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) || $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] != 1)
 {
     header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/home.php");
     exit;
@@ -31,17 +31,22 @@ if (isset( $_POST ) && isset($_POST['submit']))
 	{
 		//remove the cart item
 		$id = $_POST['CapId'];
-		if (isset($_SESSION[\Common\Security::$SessionCartArrayKey][$id]))
+		if (isset($_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey][$id]))
 		{
-			unset($_SESSION[\Common\Security::$SessionCartArrayKey][$id]);
+			unset($_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey][$id]);
+		}
+		
+		if (count($_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey]) == 0) 
+		{
+			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/home.php");
+			exit;	
 		}
 		
 	}
 	elseif($_POST['submit'] == 'Clear')
 	{
 		// clear the cart and return to home.
-		unset($_SESSION[\Common\Security::$SessionCartArrayKey]);
-		$_SESSION[\Common\Security::$SessionCartArrayKey] = array();
+		$_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey] = array();
 		header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/home.php");
 		exit;
 	}
@@ -49,13 +54,13 @@ if (isset( $_POST ) && isset($_POST['submit']))
 	{
 		// create new order with orderitems, show successful notice, then redirect to orders page.
 		$ordersManager = new \BusinessLayer\OrderManager;
-		$id = $_SESSION[\Common\Security::$SessionUserIdKey];
-		$cart = $_SESSION[\Common\Security::$SessionCartArrayKey];
+		$id = $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey];
+		$cart = $_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey];
 		
 		$ordersManager->PlaceOrder($id, $cart);
 		
 		// clear the cart after placing the order.
-		$_SESSION[\Common\Security::$SessionCartArrayKey] = array();
+		$_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey] = array();
 			 
 		header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/orders.php?s=1");
     	exit;
@@ -66,12 +71,9 @@ $capsManager = new \BusinessLayer\CapManager;
 
 $retrievedCaps = array();
 
-$page_size = \Common\Constants::$CheckoutTablePageSize;
+$pageSize = \Common\Constants::$CheckoutTablePageSize;
 
-$cart_count = count($_SESSION[\Common\Security::$SessionCartArrayKey]);
-
-
-
+$cartCount = count($_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey]);
 
 ?>
 
@@ -80,12 +82,9 @@ $cart_count = count($_SESSION[\Common\Security::$SessionCartArrayKey]);
 <head>
     <meta charset="utf-8">
     <title>Quality Caps - Checkout</title>
-    <link rel="stylesheet" type="text/css" href="../css/jquery-ui.css">
-    <link rel="stylesheet" type="text/css" href="../css/jquery-ui.structure.css">
-    <link rel="stylesheet" type="text/css" href="../css/jquery-ui.theme.css">
-    <link rel="stylesheet" type="text/css" href="../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="../css/Common.css">
-    <script type="text/javascript" src="../js/jquery.js"></script>
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
     <script type="text/javascript">
 		function CheckoutAjaxPage(page)
 		{
@@ -105,26 +104,34 @@ $cart_count = count($_SESSION[\Common\Security::$SessionCartArrayKey]);
 						if (itemcount <= pagesize)
 						{
 							$("#lblPrevPage").html("Previous");
+							$("#lblPrevPage").prop("class","label label-primary PageLinkDisabled");
 							$("#lblPageNumber").html("Page: 1");
 							$("#lblNextPage").html("Next");
+							$("#lblNextPage").prop("class","label label-primary PageLinkDisabled");
 						}
 						else if (page <= 1)
 						{
 							$("#lblPrevPage").html("Previous");
+							$("#lblPrevPage").prop("class","label label-primary PageLinkDisabled");
 							$("#lblPageNumber").html("Page: 1");
-							$("#lblNextPage").html('<a href="#" onclick="CheckoutAjaxPage( ' + nextPage + ')">Next</a>');
+							$("#lblNextPage").html('<a href="#" class="PageLinkActive" onclick="CheckoutAjaxPage( ' + nextPage + ')">Next</a>');
+							$("#lblNextPage").prop("class","label label-primary PageLinkActive");
 						}
 						else if (page * pagesize >= itemcount)
 						{
-							$("#lblPrevPage").html('<a href="#" onclick="CheckoutAjaxPage( ' + prevPage + ')">Previous</a>')
+							$("#lblPrevPage").html('<a href="#" onclick="CheckoutAjaxPage( ' + prevPage + ')">Previous</a>');
+							$("#lblPrevPage").prop("class","label label-primary PageLinkActive");
 							$("#lblPageNumber").html("Page: " + page);
 							$("#lblNextPage").html("Next");
+							$("#lblNextPage").prop("class","label label-primary PageLinkDisabled");
 						}
 						else
 						{
-							$("#lblPrevPage").html('<a href="#" onclick="CheckoutAjaxPage( ' + prevPage + ')">Previous</a>')
+							$("#lblPrevPage").html('<a href="#" onclick="CheckoutAjaxPage( ' + prevPage + ')">Previous</a>');
+							$("#lblPrevPage").prop("class","label label-primary PageLinkActive");
 							$("#lblPageNumber").html("Page: " + page);
 							$("#lblNextPage").html('<a href="#" onclick="CheckoutAjaxPage( ' + nextPage + ')">Next</a>');
+							$("#lblNextPage").prop("class","label label-primary PageLinkActive");
 						}
 						
 						$("#inputJsParamsPage").val(page);
@@ -138,6 +145,7 @@ $cart_count = count($_SESSION[\Common\Security::$SessionCartArrayKey]);
 
 <body>
 	<?php
+		// only members can see the orders page
         include_once("../Includes/navbar.member.php");
     ?>
     
@@ -190,8 +198,8 @@ $cart_count = count($_SESSION[\Common\Security::$SessionCartArrayKey]);
                     </div>
                     
                     <input type="number" hidden id="inputJsParamsPage" value="1"/>
-                    <input type="number" hidden id="inputJsParamsPageSize" value="<?php echo $page_size ?>"/>
-                    <input type="number" hidden id="inputJsParamsItemCount" value="<?php echo $cart_count ?>"/>
+                    <input type="number" hidden id="inputJsParamsPageSize" value="<?php echo $pageSize ?>"/>
+                    <input type="number" hidden id="inputJsParamsItemCount" value="<?php echo $cartCount ?>"/>
                     
                     <br/>
                     <br/>
@@ -207,7 +215,7 @@ $cart_count = count($_SESSION[\Common\Security::$SessionCartArrayKey]);
                         <div class="col-xs-0 col-sm-3 col-md-3">
                         </div>
                         <div class="col-xs-6 col-sm-2 col-md-2">
-                             <input class="btn btn-primary" type="submit" Value="Checkout" name="submit" />
+                             <input id="btnCheckout" class="btn btn-primary" type="submit" Value="Checkout" name="submit" />
                         </div>
                         <div class="col-xs-0 col-sm-2 col-md-2">
                         </div>

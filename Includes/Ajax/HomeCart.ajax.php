@@ -4,9 +4,14 @@ include_once('../Session.php');
 include_once("../CapManager.php");
 include_once('../Common.php');
 
-/*
-
-*/
+/**
+ * Created by Dreamweaver.
+ * User: Roland
+ * Date: 28/10/2016
+ * Time: 7:00 PM
+ *
+ * AJAX page for showing home page cart
+ */
 
 // check for malformed AJAX
 if (!isset($_REQUEST["c"]) && !isset($_REQUEST["p"]) && !isset($_REQUEST["d"]) && !isset($_REQUEST["a"]) && !isset($_REQUEST["aq"]) )
@@ -33,9 +38,10 @@ if (!isset($_REQUEST["c"]) && !isset($_REQUEST["p"]) && !isset($_REQUEST["d"]) &
 // clear the cart.
 elseif (isset($_REQUEST["c"]))
 {
-	$_SESSION[\Common\Security::$SessionCartArrayKey] = array();
+	$_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey] = array();
 	
-	echo '<p><label>There are no items in your shopping cart.</label></p>';
+	// disable checkout
+	echo '<script type="text/javascript">$("#btnCheckout").prop("disabled", true);</script>';
 }
 
 // delete one cart item.
@@ -43,7 +49,16 @@ elseif (isset($_REQUEST["d"]))
 {
 	$id = (integer) ($_REQUEST["d"] + 0);
 	
-	unset($_SESSION[\Common\Security::$SessionCartArrayKey][$id]);
+	unset($_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey][$id]);
+	
+	$cart = $_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey];
+	$itemCount = count($cart);	
+	
+	// if cart is empty, disable checkout.
+	if ($itemCount == 0)
+	{
+		echo '<script type="text/javascript">$("#btnCheckout").prop("disabled", true);</script>';
+	}
 }
 
 // add a cart item, with a quantity to add by.
@@ -53,23 +68,23 @@ elseif( isset($_REQUEST["a"]) && isset($_REQUEST["aq"]) )
 	$id = (integer) ($_REQUEST["a"] + 0);
 	$qty = (integer) ($_REQUEST["aq"] + 0);
 	
-	if ( !isset($_SESSION[\Common\Security::$SessionCartArrayKey][$id]))
+	if ( !isset($_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey][$id]))
 	{
-		$_SESSION[\Common\Security::$SessionCartArrayKey][$id] = 0;	
+		$_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey][$id] = 0;	
 	}
 	
-	$_SESSION[\Common\Security::$SessionCartArrayKey][$id] += $qty;
+	$_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey][$id] += $qty;	
 }
 
 // update cart page
 if (isset($_REQUEST["p"]))
 {
-	$cart = $_SESSION[\Common\Security::$SessionCartArrayKey];
-	$itemcount = count($cart);	
+	$cart = $_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey];
+	$itemCount = count($cart);	
 	
-	echo '<input type="number" hidden id="inputJsParamsCartItemCount" value="'.$itemcount.'" />';
+	echo '<input type="number" hidden id="inputJsParamsCartItemCount" value="'.$itemCount.'" />';
 	
-	if ($itemcount == 0)
+	if ($itemCount == 0)
 	{
 		echo '<p><label>There are no items in your shopping cart.</label></p>';
 	}
@@ -77,7 +92,7 @@ if (isset($_REQUEST["p"]))
 	{
 		
 		$page = (integer) ($_REQUEST["p"] + 0);
-		$pagesize = \Common\Constants::$HomeCartTablePageSize;	
+		$pageSize = \Common\Constants::$HomeCartTablePageSize;	
 		$capsManager = new \BusinessLayer\CapManager;
 		
 		// cannot have a page of 0 or less.
@@ -86,7 +101,7 @@ if (isset($_REQUEST["p"]))
 			$page = 1;
 		}
 		// if an item has been deleted, may need to go back one page.
-		elseif(($page - 1) * $pagesize >= $itemcount)
+		elseif(($page - 1) * $pageSize >= $itemCount)
 		{
 			$page -= 1;
 		}
@@ -99,14 +114,14 @@ if (isset($_REQUEST["p"]))
 		$c = 1;
 		
 		// store pages to show.
-		$page_items = array();
+		$pageItems = array();
 	
 		foreach($cart as $capId=>$qty)
 		{
 			// if item is in current page, store it.
 			if($c >= $start && $c <= $end)
 			{
-				$page_items[$capId] = $qty;	
+				$pageItems[$capId] = $qty;	
 			}
 			
 			$c += 1;
@@ -117,7 +132,7 @@ if (isset($_REQUEST["p"]))
 		}
 	
 		// now display the pages
-		foreach($page_items as $capId=>$qty)
+		foreach($pageItems as $capId=>$qty)
 		{
 			$cap = $capsManager->GetSingleCap($capId);
 			$price = number_format((float)$cap["price"], 2, '.', '');
@@ -127,7 +142,7 @@ if (isset($_REQUEST["p"]))
 			
 			echo '<div class="row"><div class="col-xs-0 col-sm-1 col-md-1"></div>'.
 				'<div class="col-xs-4 col-sm-2 col-md-2">'.
-				'<input style="background-color:red" type="button" class="btn btn-danger" onclick="DeleteCartItem('.$capId.')" value="X" /></div>'.
+				'<input style="background-color:red" type="button" class="btn btn-danger" onclick="deleteCartItem('.$capId.')" value="X" /></div>'.
 				'<div class="col-xs-4 col-sm-2 col-md-2">'.
 				'<label>ID: </label></div><div class="col-xs-4 col-sm-2 col-md-2">'.
 				'<span>'. $capId .'</span></div><div class="col-xs-0 col-sm-4 col-md-4"></div></div>';
@@ -144,9 +159,9 @@ if (isset($_REQUEST["p"]))
 		}
 		
 		// if not enough items to fill the page, create empty placeholders.
-		if (count( $page_items) < (\Common\Constants::$HomeCartTablePageSize) )
+		if (count( $pageItems) < (\Common\Constants::$HomeCartTablePageSize) )
 		{
-			$c = (\Common\Constants::$HomeCartTablePageSize) - (count( $page_items));
+			$c = (\Common\Constants::$HomeCartTablePageSize) - (count( $pageItems));
 			
 			while ($c >0)
 			{
@@ -156,6 +171,18 @@ if (isset($_REQUEST["p"]))
 			
 				$c -= 1;	
 			}
+		}
+		
+		// if cart is empty, disable checkout. else enable
+		if ($itemCount > 0
+			&& isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) 
+			&& $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] == 1)
+		{
+			echo '<script type="text/javascript">$("#btnCheckout").prop("disabled", false);</script>';
+		}
+		else
+		{
+			echo '<script type="text/javascript">$("#btnCheckout").prop("disabled", true);</script>';
 		}
 	}
 }
