@@ -270,10 +270,11 @@ class DataManager
 			
 		$this->_conn->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
 		
-		$sql =  "update SiteUser set firstName='".$firstName."', set lastName='".$lastName."', set login='".$login."'," .
-		" set emailAddress='".$email."', set homenumber='".$homeNumber."', set worknumber='".$workNumber."', set mobilenumber='".$mobileNumber."',". 
-		" set streetaddress='".$streetAddress."', set suburb='".$suburb."', set city='".$city."' " .
+		$sql =  "update SiteUser set firstName='".$firstName."', lastName='".$lastName."', login='".$login."'," .
+		" emailAddress='".$email."', homenumber='".$homeNumber."', worknumber='".$workNumber."', mobilenumber='".$mobileNumber."',". 
+		" streetaddress='".$streetAddress."', suburb='".$suburb."', city='".$city."' " .
 		" where userType='C' AND id=" . $id . ";";
+		
 		$this->_conn->query($sql);
 		
 		if (!$this->_conn->commit())
@@ -285,7 +286,7 @@ class DataManager
 			exit;
 		}
 		
-		$this->_CloseConnection();								
+		$this->_CloseConnection();
 	}	
 	
 	/*

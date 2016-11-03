@@ -29,11 +29,6 @@ class CustomerManager
 	function RegisterCustomer($firstName, $lastName, $login, $password, $email, $homeNumber, 
 									$workNumber, $mobileNumber, $streetAddress, $suburb, $city)
 	{
-		if ($this->FindMatchingLogin($login) || $this->FindMatchingEmail($email))
-		{
-			return false;	
-		}
-		
 		$salt = \Common\SecurityConstraints::getRandomSalt();
 		while ($this->_dataManager->MatchesUsedSalt($salt))
 		{
@@ -55,12 +50,7 @@ class CustomerManager
 	*/
 	function UpdateProfile($firstName, $lastName, $login, $email, $homeNumber, 
 									$workNumber, $mobileNumber, $streetAddress, $suburb, $city, $id)
-	{
-		if ($this->FindMatchingLogin($login) || $this->FindMatchingEmail($email))
-		{
-			return false;	
-		}
-		
+	{				
 		$this->_dataManager->UpdateCustomerButNotPassword($firstName, $lastName, $login, $email, $homeNumber, 
 									$workNumber, $mobileNumber, $streetAddress, $suburb, $city, $id);
 		

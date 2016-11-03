@@ -21,7 +21,7 @@ $postRegisterKey = \Common\Constants::$RegistrationSubmitKeyword;
 $postUpdateProfileKey = \Common\Constants::$ProfileUpdateKeyword;
 
 // postback, when submitting new customer or updating profile.
-if (isset($_POST["submit"]) && ($_POST["submit"] == $postRegisterKey || $_POST["submit"] == $postUpdateProfileKey))
+if (isset($_POST["submit"]) && @strcmp($_POST["submit"], $postRegisterKey) === 0 || @strcmp($_POST["submit"], $postUpdateProfileKey) === 0)
 {
 	
 	foreach( $_POST as $key => $value)
@@ -37,11 +37,35 @@ if (isset($_POST["submit"]) && ($_POST["submit"] == $postRegisterKey || $_POST["
 	// for customer validation, server side
 	$isValid = true;
 	
-	// check if email or login is in use.
-	if ($CustomerManager->FindMatchingEmail($_POST["txtEmail"]) || $CustomerManager->FindMatchingLogin($_POST["txtLogin"]))
+	// check if login is in use.
+	if ($CustomerManager->FindMatchingLogin($_POST["txtLogin"]))
 	{
+		
+		// if register, always fail on a match
+		if ($_POST["submit"] == $postRegisterKey)
+		{
+			$isValid = false;
+			$errorMsg = "Supplied login is already in use. Try a different login name.";
+		}
+		// if profile update, and login unchanged, then ignore the match
+		else
+		{
+			$customer = $CustomerManager->FindCustomer($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]);
+			$oldLogin = $customer["login"];
+			
+			if ($oldLogin != $_POST["txtLogin"])
+			{
+				$isValid = false;
+				$errorMsg = "Supplied login is already in use. Try a different login name.";
+			}
+		}
+	}
+	// ignore if updating profile
+	// profile updates do not allow email changes.
+	if ($_POST["submit"] == $postRegisterKey && $CustomerManager->FindMatchingEmail($_POST["txtEmail"]))
+	{		
 		$isValid = false;
-		$errorMsg = "Supplied login, or email, is already in use. Try a different login name, or email.";
+		$errorMsg = "Supplied email, is already in use. Try a different email.";
 	}	
 	// use regex for identifying valid entries, and if contact numbers are missing.
 	if ($isValid && empty($_POST["txtHomePhone"]) && empty($_POST["txtWorkPhone"]) && empty($_POST["txtMobilePhone"]) )
@@ -105,7 +129,8 @@ if (isset($_POST["submit"]) && ($_POST["submit"] == $postRegisterKey || $_POST["
 		$errorMsg = "Invalid address. Must be in form '[flat number/]numbers[letter] name suffix'. The first number cannot be zero.";
 	}
 	// filter_var for email is simpler than regex.
-	if ($isValid && !filter_var($_POST["txtEmail"], FILTER_VALIDATE_EMAIL))
+	// only check email validity if registering - it will be unchanged for profile update
+	if (isset($_POST["txtEmail"]) && $isValid && !filter_var($_POST["txtEmail"], FILTER_VALIDATE_EMAIL))
 	{
 		$isValid = false;
 		$errorMsg = "Invalid email. Must be in form 'name@site.domain', e.g. 'xli@yourunitec.ac.nz' or 'jnx@yourunitec.com'.";
@@ -113,12 +138,8 @@ if (isset($_POST["submit"]) && ($_POST["submit"] == $postRegisterKey || $_POST["
 	
 	// if valid, do registration / update profile and send email.
 	if ($isValid)
-	{
-		include_once("../Includes/BusinessLayer.php");
-	
-		$CustomerManager = new \BusinessLayer\CustomerManager;
-	
-		if ($_POST["submit"] == $postRegisterKey)
+	{	
+		if (strcmp($_POST["submit"], $postRegisterKey) == 0 )
 		{
 			if($CustomerManager->RegisterCustomer($_POST["txtFirstName"], $_POST["txtLastName"], $_POST["txtLogin"], $_POST["txtPassword"],
 				$_POST["txtEmail"], $_POST["txtHomePhone"], $_POST["txtWorkPhone"], $_POST["txtMobilePhone"], $_POST["txtAddress"],
@@ -156,30 +177,60 @@ if (isset($_POST["submit"]) && ($_POST["submit"] == $postRegisterKey || $_POST["
 			}
 			else
 			{
-				$errorMsg = "ERROR: could not register new customer. Please contact admin at ". $senderEmail ." immediately.";
+				$errorMsg = "ERROR: could not register new customer. Please contact the admin at ". $senderEmail ." immediately.";
 			}
 		}
-		elseif ($_POST["submit"] == $postUpdateProfileKey)
+		elseif (strcmp($_POST["submit"], $postUpdateProfileKey) == 0)
 		{
 			if($CustomerManager->UpdateProfile($_POST["txtFirstName"], $_POST["txtLastName"], $_POST["txtLogin"],
 				$_POST["txtEmail"], $_POST["txtHomePhone"], $_POST["txtWorkPhone"], $_POST["txtMobilePhone"], $_POST["txtAddress"],
 				$_POST["txtSuburb"], $_POST["txtCity"], $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey] ))
 			{
 				// indicate primary update of profile worked.
-				$successfulProfileUpdate = true;
+				$successfulPrimaryProfileUpdate = true;
 				
-				if(!$CustomerManager->UpdatePassword($_POST["txtPassword"], $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]))
+				// check if password update is requested too
+				if (!empty($_POST["txtPassword"]))
 				{
-					$errorMsg = "ERROR: Updated profile but could not change password. Please contact admin at ". $senderEmail ." immediately.";
+					// try password update
+					if ($CustomerManager->UpdatePassword($_POST["txtPassword"], $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]))
+					{
+						// success - indicate this.
+						$successfulPasswordUpdate = true;
+					}
+					else
+					{
+						
+						// failure - post warning message
+						$errorMsg = "ERROR: Updated profile but could not change password. Please contact admin at ". $senderEmail ." immediately.";
+					}
 				}
 				else
 				{
-					// request first available admin, obtain email.
+					// do nothing - not updating the password
+				}
 				
+				if (isset($successfulPrimaryProfileUpdate))
+				{
+					// must notify customer that profile has changed.
 					$senderEmail = \Common\Constants::$EmailAdminDefault;
 					$receiverEmail = $_POST["txtEmail"];
-					$subject = "Quality Caps, Registered Customer";
-					$body = "Dear Customer,\r\n\r\n\r\nWelcome to Quality Caps!\r\n\r\nYour Details are:\r\n\tLogin\t\t\t".$_POST["txtLogin"]."\r\n\tPassword\t\t".$_POST["txtPassword"]."\r\n\r\nYoursSincerely,\r\n\r\nThe QualityCapsTeam\r\n";
+					$subject = "Quality Caps, Profile Update";
+					
+					if (isset($successfulPasswordUpdate))
+					{
+						// if password changed
+						$body = wordwrap("Dear Customer,\r\n\r\n\r\nYour profile has been updated.\r\n\r\nYour login details are:".
+								"\r\n\r\n\tLogin         ". $_POST["txtLogin"]. "\r\n\tPassword      ".$_POST["txtPassword"].
+								"\r\n\r\nYours Sincerely,\r\n\r\nThe Quality Caps Team\r\n", 70, "\r\n");
+					}
+					else
+					{
+						// without password change.
+						$body = wordwrap("Dear Customer,\r\n\r\n\r\nYour profile has been updated.\r\n\r\nYour login details have not changed.".
+								"\r\n\r\nIf you are not responsible for this, please contact administration immediately.".
+								"\r\n\r\nYours Sincerely,\r\n\r\nThe Quality Caps Team\r\n", 70, "\r\n");
+					}
 					
 					$headers = "From: ". $senderEmail. "\r\n";
 					$headers .= "Reply-To: ". $senderEmail. "\r\n";
@@ -188,13 +239,14 @@ if (isset($_POST["submit"]) && ($_POST["submit"] == $postRegisterKey || $_POST["
 					
 					if (!mail($receiverEmail, $subject, $body, $headers))
 					{
-						$errorMsg = "Customer was registered but could not send confirmation email. Please contact admin at ". $senderEmail ." immediately.";
+						$errorMsg = "Profile was updated but could not send confirmation email.".
+									" Please contact admin at ". $senderEmail .".";
 					}
 				}
 			}
 			else
 			{
-				$errorMsg = "ERROR: could not update profile. Please contact admin at ". $senderEmail ." immediately.";
+				$errorMsg = "ERROR: could not update profile. Please notify the admin at ". $senderEmail ." immediately.";
 			}
 		}
 	}	
@@ -214,7 +266,7 @@ if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey])
 	&& $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] == 1)
 {
 	// if this is a logged in user, then initially all fields are disabled, until user indicates they want to edit profile details.
-    $isDisabled = 'disabled';
+    $isDisabled = 'readonly';
 	
 	$customer = $CustomerManager->FindCustomer($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]);
 	if (empty($customer))
@@ -264,36 +316,37 @@ else
 		{
 			if($("#btnEditForm").val() == "Edit")
 			{
-				$("#txtFirstName").prop( 'disabled', false);
-				$("#txtLastName").prop( 'disabled', false);
-				$("#txtLogin").prop( 'disabled', false);
+				$("#txtFirstName").prop( 'readonly', false);
+				$("#txtLastName").prop( 'readonly', false);
+				$("#txtLogin").prop( 'readonly', false);
 				$("#btnChangeProfilePassword").prop( 'disabled', false);
-				$("#txtHomePhone").prop( 'disabled', false);
-				$("#txtWorkPhone").prop( 'disabled', false);
-				$("#txtMobilePhone").prop( 'disabled', false);
-				$("#txtAddress").prop( 'disabled', false);
-				$("#txtSuburb").prop( 'disabled', false);
-				$("#txtCity").prop( 'disabled', false);
-				$("#submit").prop( 'disabled', false);
+				$("#txtHomePhone").prop( 'readonly', false);
+				$("#txtWorkPhone").prop( 'readonly', false);
+				$("#txtMobilePhone").prop( 'readonly', false);
+				$("#txtAddress").prop( 'readonly', false);
+				$("#txtSuburb").prop( 'readonly', false);
+				$("#txtCity").prop( 'readonly', false);
+				$("#submit").prop( 'readonly', false);
 				$("#btnEditForm").val("Reset");
 			}
 			else
 			{
-				$("#txtFirstName").prop( 'disabled', true);
-				$("#txtLastName").prop( 'disabled', true);
-				$("#txtLogin").prop( 'disabled', true);
+				$("#txtFirstName").prop( 'readonly', true);
+				$("#txtLastName").prop( 'readonly', true);
+				$("#txtLogin").prop( 'readonly', true);
 				$("#btnChangeProfilePassword").prop( 'disabled', true);
 				$("#btnChangeProfilePassword").val("Change Password" );
-				$("#txtPassword").prop( 'disabled', true);
+				$("#txtPassword").prop( 'readonly', true);
 				$("#txtPassword").val('');
-				$("#txtHomePhone").prop( 'disabled', true);
-				$("#txtWorkPhone").prop( 'disabled', true);
-				$("#txtMobilePhone").prop( 'disabled', true);
-				$("#txtAddress").prop( 'disabled', true);
-				$("#txtSuburb").prop( 'disabled', true);
-				$("#txtCity").prop( 'disabled', true);
-				$("#submit").prop( 'disabled', true);
+				$("#txtHomePhone").prop( 'readonly', true);
+				$("#txtWorkPhone").prop( 'readonly', true);
+				$("#txtMobilePhone").prop( 'readonly', true);
+				$("#txtAddress").prop( 'readonly', true);
+				$("#txtSuburb").prop( 'readonly', true);
+				$("#txtCity").prop( 'readonly', true);
+				$("#submit").prop( 'readonly', true);
 				$("#btnEditForm").val("Edit");
+				$("#resetProfile").click();
 			}
 		}
 		
@@ -305,12 +358,12 @@ else
 				if($("#btnChangeProfilePassword").val() == "Change Password")
 				{
 					$("#btnChangeProfilePassword").val("Reset Password" );
-					$("#txtPassword").prop( 'disabled', false);
+					$("#txtPassword").prop( 'readonly', false);
 				}
 				else
 				{
 					$("#btnChangeProfilePassword").val("Change Password" );
-					$("#txtPassword").prop( 'disabled', true);
+					$("#txtPassword").prop( 'readonly', true);
 					$("#txtPassword").val('');
 				}
 		}
@@ -462,13 +515,8 @@ else
 											{
 												echo 'value="' . $_POST["txtEmail"] . '"';
 											}
-										?>
-                                       
-									   <?php 
-											echo $isDisabled;
-										?>
-                                        
-                                         required minlength="5" maxlength="100" type="text" />
+									   ?>
+                                       readonly required minlength="5" maxlength="100" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -523,7 +571,7 @@ else
 									 '<div class="col-xs-12 col-sm-6 col-md-4">'.
 										 '<input class="form-control" style="float: left; width:100%" id="txtPassword"' .
 											    ' name="txtPassword"  value="" ' .
-											    ' disabled required minlength="10" type="password" />' .
+											    ' readonly required minlength="10" type="password" />' .
 									 '</div>';
 							}
 							else
@@ -749,10 +797,13 @@ else
                             if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) 
 								&& $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] == 1)
                             {
-                                $submitValue = 'Save';
+                                $submitBtnText = 'Save';
+								$submitValue = $postUpdateProfileKey;
 
+								// hide a reset button, to undo changes if user cancels.
                                 echo '<div class="col-xs-6 col-sm-3 col-md-3">' .
                                     '<input type="button" class="btn btn-primary" id="btnEditForm" onclick="change_form();" value="Edit" />' .
+									'<input type="reset" hidden value="Reset" id="resetProfile" />' .
                                     '</div>' .
                                     '<div class="col-xs-12 col-sm-2 col-md-2">' .
 									'<a class="btn btn-primary" href="../Pages/orders.php">Orders</a>' .
@@ -760,7 +811,8 @@ else
                             }
                             else
                             {
-                                $submitValue = 'Register';
+                                $submitBtnText = 'Register';
+								$submitValue = $postRegisterKey;
 
                                 echo '<div class="col-xs-6 col-sm-3 col-md-3">' .
                                     '<input type="reset" class="btn btn-primary" value="Reset" id="resetRegister" />' .
@@ -770,14 +822,15 @@ else
                             }
                             ?>
                             <div class="col-xs-6 col-sm-3 col-md-3">
-                                <input class="btn btn-primary" style="float: right;" id="submit" name="submit"
+                            	<input type="text" hidden value="<?php echo $submitValue ?>" name="submit"/>
+                                <input class="btn btn-primary" style="float: right;" id="submit"
                                     
                                        
 									   <?php 
 											echo $isDisabled;
 										?>
                                         
-                                         value="<?php echo $submitValue; ?>" type="submit" />
+                                         value="<?php echo $submitBtnText; ?>" type="submit" />
                             </div>
                             <div class="col-xs-0 col-sm-2 col-md-2">
 								
