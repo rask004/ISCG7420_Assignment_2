@@ -305,6 +305,7 @@ else
     <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="../css/Common.css">
     <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/Validation.js"></script>
     <script type="text/javascript">
 	
 		// for profile update form.
@@ -383,7 +384,7 @@ else
     }
     ?>
 
-    <form method="post" enctype="multipart/form-data" autocomplete="off">
+    <form method="post" enctype="multipart/form-data" autocomplete="off" target="">
 
         <div class="container-fluid PageContainer">
 
@@ -431,16 +432,17 @@ else
                         -->
 
                         <div class="row" style="margin-top: 4px">
-                            <div class="col-xs-0 col-sm-1 col-md-2">
+                            <div class="col-xs-0 col-sm-1 col-md-1">
                             </div>
-                            <div class="col-xs-12 col-sm-4 col-md-4">
-                                <label class="label label-default" style="margin-top:4px; float: left; 
+                            <div class="col-xs-12 col-sm-4 col-md-3">
+                                <label class="label label-default" style="margin-top:4px; float: left; width:100%;
                                 	font-size:0.9em" for="txtFirstName">First Name:</label>
                             </div>
-                            <div class="col-xs-12 col-sm-6 col-md-4">
+                            <div class="col-xs-12 col-sm-6 col-md-7">
                                 
                                 <input class="form-control" style="float: left; width:100%" id="txtFirstName"
-                                        name="txtFirstName" 
+                                        name="txtFirstName" pattern=/^[a-zA-Z',.\s]*/ 
+                                        placeholder="letters, spaces, and apostrophes only."
 									    <?php 
 											// show customer details for logged in user
 											if(isset($customer)) 
@@ -459,20 +461,21 @@ else
 										?>
                                         required maxlength="32" type="text" />
                             </div>
-                            <div class="col-xs-0 col-sm-1 col-md-2">
+                            <div class="col-xs-0 col-sm-1 col-md-1">
                             </div>
                         </div>
 
                         <div class="row" style="margin-top: 4px">
-                            <div class="col-xs-0 col-sm-1 col-md-2">
+                            <div class="col-xs-0 col-sm-1 col-md-1">
                             </div>
-                            <div class="col-xs-12 col-sm-4 col-md-4">
-                                <label class="label label-default" style="margin-top:4px; float: left; 
+                            <div class="col-xs-12 col-sm-4 col-md-3">
+                                <label class="label label-default" style="margin-top:4px; float: left; width:100%;
                                 	font-size:0.9em" for="txtLastName">Last Name:</label>
                             </div>
-                            <div class="col-xs-12 col-sm-6 col-md-4">
+                            <div class="col-xs-12 col-sm-6 col-md-7">
                                 <input class="form-control" style="float: left; width:100%" id="txtLastName"
-                                       name="txtLastName"
+                                       name="txtLastName" pattern=/^[a-zA-Z',.\s]*/
+                                       placeholder="letters, spaces, and apostrophes only."
 									   <?php 
 											if(isset($customer)) 
 											{ 
@@ -490,31 +493,32 @@ else
                                         
                                          required maxlength="32" type="text" />
                             </div>
-                            <div class="col-xs-0 col-sm-1 col-md-2">
+                            <div class="col-xs-0 col-sm-1 col-md-1">
                             </div>
                         </div>
                         
                         <div class="row" style="margin-top: 4px">
-                            <div class="col-xs-0 col-sm-1 col-md-2">
+                            <div class="col-xs-0 col-sm-1 col-md-1">
                             </div>
-                            <div class="col-xs-12 col-sm-4 col-md-4">
-                                <label class="label label-default" style="margin-top:4px; float: left; 
+                            <div class="col-xs-12 col-sm-4 col-md-3">
+                                <label class="label label-default" style="margin-top:4px; float: left; width:100%;
                                 	font-size:0.9em" for="txtEmail">Email:</label>
                             </div>
-                            <div class="col-xs-12 col-sm-6 col-md-4">
+                            <div class="col-xs-12 col-sm-6 col-md-7">
                                 <input class="form-control" style="float: left; width:100%" id="txtEmail"
-                                       name="txtEmail" 
+                                       name="txtEmail" pattern=/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([com\co\.\in])+$/
+                                       placeholder="standard email format, e.g. james@site.org."
 									   <?php 
 									   		if(isset($customer)) 
 											{ 
-												echo 'value="' . $customer["emailAddress"] . '"';
+												echo 'value="' . $customer["emailAddress"] . '" readonly';
 											} 
 											elseif (isset($_POST["submit"]) && ($_POST["submit"] == $postRegisterKey))
 											{
 												echo 'value="' . $_POST["txtEmail"] . '"';
 											}
 									   ?>
-                                       readonly required minlength="5" maxlength="100" type="text" />
+                                       required minlength="5" maxlength="100" type="text" />
                             </div>
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
@@ -523,15 +527,16 @@ else
                         <br/>
 
                         <div class="row" style="margin-top: 4px">
-                            <div class="col-xs-0 col-sm-1 col-md-2">
+                            <div class="col-xs-0 col-sm-1 col-md-1">
                             </div>
-                            <div class="col-xs-12 col-sm-4 col-md-4">
-                                <label class="label label-default" style="margin-top:4px; float: left; 
+                            <div class="col-xs-12 col-sm-4 col-md-3">
+                                <label class="label label-default" style="margin-top:4px; float: left; width:100%;
                                 	font-size:0.9em" for="txtLogin">Login:</label>
                             </div>
-                            <div class="col-xs-12 col-sm-6 col-md-4">
+                            <div class="col-xs-12 col-sm-6 col-md-7">
                                 <input class="form-control" style="float: left; width:100%" id="txtLogin"
-                                       name="txtLogin" 
+                                       name="txtLogin" pattern=/^[a-zA-Z0-9_]*/ 
+                                       placeholder="letters, numbers and underscores only."
 									   <?php 
 									   		if (isset($customer)) 
 											{ 
@@ -549,12 +554,12 @@ else
                                         
                                          required minlength="8" maxlength="32" type="text" />
                             </div>
-                            <div class="col-xs-0 col-sm-1 col-md-2">
+                            <div class="col-xs-0 col-sm-1 col-md-1">
                             </div>
                         </div>
 
                         <div class="row" style="margin-top: 4px">
-                            <div class="col-xs-0 col-sm-1 col-md-2">
+                            <div class="col-xs-0 col-sm-1 col-md-1">
                             </div>
                             <?php
 							// show either password toggle button and password update field, for logged in user,
@@ -562,11 +567,11 @@ else
                             if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) 
 								&& $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] == 1)
                             {
-								echo '<div class="col-xs-12 col-sm-4 col-md-4">' .
+								echo '<div class="col-xs-12 col-sm-4 col-md-3">' .
 									 '<input type="button" class="btn btn-warning" id="btnChangeProfilePassword" '.
-									 ' disabled onclick="passwordEntryToggle();" style="float: left; width:80%" value="Change Password" />' .
+									 ' disabled onclick="passwordEntryToggle();" style="float: left; width:100%" value="Change Password" />' .
 									 '</div>' .
-									 '<div class="col-xs-12 col-sm-6 col-md-4">'.
+									 '<div class="col-xs-12 col-sm-6 col-md-7">'.
 										 '<input class="form-control" style="float: left; width:100%" id="txtPassword"' .
 											    ' name="txtPassword"  value="" ' .
 											    ' readonly required minlength="10" type="password" />' .
@@ -580,11 +585,11 @@ else
 								{
 									$password .= $_POST["txtPassword"];
 								}
-								echo '<div class="col-xs-12 col-sm-4 col-md-4">' .
-									 '<label class="label label-default" style="margin-top:4px; float: left; font-size:0.9em" ' .
+								echo '<div class="col-xs-12 col-sm-4 col-md-3">' .
+									 '<label class="label label-default" style="margin-top:4px; float: left; width:100%; font-size:0.9em" ' .
 									 'for="txtPassword">Password:</label>' .
 									 '</div>' .
-									 '<div class="col-xs-12 col-sm-6 col-md-4">' .
+									 '<div class="col-xs-12 col-sm-6 col-md-7">' .
 										 '<input class="form-control" style="float: left; width:100%" id="txtPassword"' .
 											    ' name="txtPassword"  value="' . $password . '" ' .
 											    ' required minlength="10" type="password" />' .
@@ -592,22 +597,23 @@ else
 							}
 							?>
                             
-                            <div class="col-xs-0 col-sm-1 col-md-2">
+                            <div class="col-xs-0 col-sm-1 col-md-1">
                             </div>
                         </div>
 
                         <br/>
 
                         <div class="row" style="margin-top: 4px">
-                            <div class="col-xs-0 col-sm-1 col-md-2">
+                            <div class="col-xs-0 col-sm-1 col-md-1">
                             </div>
-                            <div class="col-xs-12 col-sm-4 col-md-4">
-                                <label class="label label-default" style="margin-top:4px; float: left; 
+                            <div class="col-xs-12 col-sm-4 col-md-3">
+                                <label class="label label-default" style="margin-top:4px; float: left; width:100%;
                                 	font-size:0.9em" for="txtHomePhone">Home Phone:</label>
                             </div>
-                            <div class="col-xs-12 col-sm-6 col-md-4">
+                            <div class="col-xs-12 col-sm-6 col-md-7">
                                 <input class="form-control" style="float: left; width:100%" id="txtHomePhone"
-                                       name="txtHomePhone"
+                                       name="txtHomePhone" pattern=/^0[0-9]{7,9}/ 
+                                       placeholder="8 to 10 digits. First digit must be 0."
 									   <?php 
 									   		if (isset($customer)) 
 											{ 
@@ -625,20 +631,21 @@ else
                                         
                                          minlength="8" maxlength="13"  type="text" />
                             </div>
-                            <div class="col-xs-0 col-sm-1 col-md-2">
+                            <div class="col-xs-0 col-sm-1 col-md-1">
                             </div>
                         </div>
 
                         <div class="row" style="margin-top: 4px">
-                            <div class="col-xs-0 col-sm-1 col-md-2">
+                            <div class="col-xs-0 col-sm-1 col-md-1">
                             </div>
-                            <div class="col-xs-12 col-sm-4 col-md-4">
-                                <label class="label label-default" style="margin-top:4px; float: left; 
+                            <div class="col-xs-12 col-sm-4 col-md-3">
+                                <label class="label label-default" style="margin-top:4px; float: left; width:100%;
                                 	font-size:0.9em" for="txtWorkPhone">Work Phone:</label>
                             </div>
-                            <div class="col-xs-12 col-sm-6 col-md-4">
+                            <div class="col-xs-12 col-sm-6 col-md-7">
                                 <input class="form-control" style="float: left; width:100%" id="txtWorkPhone"
-                                       name="txtWorkPhone" 
+                                       name="txtWorkPhone" pattern=/^0[0-9]{7,9}/ 
+                                       placeholder="8 to 10 digits. First digit must be 0."
 									   <?php 
 									   		if (isset($customer)) 
 											{ 
@@ -656,20 +663,21 @@ else
                                         
                                          minlength="8" maxlength="13" type="text" />
                             </div>
-                            <div class="col-xs-0 col-sm-1 col-md-2">
+                            <div class="col-xs-0 col-sm-1 col-md-1">
                             </div>
                         </div>
 
                         <div class="row" style="margin-top: 4px">
-                            <div class="col-xs-0 col-sm-1 col-md-2">
+                            <div class="col-xs-0 col-sm-1 col-md-1">
                             </div>
-                            <div class="col-xs-12 col-sm-4 col-md-4">
-                                <label class="label label-default" style="margin-top:4px; float: left; 
+                            <div class="col-xs-12 col-sm-4 col-md-3">
+                                <label class="label label-default" style="width:100%; margin-top:4px; float: left; 
                                 	font-size:0.9em" for="txtMobilePhone">Mobile Phone:</label>
                             </div>
-                            <div class="col-xs-12 col-sm-6 col-md-4">
+                            <div class="col-xs-12 col-sm-6 col-md-7">
                                 <input class="form-control" style="float: left; width:100%" id="txtMobilePhone"
-                                       name="txtMobilePhone" 
+                                       name="txtMobilePhone" pattern=/^0[0-9]{8,10}/
+                                       placeholder="9 to 11 digits. First digit must be 0."
 									   <?php 
 									   		if (isset($customer)) 
 											{ 
@@ -687,22 +695,23 @@ else
                                         
                                          minlength="9" maxlength="14" type="text" />
                             </div>
-                            <div class="col-xs-0 col-sm-1 col-md-2">
+                            <div class="col-xs-0 col-sm-1 col-md-1">
                             </div>
                         </div>
 
                         <br/>
 
                         <div class="row" style="margin-top: 4px">
-                            <div class="col-xs-0 col-sm-1 col-md-2">
+                            <div class="col-xs-0 col-sm-1 col-md-1">
                             </div>
-                            <div class="col-xs-12 col-sm-4 col-md-4">
-                                <label class="label label-default" style="margin-top:4px; float: left; 
+                            <div class="col-xs-12 col-sm-4 col-md-3">
+                                <label class="label label-default" style="margin-top:4px; float: left; width:100%;
                                 	font-size:0.9em" for="txtAddress">Street Address:</label>
                             </div>
-                            <div class="col-xs-12 col-sm-6 col-md-4">
+                            <div class="col-xs-12 col-sm-6 col-md-7">
                                 <input class="form-control" style="float: left; width:100%" id="txtAddress"
-                                       name="txtAddress" 
+                                       name="txtAddress" pattern=/^[0-9a-zA-Z]+\s[a-zA-z\s]+/
+                                       placeholder="examples: 12 galway road, three Evans George St"
 									   <?php 
 									   		if (isset($customer)) 
 											{ 
@@ -720,19 +729,22 @@ else
                                         
                                          required  minlength="3" maxlength="48" type="text" />
                             </div>
-                            <div class="col-xs-0 col-sm-1 col-md-2">
+                            <div class="col-xs-0 col-sm-1 col-md-1">
                             </div>
                         </div>
 
                         <div class="row" style="margin-top: 4px">
-                            <div class="col-xs-0 col-sm-1 col-md-2">
+                            <div class="col-xs-0 col-sm-1 col-md-1">
                             </div>
-                            <div class="col-xs-12 col-sm-4 col-md-4">
-                                <label class="label label-default" style="margin-top:4px; float: left; font-size:0.9em" for="txtSuburb">Suburb:</label>
+                            <div class="col-xs-12 col-sm-4 col-md-3">
+                                <label class="label label-default" style="margin-top:4px; float: left; width:100%;
+                                font-size:0.9em" for="txtSuburb">Suburb:</label>
                             </div>
-                            <div class="col-xs-12 col-sm-6 col-md-4">
+                            <div class="col-xs-12 col-sm-6 col-md-7">
                                 <input class="form-control" style="float: left; width:100%" id="txtSuburb"
-                                       name="txtSuburb"
+                                       name="txtSuburb" pattern=/^[a-zA-Z',.\s]*/
+                                       placeholder="letters, spaces, and apostrophes only."
+                                       
 									   <?php 
 									   		if (isset($customer)) 
 											{ 
@@ -750,19 +762,22 @@ else
                                         
                                          required maxlength="24" type="text" />
                             </div>
-                            <div class="col-xs-0 col-sm-1 col-md-2">
+                            <div class="col-xs-0 col-sm-1 col-md-1">
                             </div>
                         </div>
 
                         <div class="row" style="margin-top: 4px">
-                            <div class="col-xs-0 col-sm-1 col-md-2">
+                            <div class="col-xs-0 col-sm-1 col-md-1">
                             </div>
-                            <div class="col-xs-12 col-sm-4 col-md-4">
-                                <label class="label label-default" style="margin-top:4px; float: left; font-size:0.9em" for="txtCity">City:</label>
+                            <div class="col-xs-12 col-sm-4 col-md-3">
+                                <label class="label label-default" style="margin-top:4px; float: left; width:100%;
+                                font-size:0.9em" for="txtCity">City:</label>
                             </div>
-                            <div class="col-xs-12 col-sm-6 col-md-4">
+                            <div class="col-xs-12 col-sm-6 col-md-7">
                                 <input class="form-control" style="float: left; width:100%" id="txtCity"
-                                       name="txtCity"
+                                       name="txtCity" pattern=/^[a-zA-Z',.\s]*/
+                                       placeholder="letters, spaces, and apostrophes only."
+                                       
 									   <?php 
 									   		if (isset($customer)) 
 											{ 
@@ -780,7 +795,7 @@ else
                                         
                                          required maxlength="24" type="text" />
                             </div>
-                            <div class="col-xs-0 col-sm-1 col-md-2">
+                            <div class="col-xs-0 col-sm-1 col-md-1">
                             </div>
                         </div>
 
