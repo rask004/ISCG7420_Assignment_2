@@ -60,7 +60,7 @@ if (isset($_POST["submit"]) && ($_POST["submit"] == $postRegisterKey || $_POST["
 	if ($isValid && (empty($regex_output) || !($regex_output[0] === $_POST["txtLastName"])) )
 	{
 		$isValid = false;	
-		$errorMsg = "Invalid last Name. Use letters, full stops, commas, or apostrophes only.";
+		$errorMsg = "Invalid last Name. Use letters, spaces, full stops, commas, or apostrophes only.";
 	}
 	preg_match(\Common\Constants::$ValidationCharsLoginRegex, $_POST["txtLogin"], $regex_output);
 	if ($isValid && (empty($regex_output) || !($regex_output[0] === $_POST["txtLogin"])) )
@@ -90,13 +90,13 @@ if (isset($_POST["submit"]) && ($_POST["submit"] == $postRegisterKey || $_POST["
 	if ($isValid && (empty($regex_output) || !($regex_output[0] === $_POST["txtSuburb"]) ))
 	{
 		$isValid = false;		
-		$errorMsg = "Invalid suburb. Use letters, full stops, commas, or apostrophes only.";
+		$errorMsg = "Invalid suburb. Use letters, full stops, spaces, commas, or apostrophes only.";
 	}
 	preg_match(\Common\Constants::$ValidationCharsGenericNameRegex, $_POST["txtCity"], $regex_output);
 	if ($isValid && (empty($regex_output) || !($regex_output[0] === $_POST["txtCity"]) ))
 	{
 		$isValid = false;		
-		$errorMsg = "Invalid city. Use letters, full stops, commas, or apostrophes only.";
+		$errorMsg = "Invalid city. Use letters, full stops, spaces, commas, or apostrophes only.";
 	}
 	preg_match(\Common\Constants::$ValidationStreetAddressRegex, $_POST["txtAddress"], $regex_output);
 	if ($isValid && (empty($regex_output) || !($regex_output[0] === $_POST["txtAddress"]) ))
@@ -128,13 +128,16 @@ if (isset($_POST["submit"]) && ($_POST["submit"] == $postRegisterKey || $_POST["
 				$senderEmail = \Common\Constants::$EmailAdminDefault;
 				$receiverEmail = $_POST["txtEmail"];
 				$subject = "Quality Caps, Registered Customer";
-				$body = "Dear Customer,\r\n\r\n\r\nWelcome to Quality Caps!\r\n\r\nYour Details are:\r\n\tLogin\t\t\t".$_POST["txtLogin"]."\r\n\tPassword\t\t".$_POST["txtPassword"]."\r\n\r\nYoursSincerely,\r\n\r\nThe QualityCapsTeam\r\n";
+				// formats the text correctly
+				$body = wordwrap("Dear Customer,\r\n\r\n\r\nWelcome to Quality Caps!\r\n\r\nYour Details are:\r\n\r\n\tLogin         ".$_POST["txtLogin"].
+						"\r\n\tPassword      ".$_POST["txtPassword"]."\r\n\r\nYours Sincerely,\r\n\r\nThe Quality Caps Team\r\n", 70, "\r\n");
 				
 				// mail method provided in tutorial slides did not seem to work.
 				// this method borrowed from stackoverflow. appears to work.
 				$headers = "From: ". $senderEmail. "\r\n";
 				$headers .= "Reply-To: ". $senderEmail. "\r\n";
-				$headers .= "Content-Type: text/html; charset=TIS-620 \n";
+				// mail is sent as plain literal text.
+				$headers .= "Content-Type: text/plain; charset=us-ascii \n";
 				$headers .= "MIME-Version: 1.0 \r\n";
 				
 				$queryString = "";
@@ -142,6 +145,10 @@ if (isset($_POST["submit"]) && ($_POST["submit"] == $postRegisterKey || $_POST["
 				if (!mail($receiverEmail, $subject, $body, $headers))
 				{
 					$queryString .= "?". \Common\Constants::$QueryStringEmailErrorKey . "=1";
+				}
+				else
+				{
+					$queryString .= "?". \Common\Constants::$QueryStringEmailSuccessKey . "=1";
 				}
 				
 				header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/login.php". $queryString);
@@ -194,7 +201,8 @@ if (isset($_POST["submit"]) && ($_POST["submit"] == $postRegisterKey || $_POST["
 }
 
 // redirect admin users to the admin page.
-if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && isset($_SESSION[\Common\SecurityConstraints::$SessionAdminCheckKey]))
+if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) 
+	&& isset($_SESSION[\Common\SecurityConstraints::$SessionAdminCheckKey]))
 {
     header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/AdminFiles.php");
     exit;
@@ -202,7 +210,8 @@ if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && 
 
 
 // setup page for logged in user (Profile) or visitor (Registration)
-if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] == 1)
+if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) 
+	&& $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] == 1)
 {
 	// if this is a logged in user, then initially all fields are disabled, until user indicates they want to edit profile details.
     $isDisabled = 'disabled';
@@ -229,7 +238,8 @@ else
     <title>Quality Caps -
         <?php
 		// set correct browser tab title.
-        if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] == 1)
+        if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) 
+			&& $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] == 1)
         {
             echo 'Profile';
         }
@@ -311,7 +321,8 @@ else
 <body>
     <?php
 	// load correct navbar for visitor or logged in user.
-    if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] == 1)
+    if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) 
+		&& $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] == 1)
     {
         include_once("../Includes/navbar.member.php");
     }
@@ -339,7 +350,8 @@ else
                                 <H3>
                                     <?php
 										// show correct title
-                                        if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] == 1)
+                                        if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) 
+											&& $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] == 1)
                                         {
                                             echo 'Profile';
                                         }
@@ -371,7 +383,8 @@ else
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
                             <div class="col-xs-12 col-sm-4 col-md-4">
-                                <label class="label label-default" style="margin-top:4px; float: left; font-size:0.9em" for="txtFirstName">First Name:</label>
+                                <label class="label label-default" style="margin-top:4px; float: left; 
+                                	font-size:0.9em" for="txtFirstName">First Name:</label>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 
@@ -403,7 +416,8 @@ else
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
                             <div class="col-xs-12 col-sm-4 col-md-4">
-                                <label class="label label-default" style="margin-top:4px; float: left; font-size:0.9em" for="txtLastName">Last Name:</label>
+                                <label class="label label-default" style="margin-top:4px; float: left; 
+                                	font-size:0.9em" for="txtLastName">Last Name:</label>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input class="form-control" style="float: left; width:100%" id="txtLastName"
@@ -433,7 +447,8 @@ else
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
                             <div class="col-xs-12 col-sm-4 col-md-4">
-                                <label class="label label-default" style="margin-top:4px; float: left; font-size:0.9em" for="txtEmail">Email:</label>
+                                <label class="label label-default" style="margin-top:4px; float: left; 
+                                	font-size:0.9em" for="txtEmail">Email:</label>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input class="form-control" style="float: left; width:100%" id="txtEmail"
@@ -465,7 +480,8 @@ else
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
                             <div class="col-xs-12 col-sm-4 col-md-4">
-                                <label class="label label-default" style="margin-top:4px; float: left; font-size:0.9em" for="txtLogin">Login:</label>
+                                <label class="label label-default" style="margin-top:4px; float: left; 
+                                	font-size:0.9em" for="txtLogin">Login:</label>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input class="form-control" style="float: left; width:100%" id="txtLogin"
@@ -497,7 +513,8 @@ else
                             <?php
 							// show either password toggle button and password update field, for logged in user,
 							// or password label and new password field for visitor.
-                            if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] == 1)
+                            if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) 
+								&& $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] == 1)
                             {
 								echo '<div class="col-xs-12 col-sm-4 col-md-4">' .
 									 '<input type="button" class="btn btn-warning" id="btnChangeProfilePassword" '.
@@ -506,7 +523,7 @@ else
 									 '<div class="col-xs-12 col-sm-6 col-md-4">'.
 										 '<input class="form-control" style="float: left; width:100%" id="txtPassword"' .
 											    ' name="txtPassword"  value="" ' .
-											    ' disabled required minlength="10" type="text" />' .
+											    ' disabled required minlength="10" type="password" />' .
 									 '</div>';
 							}
 							else
@@ -523,10 +540,8 @@ else
 									 '</div>' .
 									 '<div class="col-xs-12 col-sm-6 col-md-4">' .
 										 '<input class="form-control" style="float: left; width:100%" id="txtPassword"' .
-											    ' name="txtPassword"  value="' .
-													$password .
-												'" ' .
-											    $isDisabled . ' required minlength="10" type="text" />' .
+											    ' name="txtPassword"  value="' . $password . '" ' .
+											    ' required minlength="10" type="password" />' .
 									 '</div>';
 							}
 							?>
@@ -541,7 +556,8 @@ else
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
                             <div class="col-xs-12 col-sm-4 col-md-4">
-                                <label class="label label-default" style="margin-top:4px; float: left; font-size:0.9em" for="txtHomePhone">Home Phone:</label>
+                                <label class="label label-default" style="margin-top:4px; float: left; 
+                                	font-size:0.9em" for="txtHomePhone">Home Phone:</label>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input class="form-control" style="float: left; width:100%" id="txtHomePhone"
@@ -571,7 +587,8 @@ else
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
                             <div class="col-xs-12 col-sm-4 col-md-4">
-                                <label class="label label-default" style="margin-top:4px; float: left; font-size:0.9em" for="txtWorkPhone">Work Phone:</label>
+                                <label class="label label-default" style="margin-top:4px; float: left; 
+                                	font-size:0.9em" for="txtWorkPhone">Work Phone:</label>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input class="form-control" style="float: left; width:100%" id="txtWorkPhone"
@@ -601,7 +618,8 @@ else
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
                             <div class="col-xs-12 col-sm-4 col-md-4">
-                                <label class="label label-default" style="margin-top:4px; float: left; font-size:0.9em" for="txtMobilePhone">Mobile Phone:</label>
+                                <label class="label label-default" style="margin-top:4px; float: left; 
+                                	font-size:0.9em" for="txtMobilePhone">Mobile Phone:</label>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input class="form-control" style="float: left; width:100%" id="txtMobilePhone"
@@ -633,7 +651,8 @@ else
                             <div class="col-xs-0 col-sm-1 col-md-2">
                             </div>
                             <div class="col-xs-12 col-sm-4 col-md-4">
-                                <label class="label label-default" style="margin-top:4px; float: left; font-size:0.9em" for="txtAddress">Street Address:</label>
+                                <label class="label label-default" style="margin-top:4px; float: left; 
+                                	font-size:0.9em" for="txtAddress">Street Address:</label>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-4">
                                 <input class="form-control" style="float: left; width:100%" id="txtAddress"
@@ -727,7 +746,8 @@ else
 
                             </div>
                             <?php
-                            if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] == 1)
+                            if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) 
+								&& $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] == 1)
                             {
                                 $submitValue = 'Save';
 
@@ -766,7 +786,7 @@ else
                         <br/>
                     </div>
                     <br/>
-                    <div id="divErrorMessage">
+                    <div id="divErrorMessage" style="color:red; ">
 	                    <p>
 							<?php 
 								// only show errors if a message is given.

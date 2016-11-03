@@ -79,7 +79,7 @@ class Constants
 	public static $ProfileUpdateKeyword = "ProfileUpdate";
 	
 	// Validation Regex patterns.
-	public static $ValidationCharsGenericNameRegex = "/^[a-zA-Z',.]*/";
+	public static $ValidationCharsGenericNameRegex = "/^[a-zA-Z',.\s]*/";
 	
 	public static $ValidationCharsLoginRegex = "/^[a-zA-Z0-9_]*/";
 	
@@ -94,6 +94,8 @@ class Constants
 	
 	// default query string keys.
 	public static $QueryStringEmailErrorKey = "EmailError";
+	
+	public static $QueryStringEmailSuccessKey = "EmailSuccess";
 	
 	// static messages
 	public static  $AdminMessageSuccessfulUpload = "Success, file uploaded";

@@ -5,21 +5,27 @@
  * Date: 11/10/2016
  * Time: 10:09 PM
  */
+ 
+ ini_set('display_errors','1');
 
 include_once('../Includes/Session.php');
 include_once('../Includes/Common.php');
 include_once('../Includes/CustomerManager.php');
 include_once('../Includes/AdminManager.php');
 
-$bad_login_message = "";
+$msg = "testmessage";
+$senderEmail = \Common\Constants::$EmailAdminDefault;
 
 // in case of email error, notify visitor of successful registration but email failure.
-if(isset($_SERVER["QUERY_STRING"][\Common\Constants::$QueryStringEmailErrorKey]))
+if(isset($_GET[\Common\Constants::$QueryStringEmailErrorKey]))
 {
-	$errorMsg = "Customer was registered but could not send confirmation email. Please contact admin at ". $senderEmail ." immediately.";
+	$msg = "Customer was registered but could not send confirmation email. Please contact admin at ". $senderEmail ." immediately.";
+}
+else if (isset($_GET[\Common\Constants::$QueryStringEmailSuccessKey]))
+{
+	$msg = "You have been successfully registered and may now log in.";
 }
 
-// process postback - for testing, currently expect a particular user and pass (not real user).
 if (isset($_POST['inputLogin']) && isset($_POST['inputPassword']))
 {	
 	$CustomerManager = new \BusinessLayer\CustomerManager;
@@ -27,6 +33,8 @@ if (isset($_POST['inputLogin']) && isset($_POST['inputPassword']))
 	
 	if ($CustomerManager->CheckMatchingPasswordForCustomerLogin($_POST['inputLogin'], $_POST['inputPassword']))
 	{
+		echo '<p>' . 
+		
 		// successful member login
 		$Customer = $CustomerManager->FindCustomerByLogin($_POST['inputLogin']);
 		
@@ -54,7 +62,7 @@ if (isset($_POST['inputLogin']) && isset($_POST['inputPassword']))
 	}
 	else
 	{
-		$bad_login_message = "Login failed. Please check your you entered your login and password correctly.";	
+		$msg = "Login failed. Please check your you entered your login and password correctly.";
 	}
 	
 }
@@ -168,30 +176,50 @@ if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && 
                     
                     <br/>
                     <br/>
-                    <div>
-                    <p style="text-align:center">
-                    	<?php echo $bad_login_message; ?>
-                    </p>
-                    </div>
-                    <br/>
-                    <div id="divErrorMessage">
-	                    <p>
-							<?php 
-								// only show errors if a message is given.
-								if (isset($errorMsg))
-								{
-									echo $errorMsg;	
-								}
-							?>
-                        </p>
-                    </div>
                 </form>
+                
+                <!-- auto-sliding message to show when an order is successfully placed. -->
+                <div hidden id="divLoginMsg" class="alert alert-danger" role="alert">
+                  <span id="msgContent"><?php echo $msg ?></span>
+                </div>
 
             </div>
             <div id="divRightsidebar" class="col-md-3">
             </div>
         </div>
     </div>
+    
+    <?php
+		// if there is notification to show, show it.
+		if(isset($msg) )
+		{
+			// registration notifications override login warnings.
+			// besides, they should be mutually exclusive.
+			if (isset($_GET) && !empty($_GET))
+			{
+				if(isset($_GET[\Common\Constants::$QueryStringEmailSuccessKey]))
+				{
+					echo '<script type="text/javascript">$("#divLoginMsg").prop("class","alert alert-success");</script>';
+					
+				}
+				else if (isset($_GET[\Common\Constants::$QueryStringEmailErrorKey]))
+				{
+					echo '<script type="text/javascript">$("#divLoginMsg").prop("class","alert alert-warning");</script>';
+				}
+			}
+			
+			// make notification div appear.
+			echo '<script type="text/javascript">'.
+				 '$("#divLoginMsg").prop("hidden", false);'.
+				 'window.setTimeout(function() {'.
+					'$(".alert").fadeTo(500, 0).slideUp(500, function()	{'.
+						'$(this).remove(); '.
+					'});'.
+				 '}, 4000);'.
+				 '</script>';
+			
+		}
+	?>
 
     <?php include_once("../Includes/footer.php"); ?>
 </body>

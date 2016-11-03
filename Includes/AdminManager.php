@@ -68,6 +68,11 @@ class AdminManager
 		}
 		
 		$data = $this->_dataManager->RequestAdminPasswordSaltAndHash($login);
+		if (empty($data) || !isset($data['passwordsalt']) || !isset($data['passwordhash']))
+		{
+			return false;	
+		}
+		
 		$salt = $data['passwordsalt'];
 		$expectedHash = $data['passwordhash'];
 		

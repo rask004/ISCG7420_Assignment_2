@@ -196,7 +196,14 @@ $orderCount = $ordersManager->GetCountOfOrderSummariesByCustomer($_SESSION[\Comm
 		// show successful order placement message if requested.
 		if (isset($_REQUEST) && isset($_REQUEST['s']) && $_REQUEST['s'] = 1)
 		{
-			echo '<script type="text/javascript">$("#divCheckoutsuccessMsg").prop("hidden", false);</script>';
+			echo '<script type="text/javascript">'.
+				 '$("#divCheckoutsuccessMsg").prop("hidden", false);'.
+				 'window.setTimeout(function() {'.
+					'$(".alert").fadeTo(500, 0).slideUp(500, function()	{'.
+						'$(this).remove(); '.
+					'});'.
+				 '}, 4000);'.
+				 '</script>';
 		}
 	?>
 </body>
