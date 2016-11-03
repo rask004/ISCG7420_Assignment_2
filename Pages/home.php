@@ -36,16 +36,13 @@ unset($categoryManager);
 <head>
     <meta charset="utf-8">
     <title>Quality Caps - Home Page</title>
-    <link rel="stylesheet" type="text/css" href="../css/jquery-ui.css">
-    <link rel="stylesheet" type="text/css" href="../css/jquery-ui.structure.css">
-    <link rel="stylesheet" type="text/css" href="../css/jquery-ui.theme.css">
-    <link rel="stylesheet" type="text/css" href="../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="../css/Common.css">
-    <script type="text/javascript" src="../js/jquery.js"></script>
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
     <script type="text/javascript">
 	
 		// clear the cart. 
-		function ClearCart()
+		function clearCart()
 		{
 			$( document ).ready(function() {
 				$("#divShoppingCart").load("../Includes/Ajax/HomeCart.ajax.php", {c:1, p:1},
@@ -65,7 +62,7 @@ unset($categoryManager);
 		};
 		
 		// manage the cart page controls.
-		function UpdateCartPageControls(page)
+		function updateCartPageControls(page)
 		{
 			page = parseInt(page);
 			var pagesize =  parseInt($("#inputJsParamsCartPageSize").val());
@@ -88,12 +85,12 @@ unset($categoryManager);
 				$("#lblCartPrevPage").html("Previous");
 				$("#lblCartPrevPage").prop("class", "label label-primary PageLinkDisabled");
 				$("#lblCartPageNumber").html("Page: 1");
-				$("#lblCartNextPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCart( ' + nextPage + ')">Next</a>');
+				$("#lblCartNextPage").html('<a href="#" class="PageLinkActive" onclick="showPageCart( ' + nextPage + ')">Next</a>');
 				$("#lblCartNextPage").prop("class", "label label-primary PageLinkActive");
 			}
 			else if (page * pagesize >= itemcount)
 			{
-				$("#lblCartPrevPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCart( ' + prevPage + ')">Previous</a>');
+				$("#lblCartPrevPage").html('<a href="#" class="PageLinkActive" onclick="showPageCart( ' + prevPage + ')">Previous</a>');
 				$("#lblCartPrevPage").prop("class", "label label-primary PageLinkActive");
 				$("#lblCartPageNumber").html("Page: " + page);
 				$("#lblCartNextPage").html("Next");
@@ -101,17 +98,17 @@ unset($categoryManager);
 			}
 			else
 			{
-				$("#lblCartPrevPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCart( ' + prevPage + ')">Previous</a>');
+				$("#lblCartPrevPage").html('<a href="#" class="PageLinkActive" onclick="showPageCart( ' + prevPage + ')">Previous</a>');
 				$("#lblCartPrevPage").prop("class", "label label-primary PageLinkActive");
 				$("#lblCartPageNumber").html("Page: " + page);
-				$("#lblCartNextPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCart( ' + nextPage + ')">Next</a>');
+				$("#lblCartNextPage").html('<a href="#" class="PageLinkActive" onclick="showPageCart( ' + nextPage + ')">Next</a>');
 				$("#lblCartNextPage").prop("class", "label label-primary PageLinkActive");
 			}
 			
 		}
 		
 		// show a page of the cart.
-		function ShowPageCart(page)
+		function showPageCart(page)
 		{			
 			$( document ).ready(function() {
 				// update the current page.				
@@ -121,7 +118,7 @@ unset($categoryManager);
 					{
 						if(statusTxt == "success")
 						{
-							UpdateCartPageControls(page);
+							updateCartPageControls(page);
 						}
 					}
 				);
@@ -132,7 +129,7 @@ unset($categoryManager);
 		};
 		
 		// remove one cart item, given an item id.
-		function DeleteCartItem(id)
+		function deleteCartItem(id)
 		{
 			id = parseInt(id);
 			var page = parseInt($("#inputJsParamsCartPage").val());
@@ -155,7 +152,7 @@ unset($categoryManager);
 							$("#inputJsParamsCartPage").val(page);
 							$("#inputJsParamsCartItemCount").val(itemcount);
 							
-							UpdateCartPageControls(page);
+							updateCartPageControls(page);
 						}
 					}
 				);
@@ -163,7 +160,7 @@ unset($categoryManager);
 		};
 		
 		// show a page of categories
-		function ShowPageCategories(page)
+		function showPageCategories(page)
 		{
 			// grab and parse stored page data.
 			page = parseInt(page);
@@ -192,12 +189,12 @@ unset($categoryManager);
 								$("#lblCategoriesPrevPage").html("Previous");
 								$("#lblCategoriesPrevPage").prop("class", "label label-primary PageLinkDisabled");
 								$("#lblCategoriesPageNumber").html("Page: 1");
-								$("#lblCategoriesNextPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCategories( ' + nextPage + ')">Next</a>');
+								$("#lblCategoriesNextPage").html('<a href="#" class="PageLinkActive" onclick="showPageCategories( ' + nextPage + ')">Next</a>');
 								$("#lblCategoriesNextPage").prop("class", "label label-primary PageLinkActive");
 							}
 							else if (page * $("#inputJsParamsCategoryPageSize").val() >= $("#inputJsParamsCategoryItemCount").val())
 							{
-								$("#lblCategoriesPrevPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCategories( ' + prevPage + ')">Previous</a>');
+								$("#lblCategoriesPrevPage").html('<a href="#" class="PageLinkActive" onclick="showPageCategories( ' + prevPage + ')">Previous</a>');
 								$("#lblCategoriesPrevPage").prop("class", "label label-primary PageLinkActive");
 								$("#lblCategoriesPageNumber").html("Page: " + page);
 								$("#lblCategoriesNextPage").html("Next");
@@ -205,10 +202,10 @@ unset($categoryManager);
 							}
 							else
 							{
-								$("#lblCategoriesPrevPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCategories( ' + prevPage + ')">Previous</a>');
+								$("#lblCategoriesPrevPage").html('<a href="#" class="PageLinkActive" onclick="showPageCategories( ' + prevPage + ')">Previous</a>');
 								$("#lblCategoriesPrevPage").prop("class", "label label-primary PageLinkActive");
 								$("#lblCategoriesPageNumber").html("Page: " + page);
-								$("#lblCategoriesNextPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCategories( ' + nextPage + ')">Next</a>');
+								$("#lblCategoriesNextPage").html('<a href="#" class="PageLinkActive" onclick="showPageCategories( ' + nextPage + ')">Next</a>');
 								$("#lblCategoriesNextPage").prop("class", "label label-primary PageLinkActive");
 							}
 						}
@@ -221,7 +218,7 @@ unset($categoryManager);
 		};
 		
 		// show a page of caps, given a categoryId. If categoryId is -1, show page of all caps.
-		function ShowPageCaps(catId, page)
+		function showPageCaps(catId, page)
 		{
 			// grab and parse stored page data.
 			catId = parseInt(catId);
@@ -259,12 +256,12 @@ unset($categoryManager);
 								$("#lblCapsPrevPage").html("Previous");
 								$("#lblCapsPrevPage").prop("class", "label label-primary PageLinkDisabled");
 								$("#lblCapsPageNumber").html("Page: 1");
-								$("#lblCapsNextPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCaps( ' + catId + ',' + nextPage + ')">Next</a>');
+								$("#lblCapsNextPage").html('<a href="#" class="PageLinkActive" onclick="showPageCaps( ' + catId + ',' + nextPage + ')">Next</a>');
 								$("#lblCapsNextPage").prop("class", "label label-primary PageLinkActive");
 							}
 							else if (page * pagesize >= itemcount)
 							{
-								$("#lblCapsPrevPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCaps( ' + catId + ',' + prevPage + ')">Previous</a>');
+								$("#lblCapsPrevPage").html('<a href="#" class="PageLinkActive" onclick="showPageCaps( ' + catId + ',' + prevPage + ')">Previous</a>');
 								$("#lblCapsPrevPage").prop("class", "label label-primary PageLinkActive");
 								$("#lblCapsPageNumber").html("Page: " + page);
 								$("#lblCapsNextPage").html("Next");
@@ -272,10 +269,10 @@ unset($categoryManager);
 							}
 							else
 							{
-								$("#lblCapsPrevPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCaps( ' + catId + ',' + prevPage + ')">Previous</a>');
+								$("#lblCapsPrevPage").html('<a href="#" class="PageLinkActive" onclick="showPageCaps( ' + catId + ',' + prevPage + ')">Previous</a>');
 								$("#lblCapsPrevPage").prop("class", "label label-primary PageLinkActive");
 								$("#lblCapsPageNumber").html("Page: " + page);
-								$("#lblCapsNextPage").html('<a href="#" class="PageLinkActive" onclick="ShowPageCaps( ' + catId + ',' + nextPage + ')">Next</a>');
+								$("#lblCapsNextPage").html('<a href="#" class="PageLinkActive" onclick="showPageCaps( ' + catId + ',' + nextPage + ')">Next</a>');
 								$("#lblCapsNextPage").prop("class", "label label-primary PageLinkActive");
 							}
 						}
@@ -285,7 +282,7 @@ unset($categoryManager);
 		};
 		
 		// show a page of caps, given a categoryId. If categoryId is -1, show page of all caps.
-		function ShowCapDetails(capId)
+		function showCapDetails(capId)
 		{
 			// grab and parse stored page data.
 			capId = parseInt(capId);
@@ -305,7 +302,7 @@ unset($categoryManager);
 		};
 		
 		// add a cap to the cart
-		function AddCapToCart()
+		function addCapToCart()
 		{
 			var capId = parseInt($("#lblAddCapId").html());
 			var qty = parseInt($("#inputAddCapQuantity").val());
@@ -322,7 +319,7 @@ unset($categoryManager);
 						
 						if(statusTxt == "success")
 						{
-							UpdateCartPageControls(page);
+							updateCartPageControls(page);
 						}
 					}
 				);
@@ -330,7 +327,7 @@ unset($categoryManager);
 		}
 		
 		// reshow the caps page
-		function ReturnToCapListing()
+		function returnToCapListing()
 		{
 			$("#divCapsPageControls").prop("hidden", false);
 			$("#divCapsByCategory").prop("hidden", false);
@@ -528,7 +525,7 @@ unset($categoryManager);
                     	<!-- show buttons for clearing cart and doing checkout, checkout only available if logged in. -->
                         <div class="col-xs-0 col-sm-1 col-md-1"></div>
                         <div class="col-xs-6 col-sm-3 col-md-3">
-                        	<input type="button" class="btn btn-primary" value="Clear" onclick="ClearCart()" />
+                        	<input type="button" class="btn btn-primary" value="Clear" onclick="clearCart()" />
                         </div>
                         <div class="col-xs-0 col-sm-3 col-md-3"></div>
                         <div class="col-xs-6 col-sm-3 col-md-3">
@@ -544,9 +541,9 @@ unset($categoryManager);
     
     <script type="text/javascript">
 		// load initial pages for each section.
-    	ShowPageCart(1);
-		ShowPageCategories(1);
-		ShowPageCaps(-1,1);		// initially, load all caps. 
+    	showPageCart(1);
+		showPageCategories(1);
+		showPageCaps(-1,1);		// initially, load all caps. 
     </script>
 
     <?php include_once("../Includes/footer.php"); ?>

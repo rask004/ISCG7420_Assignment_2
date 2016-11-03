@@ -37,15 +37,12 @@ $orderCount = $ordersManager->GetCountOfOrderSummariesByCustomer($_SESSION[\Comm
 <head>
     <meta charset="utf-8">
     <title>Quality Caps - Orders</title>
-    <link rel="stylesheet" type="text/css" href="../css/jquery-ui.css">
-    <link rel="stylesheet" type="text/css" href="../css/jquery-ui.structure.css">
-    <link rel="stylesheet" type="text/css" href="../css/jquery-ui.theme.css">
-    <link rel="stylesheet" type="text/css" href="../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="../css/Common.css">
-    <script type="text/javascript" src="../js/jquery.js"></script>
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
     <script type="text/javascript">
 		// ajax function, retrieve orders page, setup pagination controls
-		function OrdersAjax(page)
+		function ordersAjax(page)
 		{
 			page = parseInt(page);
 			
@@ -58,7 +55,8 @@ $orderCount = $ordersManager->GetCountOfOrderSummariesByCustomer($_SESSION[\Comm
 						var prevPage = page - 1;
 						
 						var itemcount = parseInt($("#inputJsParamsOrdersItemCount").val());
-						var pagesize = parseInt($("#inputJsParamsOrdersPageSize").val());						
+						var pagesize = parseInt($("#inputJsParamsOrdersPageSize").val());	
+						// only one page					
 						if (itemcount <= pagesize)
 						{
 							$("#lblPrevPage").html("Previous");
@@ -67,28 +65,31 @@ $orderCount = $ordersManager->GetCountOfOrderSummariesByCustomer($_SESSION[\Comm
 							$("#lblNextPage").html("Next");
 							$("#lblNextPage").prop("class", "label label-primary PageLinkDisabled");
 						}
+						// showing first page
 						else if (page <= 1)
 						{
 							$("#lblPrevPage").html("Previous");
 							$("#lblPrevPage").prop("class", "label label-primary PageLinkDisabled");
 							$("#lblPageNumber").html("Page: 1");
-							$("#lblNextPage").html('<a href="#" class="PageLinkActive" onclick="OrdersAjax( ' + nextPage + ')">Next</a>');
+							$("#lblNextPage").html('<a href="#" class="PageLinkActive" onclick="ordersAjax( ' + nextPage + ')">Next</a>');
 							$("#lblNextPage").prop("class", "label label-primary PageLinkActive");
 						}
+						// showing last page
 						else if (page * pagesize >= itemcount)
 						{
-							$("#lblPrevPage").html('<a href="#" class="PageLinkActive" onclick="OrdersAjax( ' + prevPage + ')">Previous</a>');
+							$("#lblPrevPage").html('<a href="#" class="PageLinkActive" onclick="ordersAjax( ' + prevPage + ')">Previous</a>');
 							$("#lblPrevPage").prop("class", "label label-primary PageLinkActive");
 							$("#lblPageNumber").html("Page: " + page);
 							$("#lblNextPage").html("Next");
 							$("#lblNextPage").prop("class", "label label-primary PageLinkDisabled");
 						}
+						// showing between last and first page
 						else
 						{
-							$("#lblPrevPage").html('<a href="#" class="PageLinkActive" onclick="OrdersAjax( ' + prevPage + ')">Previous</a>');
+							$("#lblPrevPage").html('<a href="#" class="PageLinkActive" onclick="ordersAjax( ' + prevPage + ')">Previous</a>');
 							$("#lblPrevPage").prop("class", "label label-primary PageLinkActive");
 							$("#lblPageNumber").html("Page: " + page);
-							$("#lblNextPage").html('<a href="#" class="PageLinkActive" onclick="OrdersAjax( ' + nextPage + ')">Next</a>');
+							$("#lblNextPage").html('<a href="#" class="PageLinkActive" onclick="ordersAjax( ' + nextPage + ')">Next</a>');
 							$("#lblNextSPage").prop("class", "label label-primary PageLinkActive");
 						}
 					}
@@ -180,14 +181,7 @@ $orderCount = $ordersManager->GetCountOfOrderSummariesByCustomer($_SESSION[\Comm
     
     <!-- show first page of orders, and set auto-slide time for successful order placement message. -->
     <script type="text/javascript">
-		OrdersAjax(1 );
-		window.setTimeout(function() 
-			{
-				$(".alert").fadeTo(500, 0).slideUp(500, function()
-				{
-					$(this).remove(); 
-				});
-			}, 4000);
+		ordersAjax(1);
 	</script>
 		
     <?php include_once("../Includes/footer.php"); ?>

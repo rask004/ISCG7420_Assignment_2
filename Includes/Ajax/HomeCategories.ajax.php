@@ -64,7 +64,7 @@ else
 		echo '<div class="row"><div class="col-xs-0 col-sm-3 col-md-3"></div>'.
 			'<div class="col-xs-12 col-sm-6 col-md-6"><img class="img-thumbnail" style="max-width:120px;max-height:120px" alt="no picture" src="'.$imgUrl.'" /></div></div>'.
 			'<div class="row"><div class="col-xs-0 col-sm-3 col-md-3"></div>'.
-			'<div class="col-xs-12 col-sm-6 col-md-6"><input class="btn btn-primary" type="button" value="'.$name.'" onclick="ShowPageCaps('.$id.',1)" /></div></div>'.
+			'<div class="col-xs-12 col-sm-6 col-md-6"><input class="btn btn-primary" type="button" value="'.$name.'" onclick="showPageCaps('.$id.',1)" /></div></div>'.
 			'<br/>';
 		echo '</div></div>';
 	}

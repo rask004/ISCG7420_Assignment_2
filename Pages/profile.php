@@ -73,58 +73,58 @@ if (isset($_POST["submit"]) && @strcmp($_POST["submit"], $postRegisterKey) === 0
 	}
 	$regex_output = array();
 	preg_match(\Common\Constants::$ValidationCharsGenericNameRegex, $_POST["txtFirstName"], $regex_output);
-	if ($isValid && (empty($regex_output) || !($regex_output[0] === $_POST["txtFirstName"])) )
+	if ($isValid && (empty($regex_output) || (strcmp($regex_output[0], $_POST["txtFirstName"]) != 0)) )
 	{
 		$isValid = false;
 		$errorMsg = "Invalid first Name. Use letters, full stops, commas, or apostrophes only.";
 	}
 	preg_match(\Common\Constants::$ValidationCharsGenericNameRegex, $_POST["txtLastName"], $regex_output);
-	if ($isValid && (empty($regex_output) || !($regex_output[0] === $_POST["txtLastName"])) )
+	if ($isValid && (empty($regex_output) || (strcmp($regex_output[0], $_POST["txtLastName"]) != 0)) )
 	{
 		$isValid = false;	
 		$errorMsg = "Invalid last Name. Use letters, spaces, full stops, commas, or apostrophes only.";
 	}
 	preg_match(\Common\Constants::$ValidationCharsLoginRegex, $_POST["txtLogin"], $regex_output);
-	if ($isValid && (empty($regex_output) || !($regex_output[0] === $_POST["txtLogin"])) )
+	if ($isValid && (empty($regex_output) || (strcmp($regex_output[0], $_POST["txtLogin"]) != 0)) )
 	{
 		$isValid = false;	
 		$errorMsg = "Invalid login. Use letters, numbers and underscores only.";
 	}
 	preg_match(\Common\Constants::$ValidationLandlineRegex, $_POST["txtHomePhone"], $regex_output);
-	if ($isValid && !empty($_POST["txtHomePhone"]) && (empty($regex_output) || !($regex_output[0] === $_POST["txtHomePhone"])) )
+	if ($isValid && !empty($_POST["txtHomePhone"]) && (empty($regex_output) || (strcmp($regex_output[0], $_POST["txtHomePhone"]) != 0)) )
 	{
 		$isValid = false;	
-		$errorMsg = "Invalid home phone. Try a number in the form '0N-NNN-NNNN' or similar pattern. first digit must be a zero.";
+		$errorMsg = "Invalid home phone. Use an 8 to 10 digit number, with first digit as 0.";
 	}
 	preg_match(\Common\Constants::$ValidationLandlineRegex, $_POST["txtWorkPhone"], $regex_output);
-	if ($isValid && !empty($_POST["txtWorkPhone"]) && (empty($regex_output) || !($regex_output[0] === $_POST["txtWorkPhone"])) )
+	if ($isValid && !empty($_POST["txtWorkPhone"]) && (empty($regex_output) || (strcmp($regex_output[0], $_POST["txtWorkPhone"]) != 0)) )
 	{
 		$isValid = false;	
-		$errorMsg = "Invalid work phone. Try a number in the form '0N-NNN-NNNN' or similar pattern. first digit must be a zero.";
+		$errorMsg = "Invalid work phone. Use an 8 to 10 digit number, with first digit as 0.";
 	}
 	preg_match(\Common\Constants::$ValidationCellPhoneRegex, $_POST["txtMobilePhone"], $regex_output);
-	if ($isValid && !empty($_POST["txtMobilePhone"]) && (empty($regex_output) || !($regex_output[0] === $_POST["txtMobilePhone"])) )
+	if ($isValid && !empty($_POST["txtMobilePhone"]) && (empty($regex_output) || (strcmp($regex_output[0], $_POST["txtMobilePhone"]) != 0)) )
 	{
 		$isValid = false;
-		$errorMsg = "Invalid mobile phone. Try a number in the form '0NN-NNN-NNNN' or similar pattern. first digit must be a zero.";	
+		$errorMsg = "Invalid mobile phone. Use a 9 to 11 digit number, with first digit as 0.";	
 	}
 	preg_match(\Common\Constants::$ValidationCharsGenericNameRegex, $_POST["txtSuburb"], $regex_output);
-	if ($isValid && (empty($regex_output) || !($regex_output[0] === $_POST["txtSuburb"]) ))
+	if ($isValid && (empty($regex_output) || (strcmp($regex_output[0], $_POST["txtSuburb"]) != 0) ))
 	{
 		$isValid = false;		
 		$errorMsg = "Invalid suburb. Use letters, full stops, spaces, commas, or apostrophes only.";
 	}
 	preg_match(\Common\Constants::$ValidationCharsGenericNameRegex, $_POST["txtCity"], $regex_output);
-	if ($isValid && (empty($regex_output) || !($regex_output[0] === $_POST["txtCity"]) ))
+	if ($isValid && (empty($regex_output) || (strcmp($regex_output[0], $_POST["txtCity"]) != 0) ))
 	{
 		$isValid = false;		
 		$errorMsg = "Invalid city. Use letters, full stops, spaces, commas, or apostrophes only.";
 	}
-	preg_match(\Common\Constants::$ValidationStreetAddressRegex, $_POST["txtAddress"], $regex_output);
-	if ($isValid && (empty($regex_output) || !($regex_output[0] === $_POST["txtAddress"]) ))
+	preg_match(\Common\Constants::$ValidationAddressRegex, $_POST["txtAddress"], $regex_output);
+	if ($isValid && (empty($regex_output) || (strcmp($regex_output[0], $_POST["txtAddress"]) != 0) ))
 	{
 		$isValid = false;		
-		$errorMsg = "Invalid address. Must be in form '[flat number/]numbers[letter] name suffix'. The first number cannot be zero.";
+		$errorMsg = "Bad address. Use an address like: 3 bantam st, two george john ave, 9d fewway cresent.";
 	}
 	// filter_var for email is simpler than regex.
 	// only check email validity if registering - it will be unchanged for profile update
@@ -184,6 +184,9 @@ if (isset($_POST["submit"]) && @strcmp($_POST["submit"], $postRegisterKey) === 0
 				$_POST["txtEmail"], $_POST["txtHomePhone"], $_POST["txtWorkPhone"], $_POST["txtMobilePhone"], $_POST["txtAddress"],
 				$_POST["txtSuburb"], $_POST["txtCity"], $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey] ))
 			{
+				// in case login is changed, update the session reference
+				$_SESSION[\Common\SecurityConstraints::$sessionUserLoginKey]  = $_POST["txtLogin"];
+				
 				// indicate primary update of profile worked.
 				$successfulPrimaryProfileUpdate = true;
 				
@@ -299,18 +302,15 @@ else
         }
         ?>
     </title>
-    <link rel="stylesheet" type="text/css" href="../css/jquery-ui.css">
-    <link rel="stylesheet" type="text/css" href="../css/jquery-ui.structure.css">
-    <link rel="stylesheet" type="text/css" href="../css/jquery-ui.theme.css">
-    <link rel="stylesheet" type="text/css" href="../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="../css/Common.css">
-    <script type="text/javascript" src="../js/jquery.js"></script>
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
     <script type="text/javascript">
 	
-		// for customer update form.
+		// for profile update form.
 		// pressing edit allows changes to the form and shows reset button.
 		// pressing reset undos current and disables further changes, and shows edit button.
-		function change_form() 
+		function changeProfileForm() 
 		{
 			if($("#btnEditForm").val() == "Edit")
 			{
@@ -351,7 +351,7 @@ else
 		// toggles allowing password changes. Only for updating a member's profile.
 		// toggle on to allow entering a new password, for updating.
 		// toggle off to clear any new password entry, disable password editing and retain old password.
-		function profile_password_toggle() 
+		function passwordEntryToggle() 
 		{
 				if($("#btnChangeProfilePassword").val() == "Change Password")
 				{
@@ -564,7 +564,7 @@ else
                             {
 								echo '<div class="col-xs-12 col-sm-4 col-md-4">' .
 									 '<input type="button" class="btn btn-warning" id="btnChangeProfilePassword" '.
-									 ' disabled onclick="profile_password_toggle();" style="float: left; width:80%" value="Change Password" />' .
+									 ' disabled onclick="passwordEntryToggle();" style="float: left; width:80%" value="Change Password" />' .
 									 '</div>' .
 									 '<div class="col-xs-12 col-sm-6 col-md-4">'.
 										 '<input class="form-control" style="float: left; width:100%" id="txtPassword"' .
@@ -800,7 +800,7 @@ else
 
 								// hide a reset button, to undo changes if user cancels.
                                 echo '<div class="col-xs-6 col-sm-3 col-md-3">' .
-                                    '<input type="button" class="btn btn-primary" id="btnEditForm" onclick="change_form();" value="Edit" />' .
+                                    '<input type="button" class="btn btn-primary" id="btnEditForm" onclick="changeProfileForm();" value="Edit" />' .
 									'<input type="reset" hidden value="Reset" id="resetProfile" />' .
                                     '</div>' .
                                     '<div class="col-xs-12 col-sm-2 col-md-2">' .

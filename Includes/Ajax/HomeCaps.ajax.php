@@ -72,7 +72,7 @@ if (isset($_REQUEST["p"]) && isset($_REQUEST["c"]) )
 		echo '<div class="row"><div class="col-xs-12 col-sm-12 col-md-12">'.
 			'<img style="width:160px; height:160px;" class="img-thumbnail" alt="no picture" src="'.$imgUrl.'" /></div></div><br/>'.
 			'<div class="row"><div class="col-xs-8 col-sm-8 col-md-8">'.
-			'<input type="button" class="btn btn-primary" value="'.$name.'" onclick="ShowCapDetails('.$id.');" /></div>'.
+			'<input type="button" class="btn btn-primary" value="'.$name.'" onclick="showCapDetails('.$id.');" /></div>'.
 			'<div class="col-xs-0 col-sm-0 col-md-1"></div>'.
 			'<div class="col-xs-12 col-sm-8 col-md-8"><label>$ '.$price.' </label></div></div>';
 			
@@ -123,9 +123,9 @@ elseif (isset( $_REQUEST["d"] ))
 			'<div class="row"><div class="col-xs-0 col-sm-2 col-md-2"></div>'.
 			'<div class="col-xs-6 col-sm-9 col-md-9">'.$description.'</div></div><br/>'.
 			'<div class="row"><div class="col-xs-0 col-sm-2 col-md-2"></div>'.
-			'<div class="col-xs-6 col-sm-3 col-md-3"><input type="button" class="btn btn-primary" value="Add To Cart" onclick="AddCapToCart()" /></div>'.
+			'<div class="col-xs-6 col-sm-3 col-md-3"><input type="button" class="btn btn-primary" value="Add To Cart" onclick="addCapToCart()" /></div>'.
 			'<div class="col-xs-0 col-sm-2 col-md-2"></div>'.
-			'<div class="col-xs-6 col-sm-4 col-md-4"><input type="button" class="btn btn-primary" value="Cancel" onclick="ReturnToCapListing()" /></div>';
+			'<div class="col-xs-6 col-sm-4 col-md-4"><input type="button" class="btn btn-primary" value="Cancel" onclick="returnToCapListing()" /></div>';
 	}
 }
 else

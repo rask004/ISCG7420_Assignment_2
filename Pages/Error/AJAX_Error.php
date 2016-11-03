@@ -22,9 +22,9 @@ if( !(isset( $_SESSION["last_Error"]) && $_SESSION["last_Error"] == "AJAX_Error"
 <head>
     <meta charset="utf-8">
     <title>Quality Caps - ERROR, Database Connection</title>
-    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="../../css/Common.css">
-    <script type="text/javascript" src="../../js/jquery.js"></script>
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
     <script type="text/javascript">
 		// show error page for a while, then try to load home page
 		function doCountdown()

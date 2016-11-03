@@ -142,7 +142,7 @@ if (isset($_REQUEST["p"]))
 			
 			echo '<div class="row"><div class="col-xs-0 col-sm-1 col-md-1"></div>'.
 				'<div class="col-xs-4 col-sm-2 col-md-2">'.
-				'<input style="background-color:red" type="button" class="btn btn-danger" onclick="DeleteCartItem('.$capId.')" value="X" /></div>'.
+				'<input style="background-color:red" type="button" class="btn btn-danger" onclick="deleteCartItem('.$capId.')" value="X" /></div>'.
 				'<div class="col-xs-4 col-sm-2 col-md-2">'.
 				'<label>ID: </label></div><div class="col-xs-4 col-sm-2 col-md-2">'.
 				'<span>'. $capId .'</span></div><div class="col-xs-0 col-sm-4 col-md-4"></div></div>';

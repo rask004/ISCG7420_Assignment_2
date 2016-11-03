@@ -19,15 +19,15 @@ include_once('../Includes/Common.php');
             <!-- Call javascript function -->
                 <script type="text/javascript">
 					// show current time in 24 hour format.
-                    function update_time() {
+                    function updateTime() {
                         var c = new Date(); var h = c.getHours(); var m = c.getMinutes();
                         var s = c.getSeconds(); if (h < 10) { h = "0" + h; } if (m < 10) { m = "0" + m; }
                         if (s < 10) { s = "0" + s; }
                         document.getElementById("footerCurrentTime").innerHTML = h + ":" + m + ":" + s;
-                        setTimeout(update_time, 1000);
+                        setTimeout(updateTime, 1000);
                     }
 
-                    update_time();
+                    updateTime();
                 </script>
             </span>
     </div>
