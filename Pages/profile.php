@@ -185,7 +185,7 @@ if (isset($_POST["submit"]) && @strcmp($_POST["submit"], $postRegisterKey) === 0
 				$_POST["txtSuburb"], $_POST["txtCity"], $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey] ))
 			{
 				// in case login is changed, update the session reference
-				$_SESSION[\Common\SecurityConstraints::$sessionUserLoginKey]  = $_POST["txtLogin"];
+				$_SESSION[\Common\SecurityConstraints::$SessionUserLoginKey]  = $_POST["txtLogin"];
 				
 				// indicate primary update of profile worked.
 				$successfulPrimaryProfileUpdate = true;

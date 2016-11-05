@@ -10,7 +10,7 @@ include_once('../Includes/Session.php');
 
 // perform logout session actions here
 unset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]);
-unset($_SESSION[\Common\SecurityConstraints::$sessionUserLoginKey]);
+unset($_SESSION[\Common\SecurityConstraints::$SessionUserLoginKey]);
 unset($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]);
 unset($_SESSION[\Common\SecurityConstraints::$SessionAdminCheckKey]);
 

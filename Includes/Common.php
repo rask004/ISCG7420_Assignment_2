@@ -15,7 +15,7 @@ namespace Common;
 */
 class SecurityConstraints
 {
-	public static $sessionUserLoginKey = "UserLogin";
+	public static $SessionUserLoginKey = "UserLogin";
 	public static $SessionUserIdKey = "UserId";
 	public static $SessionAuthenticationKey = "IsAuthenticated";
 	public static $SessionAdminCheckKey = "IsAdmin";
@@ -121,4 +121,37 @@ class Constants
 	public static  $HomeCapsTablePageWidth = 2;
 	
 	public static  $HomeCartTablePageSize = 3;
+}
+
+/*
+ *  Used to manage logging.
+ *
+ */
+class Logging
+{
+    private static $_loggerDirectory = "logs";
+
+    private static $_loggerFilename = "application.log";
+
+    /*  To log an action.
+     *
+     *  source:     the class or page where the logging action occurred
+     *
+     *  message:    the message to log.
+     */
+    public static function Log($source, $message)
+    {
+        $logLine = date("Y/m/d H:i:s") . " :: [%-16s] - %s\r\n";
+
+        // if logging directory doesn't exist, create it.
+        if ( !file_exists("../" . self::$_loggerDirectory))
+        {
+            mkdir("../" . self::$_loggerDirectory, 0755);
+        }
+
+        // open the file, append a log line.
+        file_put_contents("../" . self::$_loggerDirectory . "/" . self::$_loggerFilename,
+            sprintf($logLine, $source, $message),
+            FILE_APPEND);
+    }
 }

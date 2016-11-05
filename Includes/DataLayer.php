@@ -9,6 +9,9 @@
 namespace DataLayer;
 
 require_once('Session.php');
+require_once('Common.php');
+
+use Common\Logging as Logging;
 
 // Database interaction object
 class DataManager
@@ -30,7 +33,7 @@ class DataManager
                             "`isDisabled`  BIT(1)    not null DEFAULT 0 );"))
 		{
 			$_SESSION["last_Error"] = "DB_Error_Generic";
-			$_SESSION["Error_MSG"] = (string) $mysqli->_conn->errno . "; " . $mysqli->_conn->error . "; SiteUser table Generation";
+			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SiteUser table Generation";
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
 			exit;
 		}
@@ -41,7 +44,7 @@ class DataManager
 						   "CONSTRAINT fk_OrderCustomer Foreign Key (`userId`) References `SiteUser`(`id`));"))
 		{
 			$_SESSION["last_Error"] = "DB_Error_Generic";
-			$_SESSION["Error_MSG"] = (string) $mysqli->_conn->errno . "; " . $mysqli->_conn->error . "; CustomerOrder table Generation";
+			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; CustomerOrder table Generation";
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
 			exit;
 		}
@@ -52,7 +55,7 @@ class DataManager
                             "`mobileNumber` varchar(13) null, `emailAddress` varchar(64) not null);"))
 		{
 			$_SESSION["last_Error"] = "DB_Error_Generic";
-			$_SESSION["Error_MSG"] = (string) $mysqli->_conn->errno . "; " . $mysqli->_conn->error . "; Supplier table Generation";
+			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; Supplier table Generation";
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
 			exit;
 		}
@@ -61,7 +64,7 @@ class DataManager
         if(!$this->_conn->query("create table if not exists `Category`(`id` int UNSIGNED AUTO_INCREMENT primary key, `name` varchar(40) not null); "))
 		{
 			$_SESSION["last_Error"] = "DB_Error_Generic";
-			$_SESSION["Error_MSG"] = (string) $mysqli->_conn->errno . "; " . $mysqli->_conn->error . "; Category table Generation";
+			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; Category table Generation";
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
 			exit;
 		}
@@ -75,7 +78,7 @@ class DataManager
 							"CONSTRAINT fk_category Foreign Key (`categoryId`) References `Category`(`id`)); "))
 		{
 			$_SESSION["last_Error"] = "DB_Error_Generic";
-			$_SESSION["Error_MSG"] = (string) $mysqli->_conn->errno . "; " . $mysqli->_conn->error . "; Cap table Generation";
+			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; Cap table Generation";
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
 			exit;
 		}
@@ -89,12 +92,14 @@ class DataManager
 													   "CONSTRAINT fk_capOrderItem Foreign Key (`capId`) References `Cap`(`id`)); "))
 		{
 			$_SESSION["last_Error"] = "DB_Error_Generic";
-			$_SESSION["Error_MSG"] = (string) $mysqli->_conn->errno . "; " . $mysqli->_conn->error . "; OrderItem table Generation";
+			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; OrderItem table Generation";
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
 			exit;
 		}
 														  
 		$this->_CloseConnection();
+        
+        Logging::Log('DataManager', 'completed building tables.');
 	}
 	
 	/*
@@ -106,7 +111,7 @@ class DataManager
 		if ($this->_conn->connect_errno) 
 		{
 			$_SESSION["last_Error"] = "DB_connection";
-			$_SESSION["Error_MSG"] = (string) $mysqli->connect_errno . "; " . $mysqli->connect_error;
+			$_SESSION["Error_MSG"] = (string) $this->_conn->connect_errno . "; " . $this->_conn->connect_error;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error.php");
 			exit;
 		}
@@ -160,10 +165,12 @@ class DataManager
 			{
 				$this->_conn->rollback();
 				$_SESSION["last_Error"] = "DB_Error_Generic";
-				$_SESSION["Error_MSG"] = (string) $mysqli->_conn->errno . "; " . $mysqli->_conn->error . "; SQL='". $sql ."'";
+				$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL='". $sql ."'";
 				header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error.php");
 				exit;
 			}
+
+            Logging::Log('DataManager', 'query: ' . $sql);
 
 			// create each new order item, using the order id.
 			$sql = "insert into OrderItem (orderId, capId, quantity ) values ";			
@@ -194,10 +201,12 @@ class DataManager
 			{
 				$this->_conn->rollback();
 				$_SESSION["last_Error"] = "DB_Error_Generic";
-				$_SESSION["Error_MSG"] = (string) $mysqli->_conn->errno . "; " . $mysqli->_conn->error . "; SQL=". $sql;
+				$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 				header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
 				exit;
 			}
+
+            Logging::Log('DataManager', 'query: ' . $sql);
 			
 			$this->_CloseConnection();
 		}
@@ -236,10 +245,12 @@ class DataManager
 		{
 			$this->_conn->rollback();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
-			$_SESSION["Error_MSG"] = (string) $mysqli->_conn->errno . "; " . $mysqli->_conn->error . "; SQL=". $sql;
+			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
 			exit;
 		}
+
+        Logging::Log('DataManager', 'query: ' . $sql);
 		
 		$this->_CloseConnection();								
 	}
@@ -279,10 +290,12 @@ class DataManager
 		{
 			$this->_conn->rollback();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
-			$_SESSION["Error_MSG"] = (string) $mysqli->_conn->errno . "; " . $mysqli->_conn->error . "; SQL=". $sql;
+			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
 			exit;
 		}
+
+        Logging::Log('DataManager', 'query: ' . $sql);
 		
 		$this->_CloseConnection();
 	}	
@@ -307,10 +320,12 @@ class DataManager
 		{
 			$this->_conn->rollback();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
-			$_SESSION["Error_MSG"] = (string) $mysqli->_conn->errno . "; " . $mysqli->_conn->error . "; SQL=". $sql;
+			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
 			exit;
 		}
+
+        Logging::Log('DataManager', 'query: ' . $sql);
 		
 		$this->_CloseConnection();								
 	}
@@ -323,12 +338,14 @@ class DataManager
 		$this->_OpenConnection();	
 		
 		$id = (integer) $id;
+
+        $sql = "Select * from SiteUser where UserType='C' and id=" . $id . ";";
 		
-		if (!$query_result = $this->_conn->query("Select * from SiteUser where UserType='C' and id=" . $id . ";"))
+		if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
-			$_SESSION["Error_MSG"] = (string) $mysqli->_conn->errno . "; " . $mysqli->_conn->error . "; SQL=". $sql;
+			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
 			exit;
 		}
@@ -348,6 +365,8 @@ class DataManager
 		{
 			$query_result->free();
 		}
+
+        Logging::Log('DataManager', 'query: ' . $sql);
 		
 		$this->_CloseConnection();	
 		
@@ -361,13 +380,14 @@ class DataManager
 	{
 		$this->_OpenConnection();	
 		
-		$login = $this->_conn->real_escape_string($login);	
-		
-		if (!$query_result = $this->_conn->query("Select * from SiteUser where UserType='C' and login='" . $login . "';"))
+		$login = $this->_conn->real_escape_string($login);
+
+        $sql = "Select * from SiteUser where UserType='C' and login='" . $login . "';";
+        if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
-			$_SESSION["Error_MSG"] = (string) $mysqli->_conn->errno . "; " . $mysqli->_conn->error . "; SQL=". $sql;
+			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
 			exit;
 		}
@@ -387,6 +407,8 @@ class DataManager
 		{
 			$query_result->free();
 		}
+
+        Logging::Log('DataManager', 'query: ' . $sql);
 		
 		$this->_CloseConnection();	
 		
@@ -400,13 +422,14 @@ class DataManager
 	{
 		$this->_OpenConnection();
 		
-		$login = $this->_conn->real_escape_string($login);		
-		
-		if (!$query_result = $this->_conn->query("Select * from SiteUser where UserType='C' and login='" . $login . "';"))
+		$login = $this->_conn->real_escape_string($login);
+
+        $sql = "Select * from SiteUser where UserType='C' and login='" . $login . "';";
+        if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
-			$_SESSION["Error_MSG"] = (string) $mysqli->_conn->errno . "; " . $mysqli->_conn->error . "; SQL=". $sql;
+			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
 			exit;
 		}
@@ -422,6 +445,8 @@ class DataManager
 		{
 			$query_result->free();
 		}
+
+        Logging::Log('DataManager', 'query: ' . $sql);
 		
 		$this->_CloseConnection();	
 		
@@ -435,13 +460,14 @@ class DataManager
 	{
 		$this->_OpenConnection();
 		
-		$email = $this->_conn->real_escape_string($email);	
-		
-		if (!$query_result = $this->_conn->query("Select * from SiteUser where UserType='C' and emailAddress='" . $email . "';"))
+		$email = $this->_conn->real_escape_string($email);
+
+        $sql = "Select * from SiteUser where UserType='C' and emailAddress='" . $email . "';";
+        if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
-			$_SESSION["Error_MSG"] = (string) $mysqli->_conn->errno . "; " . $mysqli->_conn->error . "; SQL=". $sql;
+			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
 			exit;
 		}
@@ -457,6 +483,8 @@ class DataManager
 		{
 			$query_result->free();
 		}
+
+        Logging::Log('DataManager', 'query: ' . $sql);
 		
 		$this->_CloseConnection();	
 		
@@ -471,12 +499,13 @@ class DataManager
 		$this->_OpenConnection();	
 		
 		$id = (integer) $id;
-		
-		if (!$query_result = $this->_conn->query("Select * from SiteUser where UserType='A' and id=" . $id . ";"))
+
+        $sql = "Select * from SiteUser where UserType='A' and id=" . $id . ";";
+        if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
-			$_SESSION["Error_MSG"] = (string) $mysqli->_conn->errno . "; " . $mysqli->_conn->error . "; SQL=". $sql;
+			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
 			exit;
 		}
@@ -496,6 +525,8 @@ class DataManager
 		{
 			$query_result->free();
 		}
+
+        Logging::Log('DataManager', 'query: ' . $sql);
 		
 		$this->_CloseConnection();	
 		
@@ -509,13 +540,14 @@ class DataManager
 	{
 		$this->_OpenConnection();	
 		
-		$login = $this->_conn->real_escape_string($login);	
-		
-		if (!$query_result = $this->_conn->query("Select * from SiteUser where UserType='A' and login='" . $login . "';"))
+		$login = $this->_conn->real_escape_string($login);
+
+        $sql = "Select * from SiteUser where UserType='A' and login='" . $login . "';";
+        if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
-			$_SESSION["Error_MSG"] = (string) $mysqli->_conn->errno . "; " . $mysqli->_conn->error . "; SQL=". $sql;
+			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
 			exit;
 		}
@@ -535,6 +567,8 @@ class DataManager
 		{
 			$query_result->free();
 		}
+
+        Logging::Log('DataManager', 'query: ' . $sql);
 		
 		$this->_CloseConnection();	
 		
@@ -548,13 +582,14 @@ class DataManager
 	{
 		$this->_OpenConnection();	
 		
-		$login = $this->_conn->real_escape_string($login);	
-		
-		if (!$query_result = $this->_conn->query("Select * from SiteUser where UserType='A' and login='" . $login . "';"))
+		$login = $this->_conn->real_escape_string($login);
+
+        $sql = "Select * from SiteUser where UserType='A' and login='" . $login . "';";
+        if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
-			$_SESSION["Error_MSG"] = (string) $mysqli->_conn->errno . "; " . $mysqli->_conn->error . "; SQL=". $sql;
+			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
 			exit;
 		}
@@ -571,6 +606,8 @@ class DataManager
 		{
 			$query_result->free();
 		}
+
+        Logging::Log('DataManager', 'query: ' . $sql);
 		
 		$this->_CloseConnection();	
 		
@@ -594,13 +631,15 @@ class DataManager
 			$firstItemIndex = 0;
 		}
 		
-		$this->_OpenConnection();	
-		
-		if (!$query_result = $this->_conn->query("SELECT c.id, c.name, cp.imageUrl FROM `cap` cp, `category` c WHERE cp.categoryId = c.id group by c.id ".  			"order by id, name LIMIT " . $firstItemIndex . ", " . $numberOfItems . ";"))
+		$this->_OpenConnection();
+
+        $sql = "SELECT c.id, c.name, cp.imageUrl FROM `cap` cp, `category` c WHERE cp.categoryId = c.id group by c.id "
+                . "order by id, name LIMIT " . $firstItemIndex . ", " . $numberOfItems . ";";
+        if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
-			$_SESSION["Error_MSG"] = (string) $mysqli->_conn->errno . "; " . $mysqli->_conn->error . "; SQL=". $sql;
+			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
 			exit;
 		}
@@ -619,6 +658,8 @@ class DataManager
 		{
 			$query_result->free();
 		}
+
+        Logging::Log('DataManager', 'query: ' . $sql);
 		
 		$this->_CloseConnection();	
 		
@@ -630,13 +671,14 @@ class DataManager
 	*/
 	public function SelectCountOfAvailableCategories()
 	{
-		$this->_OpenConnection();	
-		
-		if (!$query_result = $this->_conn->query("Select * from `category` WHERE `id` in (select distinct `categoryId` from `cap`);"))
+		$this->_OpenConnection();
+
+        $sql = "Select * from `category` WHERE `id` in (select distinct `categoryId` from `cap`);";
+        if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
-			$_SESSION["Error_MSG"] = (string) $mysqli->_conn->errno . "; " . $mysqli->_conn->error . "; SQL=". $sql;
+			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
 			exit;
 		}
@@ -647,6 +689,8 @@ class DataManager
 		{
 			$query_result->free();
 		}
+
+        Logging::Log('DataManager', 'query: ' . $sql);
 		
 		$this->_CloseConnection();	
 		
@@ -672,14 +716,15 @@ class DataManager
 			$firstItemIndex = 0;
 		}
 		
-		$this->_OpenConnection();	
-		
-		if (!$query_result = $this->_conn->query("Select * from `cap` WHERE `categoryId` = " . $categoryId . " order by categoryId, id LIMIT "
-		. $firstItemIndex . ", " . $numberOfItems . ";"))
+		$this->_OpenConnection();
+
+        $sql = "Select * from `cap` WHERE `categoryId` = " . $categoryId . " order by categoryId, id LIMIT "
+            . $firstItemIndex . ", " . $numberOfItems . ";";
+        if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
-			$_SESSION["Error_MSG"] = (string) $mysqli->_conn->errno . "; " . $mysqli->_conn->error . "; SQL=". $sql;
+			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
 			exit;
 		}
@@ -698,6 +743,8 @@ class DataManager
 		{
 			$query_result->free();
 		}
+
+        Logging::Log('DataManager', 'query: ' . $sql);
 		
 		$this->_CloseConnection();	
 		
@@ -711,13 +758,14 @@ class DataManager
 	{
 		$categoryId = (integer) $categoryId;
 		
-		$this->_OpenConnection();	
-		
-		if (!$query_result = $this->_conn->query("Select * from `cap` WHERE `categoryId` = " . $categoryId . ";"))
+		$this->_OpenConnection();
+
+        $sql = "Select * from `cap` WHERE `categoryId` = " . $categoryId . ";";
+        if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
-			$_SESSION["Error_MSG"] = (string) $mysqli->_conn->errno . "; " . $mysqli->_conn->error . "; SQL=". $sql;
+			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
 			exit;
 		}
@@ -728,6 +776,8 @@ class DataManager
 		{
 			$query_result->free();
 		}
+
+        Logging::Log('DataManager', 'query: ' . $sql);
 		
 		$this->_CloseConnection();
 		
@@ -739,13 +789,14 @@ class DataManager
 	*/
 	public function SelectAllCaps($firstItemIndex,  $numberOfItems)
 	{
-		$this->_OpenConnection();	
-		
-		if (!$query_result = $this->_conn->query("Select * from `cap` order by id LIMIT ".$firstItemIndex.", ".$numberOfItems.";"))
+		$this->_OpenConnection();
+
+        $sql = "Select * from `cap` order by id LIMIT " . $firstItemIndex . ", " . $numberOfItems . ";";
+        if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
-			$_SESSION["Error_MSG"] = (string) $mysqli->_conn->errno . "; " . $mysqli->_conn->error . "; SQL=". $sql;
+			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
 			exit;
 		}
@@ -764,6 +815,8 @@ class DataManager
 		{
 			$query_result->free();
 		}
+
+        Logging::Log('DataManager', 'query: ' . $sql);
 		
 		$this->_CloseConnection();	
 		
@@ -775,13 +828,14 @@ class DataManager
 	*/
 	public function SelectCountOfAllCaps()
 	{
-		$this->_OpenConnection();	
-		
-		if (!$query_result = $this->_conn->query("Select * from `cap`;"))
+		$this->_OpenConnection();
+
+        $sql = "Select * from `cap`;";
+        if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
-			$_SESSION["Error_MSG"] = (string) $mysqli->_conn->errno . "; " . $mysqli->_conn->error . "; SQL=". $sql;
+			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
 			exit;
 		}
@@ -792,6 +846,8 @@ class DataManager
 		{
 			$query_result->free();
 		}
+
+        Logging::Log('DataManager', 'query: ' . $sql);
 		
 		$this->_CloseConnection();	
 		
@@ -805,13 +861,14 @@ class DataManager
 	{
 		$capId = (integer) $capId;
 		
-		$this->_OpenConnection();	
-		
-		if (!$query_result = $this->_conn->query("Select * from `cap` WHERE `id` = " . $capId . ";"))
+		$this->_OpenConnection();
+
+        $sql = "Select * from `cap` WHERE `id` = " . $capId . ";";
+        if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
-			$_SESSION["Error_MSG"] = (string) $mysqli->_conn->errno . "; " . $mysqli->_conn->error . "; SQL=". $sql;
+			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
 			exit;
 		}
@@ -827,6 +884,8 @@ class DataManager
 		{
 			$query_result->free();
 		}
+
+        Logging::Log('DataManager', 'query: ' . $sql);
 		
 		$this->_CloseConnection();	
 		
@@ -842,15 +901,16 @@ class DataManager
 		$numberOfItems = (integer) $numberOfItems;
 		$customerId = (integer) $customerId;
 		
-		$this->_OpenConnection();	
-		
-		if (!$query_result = $this->_conn->query("Select id, userId, status, datePlaced, capId, quantity from `CustomerOrder` co JOIN `OrderItem`" .
-						" oi ON oi.`OrderId`=co.`id` WHERE userId=" . $customerId . " order by status, datePlaced, capId, quantity limit " .
-						$firstItemIndex . ", " . $numberOfItems . ";"))
+		$this->_OpenConnection();
+
+        $sql = "Select id, userId, status, datePlaced, capId, quantity from `CustomerOrder` co JOIN `OrderItem`" .
+            " oi ON oi.`OrderId`=co.`id` WHERE userId=" . $customerId . " order by status, datePlaced, capId, quantity limit " .
+            $firstItemIndex . ", " . $numberOfItems . ";";
+        if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
-			$_SESSION["Error_MSG"] = (string) $mysqli->_conn->errno . "; " . $mysqli->_conn->error . "; SQL=". $sql;
+			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
 			exit;
 		}
@@ -869,6 +929,8 @@ class DataManager
 		{
 			$query_result->free();
 		}
+
+        Logging::Log('DataManager', 'query: ' . $sql);
 		
 		$this->_CloseConnection();	
 		
@@ -884,16 +946,17 @@ class DataManager
 		$numberOfItems = (integer) $numberOfItems;
 		$customerId = (integer) $customerId;
 		
-		$this->_OpenConnection();	
-		
-		if (!$query_result = $this->_conn->query("SELECT co.id as id, co.status as status, co.datePlaced as datePlaced, ".
-		" sum(oi.quantity) as totalQuantity, sum(oi.quantity * c.price) as totalPrice FROM `orderitem` oi, `customerorder` co, ".
-		" `cap` c WHERE userId=" . $customerId . " and oi.orderid = co.id AND c.id = oi.capId group by orderId " .
-		" order by co.status, co.datePlaced, co.id limit " . $firstItemIndex . ", " . $numberOfItems . ";"))
+		$this->_OpenConnection();
+
+        $sql = "SELECT co.id as id, co.status as status, co.datePlaced as datePlaced, " .
+            " sum(oi.quantity) as totalQuantity, sum(oi.quantity * c.price) as totalPrice FROM `orderitem` oi, `customerorder` co, " .
+            " `cap` c WHERE userId=" . $customerId . " and oi.orderid = co.id AND c.id = oi.capId group by orderId " .
+            " order by co.status, co.datePlaced, co.id limit " . $firstItemIndex . ", " . $numberOfItems . ";";
+        if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
-			$_SESSION["Error_MSG"] = (string) $mysqli->_conn->errno . "; " . $mysqli->_conn->error . "; SQL=". $sql;
+			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
 			exit;
 		}
@@ -912,6 +975,8 @@ class DataManager
 		{
 			$query_result->free();
 		}
+
+        Logging::Log('DataManager', 'query: ' . $sql);
 		
 		$this->_CloseConnection();	
 		
@@ -925,15 +990,16 @@ class DataManager
 	{
 		$customerId = (integer) $customerId;
 		
-		$this->_OpenConnection();	
-		
-		if (!$query_result = $this->_conn->query("SELECT co.id as id, ".
-		" sum(oi.quantity) as totalQuantity, sum(oi.quantity * c.price) as totalPrice FROM `orderitem` oi, `customerorder` co, ".
-		" `cap` c WHERE userId=" . $customerId . " and oi.orderid = co.id AND c.id = oi.capId group by orderId ;"))
+		$this->_OpenConnection();
+
+        $sql = "SELECT co.id as id, " .
+            " sum(oi.quantity) as totalQuantity, sum(oi.quantity * c.price) as totalPrice FROM `orderitem` oi, `customerorder` co, " .
+            " `cap` c WHERE userId=" . $customerId . " and oi.orderid = co.id AND c.id = oi.capId group by orderId ;";
+        if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
-			$_SESSION["Error_MSG"] = (string) $mysqli->_conn->errno . "; " . $mysqli->_conn->error . "; SQL=". $sql;
+			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
 			exit;
 		}
@@ -944,6 +1010,8 @@ class DataManager
 		{
 			$query_result->free();
 		}
+
+        Logging::Log('DataManager', 'query: ' . $sql);
 		
 		$this->_CloseConnection();	
 		
@@ -959,13 +1027,14 @@ class DataManager
 		
 		$salt = $this->_conn->real_escape_string($salt);
 		
-		$matches = false;	
-		
-		if (!$query_result = $this->_conn->query("Select 1 FROM `SiteUser` WHERE passwordsalt='" . $salt . "';"))
+		$matches = false;
+
+        $sql = "Select 1 FROM `SiteUser` WHERE passwordsalt='" . $salt . "';";
+        if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
-			$_SESSION["Error_MSG"] = (string) $mysqli->_conn->errno . "; " . $mysqli->_conn->error . "; SQL=". $sql;
+			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
 			exit;
 		}
@@ -979,6 +1048,8 @@ class DataManager
 		{
 			$query_result->free();
 		}
+
+        Logging::Log('DataManager', 'query: ' . $sql);
 		
 		$this->_CloseConnection();	
 		
@@ -995,12 +1066,13 @@ class DataManager
 		$data = array();
 		
 		$login = $this->_conn->real_escape_string($login);
-		
-		if (!$query_result = $this->_conn->query("Select passwordsalt, passwordhash FROM `SiteUser` where UserType='A' and login='" . $login . "';"))
+
+        $sql = "Select passwordsalt, passwordhash FROM `SiteUser` where UserType='A' and login='" . $login . "';";
+        if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
-			$_SESSION["Error_MSG"] = (string) $mysqli->_conn->errno . "; " . $mysqli->_conn->error . "; SQL=". $sql;
+			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
 			exit;
 		}
@@ -1014,6 +1086,8 @@ class DataManager
 		{
 			$query_result->free();
 		}
+
+        Logging::Log('DataManager', 'query: ' . $sql);
 		
 		$this->_CloseConnection();	
 		
@@ -1030,12 +1104,13 @@ class DataManager
 		$data = array();
 		
 		$login = $this->_conn->real_escape_string($login);
-		
-		if (!$query_result = $this->_conn->query("Select * FROM `siteuser` WHERE userType='C' and login='" . $login . "';"))
+
+        $sql = "Select * FROM `siteuser` WHERE userType='C' and login='" . $login . "';";
+        if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
-			$_SESSION["Error_MSG"] = (string) $mysqli->_conn->errno . "; " . $mysqli->_conn->error . "; SQL=". $sql;
+			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
 			exit;
 		}
@@ -1049,6 +1124,8 @@ class DataManager
 		{
 			$query_result->free();
 		}
+
+        Logging::Log('DataManager', 'query: ' . $sql);
 		
 		$this->_CloseConnection();	
 		

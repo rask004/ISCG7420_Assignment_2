@@ -35,7 +35,7 @@ if (isset($_POST['inputLogin']) && isset($_POST['inputPassword']))
 		$Customer = $CustomerManager->FindCustomerByLogin($_POST['inputLogin']);
 		
 		$_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] = 1;
-   		$_SESSION[\Common\SecurityConstraints::$sessionUserLoginKey]  = $Customer['login'];
+   		$_SESSION[\Common\SecurityConstraints::$SessionUserLoginKey]  = $Customer['login'];
     	$_SESSION[\Common\SecurityConstraints::$SessionUserIdKey] = $Customer['id'];
 		
 		// prevent accidential misuse of member business layer objects.
@@ -48,7 +48,7 @@ if (isset($_POST['inputLogin']) && isset($_POST['inputPassword']))
 		$Admin = $AdminManager->FindAdminByLogin($_POST['inputLogin']);
 		
 		$_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] = 1;
-   		$_SESSION[\Common\SecurityConstraints::$sessionUserLoginKey]  = $Admin['login'];
+   		$_SESSION[\Common\SecurityConstraints::$SessionUserLoginKey]  = $Admin['login'];
     	$_SESSION[\Common\SecurityConstraints::$SessionUserIdKey] = $Admin['id'];
 		$_SESSION[\Common\SecurityConstraints::$SessionAdminCheckKey] = 1;
 		
