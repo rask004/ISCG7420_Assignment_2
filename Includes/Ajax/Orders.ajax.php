@@ -13,6 +13,15 @@ include_once('../Session.php');
 include_once("../Common.php");
 include_once('../OrderManager.php');
 
+$customerId = "VISITOR";
+if(isset($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]))
+{
+	$customerId = $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey];
+}
+
+\Common\Logging::Log('Pages', 'Page /Pages/checkout.php accessed. sessionId=' . session_id() . '; customer='
+	. $customerId . "; queryString=" . $_SERVER['QUERY_STRING'] . "\r\n");
+
 // Check for correct parameters. redirect to ajax error page if malformed.
 if (!isset($_REQUEST["p"]))
 {

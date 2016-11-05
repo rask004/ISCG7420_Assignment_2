@@ -1,9 +1,5 @@
 <?php
 
-include_once('../Session.php');
-include_once("../CapManager.php");
-include_once('../Common.php');
-
 /**
  * Created by Dreamweaver.
  * User: Roland
@@ -12,6 +8,19 @@ include_once('../Common.php');
  *
  * AJAX page for showing home page caps
  */
+
+include_once('../Session.php');
+include_once("../CapManager.php");
+include_once('../Common.php');
+
+$customerId = "VISITOR";
+if(isset($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]))
+{
+    $customerId = $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey];
+}
+
+\Common\Logging::Log('Pages', 'Page /Pages/checkout.php accessed. sessionId=' . session_id() . '; customer='
+    . $customerId . "; queryString=" . $_SERVER['QUERY_STRING'] . "\r\n");
 
 // check for malformed AJAX
 if (isset($_REQUEST["p"]) && isset($_REQUEST["c"]) )
