@@ -11,6 +11,15 @@ include_once('../Includes/Common.php');
 include_once('../Includes/CategoryManager.php');
 include_once('../Includes/CapManager.php');
 
+$customerId = "VISITOR";
+if(isset($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]))
+{
+    $customerId = $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey];
+}
+
+\Common\Logging::Log('Pages', 'Page /Pages/checkout.php accessed. sessionId=' . session_id() . '; customer='
+    . $customerId ."\r\n");
+
 // only customers and visitors can visit home page. 
 if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && isset($_SESSION[\Common\SecurityConstraints::$SessionAdminCheckKey]))
 {

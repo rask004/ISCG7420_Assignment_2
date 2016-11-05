@@ -12,6 +12,15 @@ include_once('../Includes/Session.php');
 include_once('../Includes/Common.php');
 include_once("../Includes/CustomerManager.php");
 
+$customerId = "VISITOR";
+if(isset($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]))
+{
+	$customerId = $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey];
+}
+
+\Common\Logging::Log('Pages', 'Page /Pages/checkout.php accessed. sessionId=' . session_id() . '; customer='
+	. $customerId ."\r\n");
+
 // for adding and updating customers.
 $CustomerManager = new \BusinessLayer\CustomerManager;
 

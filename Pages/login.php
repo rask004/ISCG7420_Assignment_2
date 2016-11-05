@@ -11,6 +11,15 @@ include_once('../Includes/Common.php');
 include_once('../Includes/CustomerManager.php');
 include_once('../Includes/AdminManager.php');
 
+$customerId = "VISITOR";
+if(isset($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]))
+{
+    $customerId = $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey];
+}
+
+\Common\Logging::Log('Pages', 'Page /Pages/login.php accessed. sessionId=' . session_id() . '; customer='
+    . $customerId);
+
 $msg = "";
 $senderEmail = \Common\Constants::$EmailAdminDefault;
 

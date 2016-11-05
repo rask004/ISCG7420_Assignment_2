@@ -6,6 +6,17 @@
  * Time: 10:11 PM
  */
 
+include_once('../Includes/Common.php');
+
+$customerId = "VISITOR";
+if(isset($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]))
+{
+    $customerId = $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey];
+}
+
+\Common\Logging::Log('Pages', 'Page /Pages/checkout.php accessed. sessionId=' . session_id() . '; customer='
+    . $customerId ."\r\n");
+
 //treat folder root as home page, using redirection
 
 // don't allow caching of the folder root page.

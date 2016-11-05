@@ -10,6 +10,19 @@
 include_once('../Includes/Session.php');
 include_once('../Includes/Common.php');
 
+$customerId = "UNKNOWN";
+$adminAccess = "FALSE";
+if(isset($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]))
+{
+	$customerId = $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey];
+}
+if(isset($_SESSION[\Common\SecurityConstraints::$SessionAdminCheckKey]))
+{
+    $adminAccess = "TRUE";
+}
+
+\Common\Logging::Log('Pages', 'Page /Pages/AdminFiles.php accessed. sessionId=' . session_id() . '; customer='
+	. $customerId . "; is_admin=" . $adminAccess."\r\n");
 
 if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] == 1
 	&& isset($_SESSION[\Common\SecurityConstraints::$SessionAdminCheckKey])))
