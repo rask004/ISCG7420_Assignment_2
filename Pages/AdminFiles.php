@@ -10,6 +10,19 @@
 include_once('../Includes/Session.php');
 include_once('../Includes/Common.php');
 
+$customerId = "UNKNOWN";
+$adminAccess = "FALSE";
+if(isset($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]))
+{
+	$customerId = $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey];
+}
+if(isset($_SESSION[\Common\SecurityConstraints::$SessionAdminCheckKey]))
+{
+    $adminAccess = "TRUE";
+}
+
+\Common\Logging::Log('Executing Page. sessionId=' . session_id() . '; customer='
+	. $customerId . "; is_admin=" . $adminAccess."\r\n");
 
 if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] == 1
 	&& isset($_SESSION[\Common\SecurityConstraints::$SessionAdminCheckKey])))
@@ -29,7 +42,7 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
 			{
 				$filepath = "../" . \Common\Constants::$AdminFileuploadFolder ."/" . $_POST["file_to_delete"];
 				// only delete files that actually exist.
-				if (file_exists($filepath) && unlink( "../" . \Common\Constants::$AdminFileuploadFolder ."/" . $_POST["file_to_delete"]))
+				if (file_exists($filepath) && @unlink( $filepath))
 				{
 					$fileDeleteSuccess = 1;
 				}
@@ -157,7 +170,7 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
                                         {
                                             $file_parts = explode(".", $value);
                                             $extension = $file_parts[count($file_parts) - 1 ];
-                                            // remove directory idicators, and non-permitted files.
+                                            // remove directory indicators, and non-permitted files.
                                             if ($value == "." || $value == ".." 
                                                 || !in_array($extension, \Common\Constants::$AdminPermittedFileuploadExtensions))
                                             {
@@ -168,7 +181,8 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
                                         $i = 0;
                                         
                                         echo '<div class="row">';
-                                        
+
+                                        // show each filename in a button, for selecting files to delete.
                                         foreach(array_values($contents) as $name)
                                         {
                                             echo '<div class="col-xs-12 col-sm-6 col-md-6">';
@@ -201,7 +215,8 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
                                     </div>
                                 </div>
                                 <div class="row">
-                                	
+
+                                    <!-- shows name of current file selected to delete. -->
 									<div class="col-xs-12 col-sm-12 col-md-12">
                                 		<input type="text" style="width:100%" readonly value="" id="input_delete_filename_hidden" name="file_to_delete" />
                                     </div>
@@ -220,6 +235,7 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
                                 <br/>
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-12">
+                                        <!-- shows picture of selected image for deletion -->
                                 		<img style="width:50%;height:50%" id="imgDeletePreview" src="" alt="selected image will appear here.">
                                     </div>
 

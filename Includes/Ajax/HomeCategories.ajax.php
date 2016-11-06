@@ -1,8 +1,5 @@
 <?php
 
-include_once('../Session.php');
-include_once("../CategoryManager.php");
-include_once('../Common.php');
 /**
  * Created by Dreamweaver.
  * User: Roland
@@ -11,6 +8,21 @@ include_once('../Common.php');
  *
  * AJAX page for showing home page categories
  */
+
+include_once('../Session.php');
+include_once("../CategoryManager.php");
+include_once('../Common.php');
+
+use \BusinessLayer\CategoryManager;
+
+$customerId = "VISITOR";
+if(isset($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]))
+{
+    $customerId = $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey];
+}
+
+\Common\Logging::Log('Executing Page. sessionId=' . session_id() . '; customer='
+    . $customerId . "\r\n");
 
 // check for malformed AJAX
 if (!isset($_REQUEST["p"]))
@@ -36,7 +48,7 @@ if (!isset($_REQUEST["p"]))
 else
 {
 	// show current page of categories
-	$categoryManager = new \BusinessLayer\CategoryManager;
+	$categoryManager = new CategoryManager();
 
 	$page = (integer) ($_REQUEST["p"] + 0);
 	

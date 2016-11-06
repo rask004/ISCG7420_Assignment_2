@@ -1,9 +1,5 @@
 <?php
 
-include_once('../Session.php');
-include_once("../CapManager.php");
-include_once('../Common.php');
-
 /**
  * Created by Dreamweaver.
  * User: Roland
@@ -13,12 +9,27 @@ include_once('../Common.php');
  * AJAX page for showing home page caps
  */
 
+include_once('../Session.php');
+include_once("../CapManager.php");
+include_once('../Common.php');
+
+use \BusinessLayer\CapManager;
+
+$customerId = "VISITOR";
+if(isset($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]))
+{
+    $customerId = $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey];
+}
+
+\Common\Logging::Log('Executing Page. sessionId=' . session_id() . '; customer='
+    . $customerId . "\r\n");
+
 // check for malformed AJAX
 if (isset($_REQUEST["p"]) && isset($_REQUEST["c"]) )
 {
 	// ok to process
 	
-	$CapManager = new \BusinessLayer\CapManager;
+	$CapManager = new CapManager();
 	$categoryId = (integer) ($_REQUEST["c"] + 0);
 	$page = (integer) ($_REQUEST["p"] + 0);
 	$pageSize = \Common\Constants::$HomeCapsTablePageSize;

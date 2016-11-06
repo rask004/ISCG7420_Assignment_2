@@ -15,7 +15,7 @@ namespace Common;
 */
 class SecurityConstraints
 {
-	public static $sessionUserLoginKey = "UserLogin";
+	public static $SessionUserLoginKey = "UserLogin";
 	public static $SessionUserIdKey = "UserId";
 	public static $SessionAuthenticationKey = "IsAuthenticated";
 	public static $SessionAdminCheckKey = "IsAdmin";
@@ -74,6 +74,7 @@ class SecurityConstraints
 */
 class Constants
 {
+
 	// submission keywords for the register/profile page.
 	public static $RegistrationSubmitKeyword = "Register";
 	public static $ProfileUpdateKeyword = "ProfileUpdate";
@@ -121,4 +122,45 @@ class Constants
 	public static  $HomeCapsTablePageWidth = 2;
 	
 	public static  $HomeCartTablePageSize = 3;
+}
+
+/*
+ *  Used to manage logging.
+ *
+ */
+class Logging
+{
+    private static $_loggerDirectory = "logs";
+
+    private static $_loggerFilename = "application.log";
+
+    /*  To log an action.
+     *
+     *  source:     the class or page where the logging action occurred
+     *
+     *  message:    the message to log.
+     */
+    public static function Log($message)
+    {
+        $logLine = date("Y/m/d H:i:s") . "%-20s, %22s, %40s, %40s, %12s, %40, %s\r\n";
+
+        // if logging directory doesn't exist, create it.
+        if ( !file_exists("../" . self::$_loggerDirectory) ||
+             !file_exists("../" . self::$_loggerDirectory . "/" . self::$_loggerFilename))
+        {
+            mkdir("../" . self::$_loggerDirectory, 0755);
+            file_put_contents("../" . self::$_loggerDirectory . "/" . self::$_loggerFilename,
+                sprintf($logLine, "DATETIME", "REMOTE_ADDRESS",
+                    "SCRIPT_FILENAME", "REQUESTED_URL", "METHOD",
+                    "QUERY_STRING", "NOTES"),
+                FILE_APPEND);
+        }
+
+        // open the file, append a log line.
+        file_put_contents("../" . self::$_loggerDirectory . "/" . self::$_loggerFilename,
+            sprintf($logLine, date("Y/m/d H:i:s"), $_SERVER['REMOTE_ADDR'].':'.$_SERVER['REMOTE_PORT'],
+                $_SERVER['SCRIPT_FILENAME'], $_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD'],
+                $_SERVER['QUERY_STRING'], $message),
+            FILE_APPEND);
+    }
 }

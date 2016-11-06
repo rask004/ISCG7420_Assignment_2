@@ -9,6 +9,15 @@
 include_once('../../Includes/Common.php');
 include_once('../../Includes/Session.php');
 
+$customerId = "VISITOR";
+if(isset($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]))
+{
+    $customerId = $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey];
+}
+
+\Common\Logging::Log('Error Pages', 'Page /Pages/Error/DB_Error_SQL.php accessed. sessionId=' . session_id() . '; customer='
+    . $customerId . "\r\n");
+
 // If no error, redirect to home.
 if( !(isset( $_SESSION["last_Error"]) && $_SESSION["last_Error"] == "DB_Error_Generic"))
 {
@@ -30,7 +39,7 @@ if( !(isset( $_SESSION["last_Error"]) && $_SESSION["last_Error"] == "DB_Error_Ge
 		// show error page for a while, then try to load home page
 		function doCountdown()
 		{
-			var count = $("#lblCountdown").html();
+			var count = parseInt($("#lblCountdown").html());
 			if (!count)
 			{
 				$("#lblCountdown").html("60");

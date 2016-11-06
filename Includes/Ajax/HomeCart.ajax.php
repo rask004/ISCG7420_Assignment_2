@@ -1,9 +1,5 @@
 <?php
 
-include_once('../Session.php');
-include_once("../CapManager.php");
-include_once('../Common.php');
-
 /**
  * Created by Dreamweaver.
  * User: Roland
@@ -12,6 +8,21 @@ include_once('../Common.php');
  *
  * AJAX page for showing home page cart
  */
+
+include_once('../Session.php');
+include_once("../CapManager.php");
+include_once('../Common.php');
+
+use \BusinessLayer\CapManager;
+
+$customerId = "VISITOR";
+if(isset($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]))
+{
+    $customerId = $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey];
+}
+
+\Common\Logging::Log('Executing Page. sessionId=' . session_id() . '; customer='
+    . $customerId . "\r\n");
 
 // check for malformed AJAX
 if (!isset($_REQUEST["c"]) && !isset($_REQUEST["p"]) && !isset($_REQUEST["d"]) && !isset($_REQUEST["a"]) && !isset($_REQUEST["aq"]) )
@@ -93,7 +104,7 @@ if (isset($_REQUEST["p"]))
 		
 		$page = (integer) ($_REQUEST["p"] + 0);
 		$pageSize = \Common\Constants::$HomeCartTablePageSize;	
-		$capsManager = new \BusinessLayer\CapManager;
+		$capsManager = new CapManager();
 		
 		// cannot have a page of 0 or less.
 		if ($page < 1)

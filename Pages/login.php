@@ -11,6 +11,18 @@ include_once('../Includes/Common.php');
 include_once('../Includes/CustomerManager.php');
 include_once('../Includes/AdminManager.php');
 
+use BusinessLayer\CustomerManager;
+use BusinessLayer\AdminManager;
+
+$customerId = "VISITOR";
+if(isset($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]))
+{
+    $customerId = $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey];
+}
+
+\Common\Logging::Log('Executing Page. sessionId=' . session_id() . '; customer='
+    . $customerId . "\r\n");
+
 $msg = "";
 $senderEmail = \Common\Constants::$EmailAdminDefault;
 
@@ -26,8 +38,7 @@ else if (isset($_GET[\Common\Constants::$QueryStringEmailSuccessKey]))
 
 if (isset($_POST['inputLogin']) && isset($_POST['inputPassword']))
 {	
-	$CustomerManager = new \BusinessLayer\CustomerManager;
-	$AdminManager = new \BusinessLayer\AdminManager;
+	$CustomerManager = new CustomerManager();
 	
 	if ($CustomerManager->CheckMatchingPasswordForCustomerLogin($_POST['inputLogin'], $_POST['inputPassword']))
 	{		
@@ -35,31 +46,34 @@ if (isset($_POST['inputLogin']) && isset($_POST['inputPassword']))
 		$Customer = $CustomerManager->FindCustomerByLogin($_POST['inputLogin']);
 		
 		$_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] = 1;
-   		$_SESSION[\Common\SecurityConstraints::$sessionUserLoginKey]  = $Customer['login'];
+   		$_SESSION[\Common\SecurityConstraints::$SessionUserLoginKey]  = $Customer['login'];
     	$_SESSION[\Common\SecurityConstraints::$SessionUserIdKey] = $Customer['id'];
 		
 		// prevent accidential misuse of member business layer objects.
-		unset($CustomerManager);
 		unset($Customer);
 	}
-	elseif ($AdminManager->CheckMatchingPasswordForAdminLogin($_POST['inputLogin'], $_POST['inputPassword']))
-	{
-		// successful admin login
-		$Admin = $AdminManager->FindAdminByLogin($_POST['inputLogin']);
-		
-		$_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] = 1;
-   		$_SESSION[\Common\SecurityConstraints::$sessionUserLoginKey]  = $Admin['login'];
-    	$_SESSION[\Common\SecurityConstraints::$SessionUserIdKey] = $Admin['id'];
-		$_SESSION[\Common\SecurityConstraints::$SessionAdminCheckKey] = 1;
-		
-		// prevent accidential misuse of admin business layer objects.
-		unset($AdminManager);
-		unset($Admin);
-	}
 	else
-	{
-		$msg = "Login failed. Please check your you entered your login and password correctly.";
-	}
+    {
+        $AdminManager = new \BusinessLayer\AdminManager;
+        if ($AdminManager->CheckMatchingPasswordForAdminLogin($_POST['inputLogin'], $_POST['inputPassword']))
+        {
+            // successful admin login
+            $Admin = $AdminManager->FindAdminByLogin($_POST['inputLogin']);
+
+            $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] = 1;
+            $_SESSION[\Common\SecurityConstraints::$SessionUserLoginKey]  = $Admin['login'];
+            $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey] = $Admin['id'];
+            $_SESSION[\Common\SecurityConstraints::$SessionAdminCheckKey] = 1;
+
+            // prevent accidential misuse of admin business layer objects.
+            unset($AdminManager);
+            unset($Admin);
+        }
+        else
+        {
+            $msg = "Login failed. Please check your you entered your login and password correctly.";
+        }
+    }
 	
 }
 
