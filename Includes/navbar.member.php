@@ -4,11 +4,9 @@
  * User: Roland
  * Date: 11/10/2016
  * Time: 10:49 PM
+ *
+ *	Navbar specific to customer members
  */
-
-// check if customer is logged in. if so, alter navbarLink hrefs and text to meet customer navbar requirements.
-// if not, hide the checkout option to meet anonymous visitor requirements.
-
 
 
 ?>

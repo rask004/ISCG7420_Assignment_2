@@ -8,7 +8,6 @@
 
 namespace BusinessLayer;
 
-
 require_once('DataLayer.php');
 require_once('Common.php');
 
@@ -17,21 +16,19 @@ require_once('Common.php');
 
 class AdminManager
 {
-	private $_data_manager;	
+	private $_dataManager;	
 	
 	function __construct()
 	{
-		$this->_data_manager = new \DataLayer\DataManager;
+		$this->_dataManager = new \DataLayer\DataManager;
 	}
 	
-	// TODO: add functionality for managing customers and administrators./
-	
 	/*
-		check that a supplied login matches an actual customer
+		check that a supplied login matches an actual admin
 	*/
-	function findMatchingLogin($login)
+	function FindMatchingLogin($login)
 	{
-		if ($this->_data_manager->matchAdminByLogin($login));
+		if ($this->_dataManager->MatchAdminByLogin($login));
 		{
 			return true;
 		}
@@ -40,41 +37,46 @@ class AdminManager
 	}
 	
 	/*
-		retrieve a customer using their id.
-		can return an empty array if customer does not exist.
+		retrieve a admin using their id.
+		can return an empty array if admin does not exist.
 	*/
-	function findAdmin($id)
+	function FindAdmin($id)
 	{
-		return $this->_data_manager->selectSingleAdmin($id);
+		return $this->_dataManager->SelectSingleAdmin($id);
 	}
 	
 	/*
-		retrieve a customer using their login.
-		can return an empty array if customer does not exist.
+		retrieve a admin using their login.
+		can return an empty array if admin does not exist.
 	*/
-	function findAdminByLogin($login)
+	function FindAdminByLogin($login)
 	{
-		return $this->_data_manager->selectSingleAdminByLogin($login);
+		return $this->_dataManager->SelectSingleAdminByLogin($login);
 	}
 	
 	/*
-		check that a supplied login and password matches an actual customer
+		check that a supplied login and password matches an actual admin
 	*/
-	function checkMatchingPasswordForAdminLogin($login, $password)
+	function CheckMatchingPasswordForAdminLogin($login, $password)
 	{
-		// there is no match if there is no customer.
-		if (!$this->findMatchingLogin($login))
+		// there is no match if there is no admin.
+		if (!$this->FindMatchingLogin($login))
 		{
 			return false;
 		}
 		
-		$data = $this->_data_manager->requestAdminPasswordSaltAndHash($login);
+		$data = $this->_dataManager->RequestAdminPasswordSaltAndHash($login);
+		if (empty($data) || !isset($data['passwordsalt']) || !isset($data['passwordhash']))
+		{
+			return false;	
+		}
+		
 		$salt = $data['passwordsalt'];
-		$expected_hash = $data['passwordhash'];
+		$expectedHash = $data['passwordhash'];
 		
-		$comparison_hash = \Common\Security::generatePasswordHash($password, $salt);
+		$comparisonHash = \Common\SecurityConstraints::generatePasswordHash($password, $salt);
 		
-		if ($comparison_hash === $expected_hash)
+		if ($comparisonHash === $expectedHash)
 		{
 			return true;	
 		}

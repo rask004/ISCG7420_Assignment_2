@@ -9,6 +9,15 @@
 include_once('../../Includes/Common.php');
 include_once('../../Includes/Session.php');
 
+$customerId = "VISITOR";
+if(isset($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]))
+{
+    $customerId = $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey];
+}
+
+\Common\Logging::Log('Error Pages', 'Page /Pages/Error/DB_Error.php accessed. sessionId=' . session_id() . '; customer='
+    . $customerId . "\r\n");
+
 if( !(isset( $_SESSION["last_Error"]) && $_SESSION["last_Error"] == "DB_connection"))
 {
 	header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/home.php");
@@ -22,13 +31,14 @@ if( !(isset( $_SESSION["last_Error"]) && $_SESSION["last_Error"] == "DB_connecti
 <head>
     <meta charset="utf-8">
     <title>Quality Caps - ERROR, Database Connection</title>
-    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="../../css/Common.css">
-    <script type="text/javascript" src="../../js/jquery.js"></script>
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
     <script type="text/javascript">
+		// show error page for a while, then try to load home page
 		function doCountdown()
 		{
-			var count = $("#lblCountdown").html();
+			var count = parseInt($("#lblCountdown").html());
 			if (!count)
 			{
 				$("#lblCountdown").html("60");

@@ -11,54 +11,76 @@ include_once('../Includes/Common.php');
 include_once('../Includes/CustomerManager.php');
 include_once('../Includes/AdminManager.php');
 
-$bad_login_message = "";
+use BusinessLayer\CustomerManager;
+use BusinessLayer\AdminManager;
 
-// TODO: check query string for email error message.
-if(isset($_SERVER["QUERY_STRING"][\Common\Constants::$QueryStringEmailErrorKey]))
+$customerId = "VISITOR";
+if(isset($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]))
 {
-	$ErrorMsg = "Customer was registered but could not send confirmation email. Please contact admin at ". $senderEmail ." immediately.";
+    $customerId = $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey];
 }
 
-// process postback - for testing, currently expect a particular user and pass (not real user).
+\Common\Logging::Log('Executing Page. sessionId=' . session_id() . '; customer='
+    . $customerId . "\r\n");
+
+$msg = "";
+$senderEmail = \Common\Constants::$EmailAdminDefault;
+
+// in case of email error, notify visitor of successful registration but email failure.
+if(isset($_GET[\Common\Constants::$QueryStringEmailErrorKey]))
+{
+	$msg = "Customer was registered but could not send confirmation email. Please contact admin at ". $senderEmail ." immediately.";
+}
+else if (isset($_GET[\Common\Constants::$QueryStringEmailSuccessKey]))
+{
+	$msg = "You have been successfully registered and may now log in.";
+}
+
 if (isset($_POST['inputLogin']) && isset($_POST['inputPassword']))
 {	
-	$customerManager = new \BusinessLayer\CustomerManager;
-	$adminManager = new \BusinessLayer\AdminManager;
+	$CustomerManager = new CustomerManager();
 	
-	if ($customerManager->checkMatchingPasswordForCustomerLogin($_POST['inputLogin'], $_POST['inputPassword']))
-	{
-		$customer = $customerManager->findCustomerByLogin($_POST['inputLogin']);
+	if ($CustomerManager->CheckMatchingPasswordForCustomerLogin($_POST['inputLogin'], $_POST['inputPassword']))
+	{		
+		// successful member login
+		$Customer = $CustomerManager->FindCustomerByLogin($_POST['inputLogin']);
 		
-		$_SESSION[\Common\Security::$SessionAuthenticationKey] = 1;
-   		$_SESSION[\Common\Security::$SessionUserLoginKey]  = $customer['login'];
-    	$_SESSION[\Common\Security::$SessionUserIdKey] = $customer['id'];
+		$_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] = 1;
+   		$_SESSION[\Common\SecurityConstraints::$SessionUserLoginKey]  = $Customer['login'];
+    	$_SESSION[\Common\SecurityConstraints::$SessionUserIdKey] = $Customer['id'];
 		
-		unset($customerManager);
-		unset($customer);
-	}
-	elseif ($adminManager->checkMatchingPasswordForAdminLogin($_POST['inputLogin'], $_POST['inputPassword']))
-	{
-		$admin = $adminManager->findAdminByLogin($_POST['inputLogin']);
-		
-		$_SESSION[\Common\Security::$SessionAuthenticationKey] = 1;
-   		$_SESSION[\Common\Security::$SessionUserLoginKey]  = $admin['login'];
-    	$_SESSION[\Common\Security::$SessionUserIdKey] = $admin['id'];
-		$_SESSION[\Common\Security::$SessionAdminCheckKey] = 1;
-		
-		unset($adminManager);
-		unset($admin);
+		// prevent accidential misuse of member business layer objects.
+		unset($Customer);
 	}
 	else
-	{
-		$bad_login_message = "Login failed. Please check your you entered your login and password correctly.";	
-	}
+    {
+        $AdminManager = new \BusinessLayer\AdminManager;
+        if ($AdminManager->CheckMatchingPasswordForAdminLogin($_POST['inputLogin'], $_POST['inputPassword']))
+        {
+            // successful admin login
+            $Admin = $AdminManager->FindAdminByLogin($_POST['inputLogin']);
+
+            $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] = 1;
+            $_SESSION[\Common\SecurityConstraints::$SessionUserLoginKey]  = $Admin['login'];
+            $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey] = $Admin['id'];
+            $_SESSION[\Common\SecurityConstraints::$SessionAdminCheckKey] = 1;
+
+            // prevent accidential misuse of admin business layer objects.
+            unset($AdminManager);
+            unset($Admin);
+        }
+        else
+        {
+            $msg = "Login failed. Please check your you entered your login and password correctly.";
+        }
+    }
 	
 }
 
 //  redirect already authenticated users - redirect to home or admin as appropriate.
-if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\Common\Security::$SessionAuthenticationKey] == 1)
+if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && $_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] == 1)
 {
-	if(isset($_SESSION[\Common\Security::$SessionAdminCheckKey]))
+	if(isset($_SESSION[\Common\SecurityConstraints::$SessionAdminCheckKey]))
 	{
 		header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/AdminFiles.php");
     	exit;
@@ -78,16 +100,16 @@ if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\
 <head>
     <meta charset="utf-8">
     <title>Quality Caps - Login</title>
-    <link rel="stylesheet" type="text/css" href="../css/jquery-ui.css">
-    <link rel="stylesheet" type="text/css" href="../css/jquery-ui.structure.css">
-    <link rel="stylesheet" type="text/css" href="../css/jquery-ui.theme.css">
-    <link rel="stylesheet" type="text/css" href="../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="../css/Common.css">
-    <script type="text/javascript" src="../js/jquery.js"></script>
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
 </head>
 
 <body>
-    <?php include_once("../Includes/navbar.visitor.php"); ?>
+    <?php 
+		// assume visiting user is visitor - as only visitor needs to login.
+		include_once("../Includes/navbar.visitor.php"); 
+	?>
 
     <div class="container-fluid PageContainer">
 
@@ -97,7 +119,7 @@ if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\
             <div id="divCentreSpace" class="col-md-6">
 
                 <form method="post" enctype="multipart/form-data">
-                    <div class="container-fluid PageSection">
+                    <div class="container-fluid panel panel-default PageSection">
                         <br/>
 
                         <div class="row" style="margin: auto 20px">
@@ -124,7 +146,7 @@ if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\
                                         <label style="float: left" for="inputLogin">Login:</label>
                                     </div>
                                     <div class="col-xs-12 col-sm-8 col-md-7">
-                                        <input style="float: right; width:100%" id="inputLogin"
+                                        <input class="form-control" style="float: right; width:100%" id="inputLogin"
                                                name="inputLogin" required minlength="6" type="text" />
                                     </div>
                                 </div>
@@ -133,7 +155,7 @@ if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\
                                         <label style="float: left" for="inputPassword">Password:</label>
                                     </div>
                                     <div class="col-xs-12 col-sm-8 col-md-7">
-                                        <input style="float: right; width:100%" id="inputPassword"
+                                        <input class="form-control" style="float: right; width:100%" id="inputPassword"
                                                name="inputPassword" required minlength="10" type="text" />
                                     </div>
                                 </div>
@@ -141,13 +163,13 @@ if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\
                                 <br/>
                                 <div class="row" style="margin-top: 4px">
                                     <div class="col-xs-4 col-sm-4 col-md-4">
-                                        <input style="width:100%" type="reset" value="Clear" />
+                                        <input class="btn btn-primary" style="width:100%" type="reset" value="Clear" />
                                     </div>
                                     <div class="col-xs-4 col-sm-4 col-md-4">
 
                                     </div>
                                     <div class="col-xs-4 col-sm-4 col-md-4">
-                                        <input style="width:100%" name="submit" type="submit" value="Submit" />
+                                        <input class="btn btn-primary" style="width:100%" name="submit" type="submit" value="Submit" />
                                     </div>
                                 </div>
 
@@ -161,30 +183,50 @@ if (isset($_SESSION[\Common\Security::$SessionAuthenticationKey]) && $_SESSION[\
                     
                     <br/>
                     <br/>
-                    <div>
-                    <p style="text-align:center">
-                    	<?= $bad_login_message ?>
-                    </p>
-                    </div>
-                    <br/>
-                    <div id="divErrorMessage">
-	                    <p>
-							<?php 
-								// only show errors if a message is given.
-								if (isset($ErrorMsg))
-								{
-									echo $ErrorMsg;	
-								}
-							?>
-                        </p>
-                    </div>
                 </form>
+                
+                <!-- auto-sliding message to show when an order is successfully placed. -->
+                <div hidden id="divLoginMsg" class="alert alert-danger" role="alert">
+                  <span id="msgContent"><?php echo $msg ?></span>
+                </div>
 
             </div>
             <div id="divRightsidebar" class="col-md-3">
             </div>
         </div>
     </div>
+    
+    <?php
+		// if there is notification to show, show it.
+		if(isset($msg) && !empty($msg) )
+		{
+			// registration notifications override login warnings.
+			// besides, they should be mutually exclusive.
+			if (isset($_GET) && !empty($_GET))
+			{
+				if(isset($_GET[\Common\Constants::$QueryStringEmailSuccessKey]))
+				{
+					echo '<script type="text/javascript">$("#divLoginMsg").prop("class","alert alert-success");</script>';
+					
+				}
+				else if (isset($_GET[\Common\Constants::$QueryStringEmailErrorKey]))
+				{
+					echo '<script type="text/javascript">$("#divLoginMsg").prop("class","alert alert-warning");</script>';
+				}
+			}
+			
+			// make notification div appear.
+			echo '<script type="text/javascript">'.
+				 '$("#divLoginMsg").prop("hidden", false);'.
+				 'window.setTimeout(function() {'.
+					'$(".alert").fadeTo(500, 0).slideUp(500, function()	{'.
+						'$(this).remove(); '.
+					'});'.
+				 '}, 4000);'.
+				 '</script>';
+			
+		}
+	?>
 
     <?php include_once("../Includes/footer.php"); ?>
 </body>

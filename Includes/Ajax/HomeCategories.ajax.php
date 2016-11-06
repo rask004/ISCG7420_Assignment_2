@@ -1,14 +1,28 @@
 <?php
 
-ini_set("display_errors","1");
+/**
+ * Created by Dreamweaver.
+ * User: Roland
+ * Date: 28/10/2016
+ * Time: 7:00 PM
+ *
+ * AJAX page for showing home page categories
+ */
 
 include_once('../Session.php');
 include_once("../CategoryManager.php");
 include_once('../Common.php');
 
-/*
-	AJAX page for showing homp page categories
-*/
+use \BusinessLayer\CategoryManager;
+
+$customerId = "VISITOR";
+if(isset($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]))
+{
+    $customerId = $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey];
+}
+
+\Common\Logging::Log('Executing Page. sessionId=' . session_id() . '; customer='
+    . $customerId . "\r\n");
 
 // check for malformed AJAX
 if (!isset($_REQUEST["p"]))
@@ -34,20 +48,22 @@ if (!isset($_REQUEST["p"]))
 else
 {
 	// show current page of categories
-	$categoryManager = new \BusinessLayer\CategoryManager;
+	$categoryManager = new CategoryManager();
 
 	$page = (integer) ($_REQUEST["p"] + 0);
 	
-	$pagesize = \Common\Constants::$HomeCategoriesTablePageSize;
+	$pageSize = \Common\Constants::$HomeCategoriesTablePageSize;
 	
 	if ($page < 1)
 	{
 		$page = 1;
 	}
 	
-	$start = ($page - 1) * $pagesize;
+	$start = ($page - 1) * $pageSize;
 	
-	$categories = $categoryManager->RetrieveCategoriesForHomePage($start, $pagesize);
+	$categories = $categoryManager->RetrieveCategoriesForHomePage($start, $pageSize);
+	
+	echo '<div class="row">';
 	
 	// display each category.
 	foreach($categories as $cat)
@@ -56,10 +72,14 @@ else
 		$name = $cat['name'];
 		$imgUrl = '../' . \Common\Constants::$AdminFileuploadFolder .'/'. $cat["imageUrl"];
 		
+		echo '<div class="col-xs-12 col-sm-4 col-md-12"><div class="container-fluid">';
 		echo '<div class="row"><div class="col-xs-0 col-sm-3 col-md-3"></div>'.
-			'<div class="col-xs-12 col-sm-6 col-md-6"><img style="max-width:80%;max-height:80%" alt="no picture" src="'.$imgUrl.'" /></div></div>'.
+			'<div class="col-xs-12 col-sm-6 col-md-6"><img class="img-thumbnail" style="max-width:120px;max-height:120px" alt="no picture" src="'.$imgUrl.'" /></div></div>'.
 			'<div class="row"><div class="col-xs-0 col-sm-3 col-md-3"></div>'.
-			'<div class="col-xs-12 col-sm-6 col-md-6"><input type="button" value="'.$name.'" onclick="ShowPageCaps('.$id.',1)" /></div></div>'.
+			'<div class="col-xs-12 col-sm-6 col-md-6"><input class="btn btn-primary" type="button" value="'.$name.'" onclick="showPageCaps('.$id.',1)" /></div></div>'.
 			'<br/>';
+		echo '</div></div>';
 	}
+	
+	echo '</div>';
 }
