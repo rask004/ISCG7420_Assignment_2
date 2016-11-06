@@ -11,14 +11,17 @@ include_once('../Includes/Common.php');
 include_once("../Includes/CapManager.php");
 include_once("../Includes/OrderManager.php");
 
+use \BusinessLayer\OrderManager;
+use \BusinessLayer\CapManager;
+
 $customerId = "VISITOR";
 if(isset($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]))
 {
     $customerId = $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey];
 }
 
-\Common\Logging::Log('Pages', 'Page /Pages/checkout.php accessed. sessionId=' . session_id() . '; customer='
-    . $customerId ."\r\n");
+\Common\Logging::Log('Executing Page. sessionId=' . session_id() . '; customer='
+    . $customerId . "\r\n");
 
 if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && isset($_SESSION[\Common\SecurityConstraints::$SessionAdminCheckKey]))
 {
@@ -62,7 +65,7 @@ if (isset( $_POST ) && isset($_POST['submit']))
 	elseif($_POST['submit'] == 'Checkout')
 	{
 		// create new order with orderitems, show successful notice, then redirect to orders page.
-		$ordersManager = new \BusinessLayer\OrderManager;
+		$ordersManager = new OrderManager();
 		$id = $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey];
 		$cart = $_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey];
 		
@@ -76,7 +79,7 @@ if (isset( $_POST ) && isset($_POST['submit']))
 	}
 }
 
-$capsManager = new \BusinessLayer\CapManager;
+$capsManager = new CapManager();
 
 $retrievedCaps = array();
 

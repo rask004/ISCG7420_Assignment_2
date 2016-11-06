@@ -10,16 +10,18 @@ include_once('../Includes/Session.php');
 include_once('../Includes/Common.php');
 include_once("../Includes/OrderManager.php");
 
+use BusinessLayer\OrderManager;
+
 $customerId = "VISITOR";
 if(isset($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]))
 {
     $customerId = $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey];
 }
 
-\Common\Logging::Log('Pages', 'Page /Pages/checkout.php accessed. sessionId=' . session_id() . '; customer='
-    . $customerId ."\r\n");
+\Common\Logging::Log('Executing Page. sessionId=' . session_id() . '; customer='
+    . $customerId . "\r\n");
 
-$ordersManager = new \BusinessLayer\OrderManager;
+$ordersManager = new OrderManager();
 
 if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && isset($_SESSION[\Common\SecurityConstraints::$SessionAdminCheckKey]))
 {

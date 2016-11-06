@@ -13,14 +13,16 @@ include_once('../Session.php');
 include_once("../CapManager.php");
 include_once('../Common.php');
 
+use \BusinessLayer\CapManager;
+
 $customerId = "VISITOR";
 if(isset($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]))
 {
     $customerId = $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey];
 }
 
-\Common\Logging::Log('Pages', 'Page /Pages/checkout.php accessed. sessionId=' . session_id() . '; customer='
-    . $customerId . "; queryString=" . $_SERVER['QUERY_STRING'] . "\r\n");
+\Common\Logging::Log('Executing Page. sessionId=' . session_id() . '; customer='
+    . $customerId . "\r\n");
 
 if (!isset($_REQUEST["p"]))
 {
@@ -50,7 +52,7 @@ else
 	
 	$cart = $_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey];
 	
-	$CapsManager = new \BusinessLayer\CapManager;
+	$CapsManager = new CapManager();
 
 	$page = (integer) ($_REQUEST["p"] + 0);
 	

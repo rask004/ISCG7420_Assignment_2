@@ -9,7 +9,8 @@
 include_once('../Includes/Session.php');
 include_once('../Includes/Common.php');
 include_once('../Includes/CategoryManager.php');
-include_once('../Includes/CapManager.php');
+
+use BusinessLayer\CategoryManager;
 
 $customerId = "VISITOR";
 if(isset($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]))
@@ -17,8 +18,8 @@ if(isset($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]))
     $customerId = $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey];
 }
 
-\Common\Logging::Log('Pages', 'Page /Pages/checkout.php accessed. sessionId=' . session_id() . '; customer='
-    . $customerId ."\r\n");
+\Common\Logging::Log('Executing Page. sessionId=' . session_id() . '; customer='
+    . $customerId . "\r\n");
 
 // only customers and visitors can visit home page. 
 if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && isset($_SESSION[\Common\SecurityConstraints::$SessionAdminCheckKey]))
@@ -26,17 +27,15 @@ if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && 
     header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/AdminFiles.php");
     exit;
 }
+$categoryManager = new CategoryManager();
 
 $cartPageSize = \Common\Constants::$HomeCartTablePageSize;
 $cartItemCount = count($_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey]);
 
-$categoryPageSize = \common\constants::$HomeCategoriesTablePageSize;
-$categoryManager = new \BusinessLayer\CategoryManager;
+$categoryPageSize = \Common\Constants::$HomeCategoriesTablePageSize;
 $categoryCount = $categoryManager->RetrieveCountOfCategoriesForHomePage();
 
-$capPageSize = \common\constants::$HomeCapsTablePageSize;
-
-unset($categoryManager);
+$capPageSize = \Common\Constants::$HomeCapsTablePageSize;
 
 ?>
 

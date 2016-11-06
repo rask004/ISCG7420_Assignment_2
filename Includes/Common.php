@@ -74,6 +74,7 @@ class SecurityConstraints
 */
 class Constants
 {
+
 	// submission keywords for the register/profile page.
 	public static $RegistrationSubmitKeyword = "Register";
 	public static $ProfileUpdateKeyword = "ProfileUpdate";
@@ -139,19 +140,27 @@ class Logging
      *
      *  message:    the message to log.
      */
-    public static function Log($source, $message)
+    public static function Log($message)
     {
-        $logLine = date("Y/m/d H:i:s") . " :: [%-16s] - %s\r\n";
+        $logLine = date("Y/m/d H:i:s") . "%-20s, %22s, %40s, %40s, %12s, %40, %s\r\n";
 
         // if logging directory doesn't exist, create it.
-        if ( !file_exists("../" . self::$_loggerDirectory))
+        if ( !file_exists("../" . self::$_loggerDirectory) ||
+             !file_exists("../" . self::$_loggerDirectory . "/" . self::$_loggerFilename))
         {
             mkdir("../" . self::$_loggerDirectory, 0755);
+            file_put_contents("../" . self::$_loggerDirectory . "/" . self::$_loggerFilename,
+                sprintf($logLine, "DATETIME", "REMOTE_ADDRESS",
+                    "SCRIPT_FILENAME", "REQUESTED_URL", "METHOD",
+                    "QUERY_STRING", "NOTES"),
+                FILE_APPEND);
         }
 
         // open the file, append a log line.
         file_put_contents("../" . self::$_loggerDirectory . "/" . self::$_loggerFilename,
-            sprintf($logLine, $source, $message),
+            sprintf($logLine, date("Y/m/d H:i:s"), $_SERVER['REMOTE_ADDR'].':'.$_SERVER['REMOTE_PORT'],
+                $_SERVER['SCRIPT_FILENAME'], $_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD'],
+                $_SERVER['QUERY_STRING'], $message),
             FILE_APPEND);
     }
 }
