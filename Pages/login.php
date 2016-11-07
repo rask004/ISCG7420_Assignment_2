@@ -41,8 +41,9 @@ if (isset($_POST['inputLogin']) && isset($_POST['inputPassword']))
 	$CustomerManager = new CustomerManager();
 	
 	if ($CustomerManager->CheckMatchingPasswordForCustomerLogin($_POST['inputLogin'], $_POST['inputPassword']))
-	{		
-		
+	{
+        $Customer = $CustomerManager->FindCustomerByLogin($_POST['inputLogin']);
+
 		// check if customer is disabled.if so, post warning
 		if ($Customer['isDisabled'] == 1)
 		{
@@ -52,8 +53,6 @@ if (isset($_POST['inputLogin']) && isset($_POST['inputPassword']))
 		{
 
 			// successful member login
-			$Customer = $CustomerManager->FindCustomerByLogin($_POST['inputLogin']);
-		
 			$_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] = 1;
    			$_SESSION[\Common\SecurityConstraints::$SessionUserLoginKey]  = $Customer['login'];
     			$_SESSION[\Common\SecurityConstraints::$SessionUserIdKey] = $Customer['id'];
@@ -64,7 +63,7 @@ if (isset($_POST['inputLogin']) && isset($_POST['inputPassword']))
 	}
 	else
     {
-        $AdminManager = new \BusinessLayer\AdminManager;
+        $AdminManager = new AdminManager;
         if ($AdminManager->CheckMatchingPasswordForAdminLogin($_POST['inputLogin'], $_POST['inputPassword']))
         {
             // successful admin login
