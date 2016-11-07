@@ -42,12 +42,22 @@ if (isset($_POST['inputLogin']) && isset($_POST['inputPassword']))
 	
 	if ($CustomerManager->CheckMatchingPasswordForCustomerLogin($_POST['inputLogin'], $_POST['inputPassword']))
 	{		
-		// successful member login
-		$Customer = $CustomerManager->FindCustomerByLogin($_POST['inputLogin']);
 		
-		$_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] = 1;
-   		$_SESSION[\Common\SecurityConstraints::$SessionUserLoginKey]  = $Customer['login'];
-    	$_SESSION[\Common\SecurityConstraints::$SessionUserIdKey] = $Customer['id'];
+		// check if customer is disabled.if so, post warning
+		if ($Customer['isDisabled'] == 1)
+		{
+			$msg = "This account is disabled. If you believe this is in error, contact the Admin at " . $senderEmail ." immediately.";
+		}
+		else
+		{
+
+			// successful member login
+			$Customer = $CustomerManager->FindCustomerByLogin($_POST['inputLogin']);
+		
+			$_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] = 1;
+   			$_SESSION[\Common\SecurityConstraints::$SessionUserLoginKey]  = $Customer['login'];
+    			$_SESSION[\Common\SecurityConstraints::$SessionUserIdKey] = $Customer['id'];
+		}
 		
 		// prevent accidential misuse of member business layer objects.
 		unset($Customer);
