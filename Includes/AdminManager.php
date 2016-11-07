@@ -84,14 +84,6 @@ class AdminManager
 		return false;
 	}
 
-	/*
-	 *  get all users
-	 */
-	public function GetAllUsers()
-    {
-        return $this->_dataManager->SelectAllSiteUsers();
-    }
-
     /*
 	 *  get all categories
 	 */
@@ -143,9 +135,9 @@ class AdminManager
     /*
 	 *  delete user
 	 */
-    public function DeleteUser($id)
+    public function DeleteCustomer($id)
     {
-        $this->_dataManager->DeleteUser($id);
+        $this->_dataManager->DeleteCustomer($id);
     }
 
     /*
@@ -211,4 +203,24 @@ class AdminManager
     {
         $this->_dataManager->DisableCustomer($id);
     }
+
+    /*
+     *  add a customer
+     */
+    public function AddCustomer($firstName, $lastName, $login, $password, $email, $homeNumber,
+                                $workNumber, $mobileNumber, $address, $suburb, $city)
+    {
+        $salt = \Common\SecurityConstraints::getRandomSalt();
+        $this->_dataManager->InsertCustomer($firstName, $lastName, $login, $salt, $password, $email,
+            $homeNumber, $workNumber, $mobileNumber, $address, $suburb, $city);
+    }
+
+    /*
+     *  list all customers
+     */
+    public function GetAllCustomers()
+    {
+        return $this->_dataManager->SelectAllCustomers();
+    }
+
 }

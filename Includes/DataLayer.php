@@ -1399,7 +1399,7 @@ class DataManager
     /*
 		delete an existing user
 	*/
-    public function DeleteUser($id)
+    public function DeleteCustomer($id)
     {
         $this->_OpenConnection();
 
@@ -1409,7 +1409,7 @@ class DataManager
         $this->_conn->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
 
         // cannot delete customers with orders..
-        $sql =  "delete from SiteUser where id = " . $id . " AND id not in " .
+        $sql =  "delete from SiteUser where userType = 'C' AND id = " . $id . " AND id not in " .
             "(select distinct userId from customerOrder);";
         $this->_conn->query($sql);
 
@@ -1518,7 +1518,7 @@ class DataManager
         $status = $this->_conn->real_escape_string($status);
         $status = strtolower($status);
 
-        if (!in_array($status))
+        if (!in_array($status, \Common\Constants::$AllowedOrderStatuses))
         {
             $this->_CloseConnection();
             $_SESSION["last_Error"] = "DB_Error_Generic";
@@ -1678,9 +1678,12 @@ class DataManager
     {
         $this->_OpenConnection();
 
-        $sql = "Select co.id as id, su.userId as userId, su.firstName as firstName, su.lastName as lastName, " .
-            " co.datePlaced as datePlaced, co.status as status from `customerOrder` co, `siteUser` su ".
-            "where co.userId = su.id order by datePlaced;";
+        $sql = "Select co.id as id, co.userId as userId, su.firstName as firstName, su.lastName as lastName, " .
+            " co.datePlaced as datePlaced, co.status as status, COUNT(oi.capId) as capCount, " .
+            " SUM(oi.quantity) as totalQuantity, SUM(oi.quantity * c.price) as totalPrice ".
+            " from `customerOrder` co, `siteUser` su, ".
+            "`orderitem` oi, `cap` c where oi.capId = c.id AND co.userId = su.id and oi.orderId = co.id ".
+            "group by oi.orderId order by datePlaced;";
         if (!$query_result = $this->_conn->query($sql))
         {
             $this->_conn->rollback();
@@ -1714,13 +1717,13 @@ class DataManager
     }
 
     /*
-		get all users
+		get all customers
 	*/
-    public function SelectAllSiteUsers()
+    public function SelectAllCustomers()
     {
         $this->_OpenConnection();
 
-        $sql = "Select * from siteUser order by id;";
+        $sql = "Select * from siteUser where userType='C' order by login;";
         if (!$query_result = $this->_conn->query($sql))
         {
             $this->_conn->rollback();

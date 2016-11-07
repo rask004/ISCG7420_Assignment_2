@@ -52,8 +52,12 @@ if (!isset($_REQUEST["l"]) && !isset($_REQUEST["a"]) && !isset($_REQUEST["d"]))
 if (isset($_REQUEST["a"]))
 {
 	// add a supplier
-    $name = $_REQUEST["name"];
+    $firstName = $_REQUEST["firstname"];
+    $lastName = $_REQUEST["lastname"];
+    $login = $_REQUEST["login"];
+    $password = $_REQUEST["password"];
     $email = $_REQUEST["email"];
+
     if (isset($_REQUEST["homeNumber"]))
     {
         $homeNumber = $_REQUEST["homeNumber"];
@@ -79,31 +83,48 @@ if (isset($_REQUEST["a"]))
         $mobileNumber = '';
     }
 
-    $Manager->AddSupplier($name, $email, $homeNumber, $workNumber, $mobileNumber);
+    $address = $_REQUEST["address"];
+    $suburb = $_REQUEST["suburb"];
+    $city = $_REQUEST["city"];
+
+    $Manager->AddCustomer($firstName, $lastName, $login, $password, $email, $homeNumber,
+        $workNumber, $mobileNumber, $address, $suburb, $city);
 }
 else if (isset($_REQUEST["d"]))
 {
-    // delete a supplier
+    // delete a user
     $id = $_REQUEST["id"];
+    $Manager->DeleteCustomer($id);
 
-    $Manager->DeleteSupplier($id);
+}
+else if (isset($_REQUEST["x"]))
+{
+    // disable a user
+    $id = $_REQUEST["id"];
+    $Manager->DisableCustomer($id);
+
 }
 
-// allows updating the category list to be simultaineous.
+// allows updating the user list to be simultaineous.
 if (isset($_REQUEST["l"]))
 {
-    // update list of categories at left
-    $Suppliers = $Manager->GetAllSuppliers();
-    foreach($Suppliers as $suppliers)
+    // update list of users at left
+    $Users = $Manager->GetAllCustomers();
+    foreach($Users as $user)
     {
         echo '<div class="row"><div class="col-xs-12 col-sm-12 col-sm-12">';
         echo '<input class="btn" style="border:1px solid black; margin-bottom:2px; width:80%;" ' .
-            'type="button" value="' . $suppliers['id'] . ', ' . $suppliers['name'] . '" ' .
-            'data-name="'.$suppliers['name'].'" data-homeNumber="'.$suppliers['homeNumber'].'"' .
-            'data-workNumber="'.$suppliers['worknumber'].'" data-email="'.$suppliers['emailAddress'].'"' .
-            'data-mobileNumber="'.$suppliers['mobileNumber'].'"' .
-            'id="supplier_' . $suppliers['id'] . '" ' .
-            'onclick="UpdateItemForm(' . $suppliers['id'] . ')" /> ';
+            'type="button" value="' . $user['id'] . ', ' . $user['login'] . '" ' .
+            'data-firstname="'.$user['firstName'].'" data-lastname="'.$user['lastName'].'" ' .
+            'data-login="'.$user['login'].'" ' .
+            'data-homenumber="'.$user['homeNumber'].'"' .
+            'data-worknumber="'.$user['workNumber'].'" data-email="'.$user['emailAddress'].'"' .
+            'data-address="'.$user['streetAddress'].'"' .
+            'data-suburb="'.$user['suburb'].'" data-city="'.$user['city'].'"' .
+            'data-mobilenumber="'.$user['mobileNumber'].'"' .
+            'data-disabled="'.$user['isDisabled'].'"' .
+            'id="user_' . $user['id'] . '" ' .
+            'onclick="UpdateItemForm(' . $user['id'] . ')" /> ';
         echo '</div></div>';
     }
 }

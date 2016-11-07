@@ -15,14 +15,16 @@ if(isset($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]))
     $customerId = $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey];
 }
 
-\Common\Logging::Log('Error Pages', 'Page /Pages/Error/AJAX_Error.php accessed. sessionId=' . session_id() . '; customer='
-    . $customerId . "\r\n");
+
 
 if( !(isset( $_SESSION["last_Error"]) && $_SESSION["last_Error"] == "AJAX_Error"))
 {
 	header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/home.php");
 	exit;
 }
+
+\Common\Logging::Log('sessionId=' . session_id() . '; customer='
+    . $customerId . '; Error Message=' . $_SESSION["Error_MSG"] . "\r\n");
 
 ?>
 

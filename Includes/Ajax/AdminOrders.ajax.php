@@ -31,7 +31,7 @@ if (!isset($_REQUEST["l"]) && !isset($_REQUEST["a"]) && !isset($_REQUEST["d"]))
 {
 	// redirect to AJAX error page.
 	$_SESSION["last_Error"] = "AJAX_Error";
-	$_SESSION["Error_MSG"] = "Admin Categories ajax page: ";
+	$_SESSION["Error_MSG"] = "Admin Orders ajax page: ";
 	if (count($_REQUEST) == 0)
 	{
 		$_SESSION["Error_MSG"] .= "Empty Query String.";
@@ -49,61 +49,38 @@ if (!isset($_REQUEST["l"]) && !isset($_REQUEST["a"]) && !isset($_REQUEST["d"]))
 	
 }
 
-if (isset($_REQUEST["a"]))
+if (isset($_REQUEST["d"]))
 {
-	// add a supplier
-    $name = $_REQUEST["name"];
-    $email = $_REQUEST["email"];
-    if (isset($_REQUEST["homeNumber"]))
-    {
-        $homeNumber = $_REQUEST["homeNumber"];
-    }
-    else
-    {
-        $homeNumber = '';
-    }
-    if (isset($_REQUEST["workNumber"]))
-    {
-        $workNumber = $_REQUEST["workNumber"];
-    }
-    else
-    {
-        $workNumber = '';
-    }
-    if (isset($_REQUEST["mobileNumber"]))
-    {
-        $mobileNumber = $_REQUEST["mobileNumber"];
-    }
-    else
-    {
-        $mobileNumber = '';
-    }
-
-    $Manager->AddSupplier($name, $email, $homeNumber, $workNumber, $mobileNumber);
-}
-else if (isset($_REQUEST["d"]))
-{
-    // delete a supplier
+    // delete an order
     $id = $_REQUEST["id"];
 
-    $Manager->DeleteSupplier($id);
+    $Manager->DeleteOrder($id);
+}
+else if (isset($_REQUEST["s"]))
+{
+    // ship an order
+    $id = $_REQUEST["id"];
+    $status = \Common\Constants::$OrderStatusShipped;
+
+    $Manager->ChangeOrderStatus($id, $status);
 }
 
 // allows updating the category list to be simultaineous.
 if (isset($_REQUEST["l"]))
 {
     // update list of categories at left
-    $Suppliers = $Manager->GetAllSuppliers();
-    foreach($Suppliers as $suppliers)
+    $Orders = $Manager->GetAllOrders();
+    foreach($Orders as $order)
     {
         echo '<div class="row"><div class="col-xs-12 col-sm-12 col-sm-12">';
         echo '<input class="btn" style="border:1px solid black; margin-bottom:2px; width:80%;" ' .
-            'type="button" value="' . $suppliers['id'] . ', ' . $suppliers['name'] . '" ' .
-            'data-name="'.$suppliers['name'].'" data-homeNumber="'.$suppliers['homeNumber'].'"' .
-            'data-workNumber="'.$suppliers['worknumber'].'" data-email="'.$suppliers['emailAddress'].'"' .
-            'data-mobileNumber="'.$suppliers['mobileNumber'].'"' .
-            'id="supplier_' . $suppliers['id'] . '" ' .
-            'onclick="UpdateItemForm(' . $suppliers['id'] . ')" /> ';
+            'type="button" value="' . $order['id'] . ', ' . $order['status'] . '" ' .
+            'data-status="'.$order['status'].'" data-dateplaced="'.$order['datePlaced'].'" ' .
+            'data-firstname="'.$order['firstName'].'" data-lastname="'.$order['lastName'].'" ' .
+            'data-capcount="'.$order['capCount'].'" data-totalqty="'.$order['totalQuantity'].'" ' .
+            'data-totalprice="'.$order['totalPrice'].'" '.
+            'data-userid="'.$order['userId'].'" id="order_' . $order['id'] . '" ' .
+            'onclick="UpdateItemForm(' . $order['id'] . ')" /> ';
         echo '</div></div>';
     }
 }
