@@ -1192,6 +1192,8 @@ class DataManager
         Logging::Log('DataManager, query: ' . $sql  . "\r\n");
 
         $this->_CloseConnection();
+
+        return true;
     }
 
     /*
@@ -1224,6 +1226,8 @@ class DataManager
         Logging::Log('DataManager, query: ' . $sql  . "\r\n");
 
         $this->_CloseConnection();
+
+        return true;
     }
 
     /*
@@ -1583,6 +1587,49 @@ class DataManager
 
         return $items;
     }
+
+    /*
+		get single categories
+	*/
+    public function SelectSingleCategory($id)
+    {
+        $this->_OpenConnection();
+
+        $id = (integer) ($id);
+
+        $sql = "Select * from `category` where id=" . $id . ";";
+        if (!$query_result = $this->_conn->query($sql))
+        {
+            $this->_conn->rollback();
+            $this->_CloseConnection();
+            $_SESSION["last_Error"] = "DB_Error_Generic";
+            $_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
+            header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
+            exit;
+        }
+
+        $category = array();
+
+        if ($query_result->num_rows > 0)
+        {
+            while ($row = $query_result->fetch_assoc())
+            {
+                $category = $row;
+            }
+        }
+
+        if ($query_result)
+        {
+            $query_result->free();
+        }
+
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
+
+        $this->_CloseConnection();
+
+        return $category;
+    }
+
 
     /*
 		get all suppliers
