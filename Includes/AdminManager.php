@@ -82,5 +82,133 @@ class AdminManager
 		}
 		
 		return false;
-	}	
+	}
+
+	/*
+	 *  get all users
+	 */
+	public function GetAllUsers()
+    {
+        return $this->_dataManager->SelectAllSiteUsers();
+    }
+
+    /*
+	 *  get all categories
+	 */
+    public function GetAllCategories()
+    {
+        return $this->_dataManager->SelectAllCategories();
+    }
+
+    /*
+	 *  get all caps
+	 */
+    public function GetAllCaps()
+    {
+        return $this->_dataManager->SelectAllCaps();
+    }
+
+    /*
+	 *  get all suppliers
+	 */
+    public function GetAllSuppliers()
+    {
+        return $this->_dataManager->SelectAllSuppliers();
+    }
+
+    /*
+	 *  get all orders
+	 */
+    public function GetAllOrders()
+    {
+        return $this->_dataManager->SelectAllOrders();
+    }
+
+    /*
+	 *  delete order
+	 */
+    public function DeleteOrder($id)
+    {
+        $this->_dataManager->DeleteOrder($id);
+    }
+
+    /*
+	 *  delete cap
+	 */
+    public function DeleteCap($id)
+    {
+        $this->_dataManager->DeleteCap($id);
+    }
+
+    /*
+	 *  delete user
+	 */
+    public function DeleteUser($id)
+    {
+        $this->_dataManager->DeleteUser($id);
+    }
+
+    /*
+	 *  delete supplier
+	 */
+    public function DeleteSupplier($id)
+    {
+        $this->_dataManager->DeleteSupplier($id);
+    }
+
+    /*
+	 *  delete category
+	 */
+    public function DeleteCategory($id)
+    {
+        $this->_dataManager->DeleteCategory($id);
+    }
+
+    /*
+	 *  add Category
+	 */
+    public function AddCategory($name)
+    {
+        $this->_dataManager->InsertCategory($name);
+    }
+
+    /*
+	 *  add Supplier
+	 */
+    public function AddSupplier($name, $email, $homeNumber, $workNumber, $mobileNumber)
+    {
+        $this->_dataManager->InsertSupplier($name, $email, $homeNumber, $workNumber, $mobileNumber);
+    }
+
+    /*
+	 *  add Cap
+	 */
+    public function AddCap($name, $price, $description, $imageUrl, $supplierId, $categoryId)
+    {
+        $this->_dataManager->InsertCap($name, $price, $description, $imageUrl, $supplierId, $categoryId);
+    }
+
+    /*
+	 *  set a cap as obsolete (remove from home page)
+	 */
+    public function RetireCap($id)
+    {
+        $this->_dataManager->RetireCap($id);
+    }
+
+    /*
+	 *  set a cap as obsolete (remove from home page)
+	 */
+    public function ChangeOrderStatus($id, $status)
+    {
+        $this->_dataManager->ChangeOrderStatus($id, $status);
+    }
+
+    /*
+	 *  disable a customer
+	 */
+    public function DisableCustomer($id)
+    {
+        $this->_dataManager->DisableCustomer($id);
+    }
 }
