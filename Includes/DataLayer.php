@@ -99,7 +99,7 @@ class DataManager
 														  
 		$this->_CloseConnection();
         
-        Logging::Log('DataManager', 'completed building tables.');
+        Logging::Log('DataManager, completed building tables.');
 	}
 	
 	/*
@@ -170,7 +170,7 @@ class DataManager
 				exit;
 			}
 
-            Logging::Log('DataManager', 'query: ' . $sql  . "\r\n");
+            Logging::Log('DataManager, query: ' . $sql  . "\r\n");
 
 			// create each new order item, using the order id.
 			$sql = "insert into OrderItem (orderId, capId, quantity ) values ";			
@@ -206,7 +206,7 @@ class DataManager
 				exit;
 			}
 
-            Logging::Log('DataManager', 'query: ' . $sql  . "\r\n");
+            Logging::Log('DataManager, query: ' . $sql  . "\r\n");
 			
 			$this->_CloseConnection();
 		}
@@ -250,7 +250,7 @@ class DataManager
 			exit;
 		}
 
-        Logging::Log('DataManager', 'query: ' . $sql  . "\r\n");
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
 		
 		$this->_CloseConnection();								
 	}
@@ -295,7 +295,7 @@ class DataManager
 			exit;
 		}
 
-        Logging::Log('DataManager', 'query: ' . $sql  . "\r\n");
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
 		
 		$this->_CloseConnection();
 	}	
@@ -325,7 +325,7 @@ class DataManager
 			exit;
 		}
 
-        Logging::Log('DataManager', 'query: ' . $sql  . "\r\n");
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
 		
 		$this->_CloseConnection();								
 	}
@@ -366,7 +366,7 @@ class DataManager
 			$query_result->free();
 		}
 
-        Logging::Log('DataManager', 'query: ' . $sql  . "\r\n");
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
 		
 		$this->_CloseConnection();	
 		
@@ -408,7 +408,7 @@ class DataManager
 			$query_result->free();
 		}
 
-        Logging::Log('DataManager', 'query: ' . $sql  . "\r\n");
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
 		
 		$this->_CloseConnection();	
 		
@@ -446,7 +446,7 @@ class DataManager
 			$query_result->free();
 		}
 
-        Logging::Log('DataManager', 'query: ' . $sql  . "\r\n");
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
 		
 		$this->_CloseConnection();	
 		
@@ -484,7 +484,7 @@ class DataManager
 			$query_result->free();
 		}
 
-        Logging::Log('DataManager', 'query: ' . $sql  . "\r\n");
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
 		
 		$this->_CloseConnection();	
 		
@@ -526,7 +526,7 @@ class DataManager
 			$query_result->free();
 		}
 
-        Logging::Log('DataManager', 'query: ' . $sql  . "\r\n");
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
 		
 		$this->_CloseConnection();	
 		
@@ -568,7 +568,7 @@ class DataManager
 			$query_result->free();
 		}
 
-        Logging::Log('DataManager', 'query: ' . $sql  . "\r\n");
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
 		
 		$this->_CloseConnection();	
 		
@@ -607,7 +607,7 @@ class DataManager
 			$query_result->free();
 		}
 
-        Logging::Log('DataManager', 'query: ' . $sql  . "\r\n");
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
 		
 		$this->_CloseConnection();	
 		
@@ -659,7 +659,7 @@ class DataManager
 			$query_result->free();
 		}
 
-        Logging::Log('DataManager', 'query: ' . $sql  . "\r\n");
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
 		
 		$this->_CloseConnection();	
 		
@@ -744,7 +744,7 @@ class DataManager
 			$query_result->free();
 		}
 
-        Logging::Log('DataManager', 'query: ' . $sql  . "\r\n");
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
 		
 		$this->_CloseConnection();	
 		
@@ -777,7 +777,7 @@ class DataManager
 			$query_result->free();
 		}
 
-        Logging::Log('DataManager', 'query: ' . $sql  . "\r\n");
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
 		
 		$this->_CloseConnection();
 		
@@ -816,7 +816,7 @@ class DataManager
 			$query_result->free();
 		}
 
-        Logging::Log('DataManager', 'query: ' . $sql  . "\r\n");
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
 		
 		$this->_CloseConnection();	
 		
@@ -847,7 +847,7 @@ class DataManager
 			$query_result->free();
 		}
 
-        Logging::Log('DataManager', 'query: ' . $sql  . "\r\n");
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
 		
 		$this->_CloseConnection();	
 		
@@ -885,7 +885,7 @@ class DataManager
 			$query_result->free();
 		}
 
-        Logging::Log('DataManager', 'query: ' . $sql  . "\r\n");
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
 		
 		$this->_CloseConnection();	
 		
@@ -930,7 +930,7 @@ class DataManager
 			$query_result->free();
 		}
 
-        Logging::Log('DataManager', 'query: ' . $sql  . "\r\n");
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
 		
 		$this->_CloseConnection();	
 		
@@ -976,7 +976,7 @@ class DataManager
 			$query_result->free();
 		}
 
-        Logging::Log('DataManager', 'query: ' . $sql  . "\r\n");
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
 		
 		$this->_CloseConnection();	
 		
@@ -1011,7 +1011,7 @@ class DataManager
 			$query_result->free();
 		}
 
-        Logging::Log('DataManager', 'query: ' . $sql  . "\r\n");
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
 		
 		$this->_CloseConnection();	
 		
@@ -1049,7 +1049,7 @@ class DataManager
 			$query_result->free();
 		}
 
-        Logging::Log('DataManager', 'query: ' . $sql  . "\r\n");
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
 		
 		$this->_CloseConnection();	
 		
@@ -1087,7 +1087,7 @@ class DataManager
 			$query_result->free();
 		}
 
-        Logging::Log('DataManager', 'query: ' . $sql  . "\r\n");
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
 		
 		$this->_CloseConnection();	
 		
@@ -1125,7 +1125,7 @@ class DataManager
 			$query_result->free();
 		}
 
-        Logging::Log('DataManager', 'query: ' . $sql  . "\r\n");
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
 		
 		$this->_CloseConnection();	
 		
