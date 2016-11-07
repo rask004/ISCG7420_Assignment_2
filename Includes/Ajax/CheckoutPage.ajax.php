@@ -120,4 +120,26 @@ else
 			'<div class="col-xs-4 col-sm-1 col-md-1"><span>$'. $total .'</span></div></div><br/>';
 		
 	}
+	
+	// update totals
+	
+	// find the subtotal.
+	$subTotal = 0.0;
+	
+	foreach ($cart as $id => $qty)
+	{
+		$cap = $CapsManager->GetSingleCap($id);
+		$price = (float) ($cap['price'] + 0);
+		$subTotal += $qty * $price;
+	}
+	
+	$gst = $subTotal * \Common\Constants::$GstRate;
+	
+	$fullTotal = $subTotal + $gst;
+	
+	echo '<script type="text/javascript">' . 
+		'$("#lblCartSubTotal").html("$ ' . number_format((float) ($subTotal), 2, '.', '') . '");' .
+		'$("#lblCartGst").html("$ ' . number_format((float) ($gst), 2, '.', '') . '");' .
+		'$("#lblCartFullTotal").html("$ ' . number_format((float) ($fullTotal), 2, '.', '') . '");' .
+		'</script>';
 }

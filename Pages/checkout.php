@@ -216,6 +216,45 @@ $cartCount = count($_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey])
                     <br/>
                     <br/>
                     
+                    <div class="row" style="margin-top: 4px">
+						<div class="container-fluid">
+                        	<div class="row">
+                            	<div class="col-xs-0 col-sm-2 col-md-2"></div>
+                            	<div class="col-xs-6 col-sm-4 col-md-4">
+                                	<label>SubTotal</label>
+                                </div>
+                                <div class="col-xs-6 col-sm-4 col-md-4">
+                                	<label id="lblCartSubTotal">$ 0.00</label>
+                                </div>
+                                <div class="col-xs-0 col-sm-2 col-md-2"></div>
+                            </div>
+                            
+                            <div class="row">
+                            	<div class="col-xs-0 col-sm-2 col-md-2"></div>
+                            	<div class="col-xs-6 col-sm-4 col-md-4">
+                                	<label>GST</label>
+                                </div>
+                                <div class="col-xs-6 col-sm-4 col-md-4">
+                                	<label id="lblCartGst">$ 0.00</label>
+                                </div>
+                                <div class="col-xs-0 col-sm-2 col-md-2"></div>
+                            </div>
+                            
+                            <div class="row">
+                            	<div class="col-xs-0 col-sm-2 col-md-2"></div>
+                            	<div class="col-xs-6 col-sm-4 col-md-4">
+                                	<label>Full Total</label>
+                                </div>
+                                <div class="col-xs-6 col-sm-4 col-md-4">
+                                	<label id="lblCartFullTotal">$ 0.00</label>
+                                </div>
+                                <div class="col-xs-0 col-sm-2 col-md-2"></div>
+                            </div>                            
+                        </div>
+                    </div>
+                    
+                    <br/>
+                    
                     <form method="post" enctype="multipart/form-data" autocomplete="off">
                     
                     <div class="row">
