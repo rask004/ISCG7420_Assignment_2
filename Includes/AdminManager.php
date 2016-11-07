@@ -32,7 +32,7 @@ class AdminManager
 		{
 			return true;
 		}
-		
+
 		return false;
 	}
 	
@@ -197,7 +197,7 @@ class AdminManager
     }
 
     /*
-	 *  set a cap as obsolete (remove from home page)
+	 *  change an order status
 	 */
     public function ChangeOrderStatus($id, $status)
     {

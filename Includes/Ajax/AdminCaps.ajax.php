@@ -51,31 +51,59 @@ if (!isset($_REQUEST["l"]) && !isset($_REQUEST["a"]) && !isset($_REQUEST["d"]))
 
 if (isset($_REQUEST["a"]))
 {
-	// add a category
+	// add a supplier
     $name = $_REQUEST["name"];
+    $email = $_REQUEST["email"];
+    if (isset($_REQUEST["homeNumber"]))
+    {
+        $homeNumber = $_REQUEST["homeNumber"];
+    }
+    else
+    {
+        $homeNumber = '';
+    }
+    if (isset($_REQUEST["workNumber"]))
+    {
+        $workNumber = $_REQUEST["workNumber"];
+    }
+    else
+    {
+        $workNumber = '';
+    }
+    if (isset($_REQUEST["mobileNumber"]))
+    {
+        $mobileNumber = $_REQUEST["mobileNumber"];
+    }
+    else
+    {
+        $mobileNumber = '';
+    }
 
-    $Manager->AddCategory($name);
+    $Manager->AddSupplier($name, $email, $homeNumber, $workNumber, $mobileNumber);
 }
 else if (isset($_REQUEST["d"]))
 {
-    // delete a category
+    // delete a supplier
     $id = $_REQUEST["id"];
 
-    $Manager->DeleteCategory($id);
+    $Manager->DeleteSupplier($id);
 }
 
 // allows updating the category list to be simultaineous.
 if (isset($_REQUEST["l"]))
 {
     // update list of categories at left
-    $Categories = $Manager->GetAllCategories();
-    foreach($Categories as $category)
+    $Suppliers = $Manager->GetAllSuppliers();
+    foreach($Suppliers as $suppliers)
     {
         echo '<div class="row"><div class="col-xs-12 col-sm-12 col-sm-12">';
         echo '<input class="btn" style="border:1px solid black; margin-bottom:2px; width:80%;" ' .
-            'type="button" value="' . $category['id'] . ', ' . $category['name'] . '" ' .
-            'data-name="'.$category['name'].'" id="category_' . $category['id'] . '" ' .
-            'onclick="UpdateItemForm(' . $category['id'] . ')" /> ';
+            'type="button" value="' . $suppliers['id'] . ', ' . $suppliers['name'] . '" ' .
+            'data-name="'.$suppliers['name'].'" data-homeNumber="'.$suppliers['homeNumber'].'"' .
+            'data-workNumber="'.$suppliers['worknumber'].'" data-email="'.$suppliers['emailAddress'].'"' .
+            'data-mobileNumber="'.$suppliers['mobileNumber'].'"' .
+            'id="supplier_' . $suppliers['id'] . '" ' .
+            'onclick="UpdateItemForm(' . $suppliers['id'] . ')" /> ';
         echo '</div></div>';
     }
 }

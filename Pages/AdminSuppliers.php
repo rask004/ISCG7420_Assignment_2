@@ -46,8 +46,8 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
     <script type="text/javascript">
         // button clicks
 
-        // prepare form for adding a category.
-        function NewCategory()
+        // prepare form for adding a supplier.
+        function NewSupplier()
         {
             if ($("#btnAdd").val() == "New...")
             {
@@ -56,8 +56,16 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
                     $("#inputItemId").val("");
                     $("#inputItemName").val("");
                     $("#inputItemName").prop("disabled", false);
+                    $("#inputItemEmail").val("");
+                    $("#inputItemEmail").prop("disabled", false);
+                    $("#inputItemHomeNum").val("");
+                    $("#inputItemHomeNum").prop("disabled", false);
+                    $("#inputItemWorkNum").val("");
+                    $("#inputItemWorkNum").prop("disabled", false);
+                    $("#inputItemMobileNum").val("");
+                    $("#inputItemMobileNum").prop("disabled", false);
                     $("#btnDelete").prop("disabled", true);
-                    $("#btnUndo").prop("disabled",false);
+                    $("#btnUndo").prop("disabled", false);
                     $("#btnAdd").prop("value", "Save");
                 });
             }
@@ -66,7 +74,11 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
                 // save the new item.
                 $( document ).ready(function() {
                     var name = $("#inputItemName").val();
-                    AddItem(name);
+                    var email = $("#inputItemEmail").val();
+                    var homeNum = $("#inputItemHomeNum").val();
+                    var workNum = $("#inputItemWorkNum").val();
+                    var mobileNum = $("#inputItemMobileNum").val();
+                    AddItem(name, email, homeNum, workNum, mobileNum);
                 });
 
                 UpdateItemForm(1);
@@ -92,12 +104,25 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
         function UpdateItemForm(id)
         {
             $( document ).ready(function() {
-                var id_text = 'category_' + id;
-                var name = $("#" + id_text).data("name");
+                var id_text = 'supplier_' + id;
+                var element = $("#" + id_text);
+                var name = element.data("name");
+                var email = element.data("email");
+                var homeNum = element.data("homenumber");
+                var workNum = element.data("worknumber");
+                var mobileNum = element.data("mobilenumber");
 
                 $("#inputItemId").val(id);
                 $("#inputItemName").val(name);
                 $("#inputItemName").prop("disabled", true);
+                $("#inputItemEmail").val(email);
+                $("#inputItemEmail").prop("disabled", true);
+                $("#inputItemHomeNum").val(homeNum);
+                $("#inputItemHomeNum").prop("disabled", true);
+                $("#inputItemWorkNum").val(workNum);
+                $("#inputItemWorkNum").prop("disabled", true);
+                $("#inputItemMobileNum").val(mobileNum);
+                $("#inputItemMobileNum").prop("disabled", true);
 
                 $("#btnAdd").prop("value", "New...");
                 $("#btnAdd").prop("disabled", false);
@@ -115,7 +140,7 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
         function UpdateItemList()
         {
             $( document ).ready(function() {
-                $("#divItemList").load("../Includes/Ajax/AdminCategories.ajax.php", {l:1},
+                $("#divItemList").load("../Includes/Ajax/AdminSuppliers.ajax.php", {l:1},
                     function(responseTxt, statusTxt, xhr)
                     {
                         if(statusTxt == "success")
@@ -133,23 +158,23 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
             var id = parseInt($("#inputItemId").val());
 
             $( document ).ready(function() {
-                $("#divItemList").load("../Includes/Ajax/AdminCategories.ajax.php", {d:1, id:id, l:1},
+                $("#divItemList").load("../Includes/Ajax/AdminSuppliers.ajax.php", {d:1, id:id, l:1},
                     function(responseTxt, statusTxt, xhr)
                     {
                         if(statusTxt == "success")
                         {
                             // check that the category was actually deleted. element should not exist
-                            var id_text = 'category_' + id;
+                            var id_text = 'supplier_' + id;
 
                             var element = document.getElementById(id_text);
 
                             if (typeof(element) != 'undefined' && element != null)
                             {
-                                $("#lblMessage").html("ERROR: could not delete Category #" + id);
+                                $("#lblMessage").html("ERROR: could not delete Supplier #" + id);
                             }
                             else
                             {
-                                $("#lblMessage").html("SUCCESS: Category #" + id + " deleted.");
+                                $("#lblMessage").html("SUCCESS: Supplier #" + id + " deleted.");
                             }
 
                             UpdateItemForm(1);
@@ -160,15 +185,17 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
         };
 
         // add one category
-        function AddItem(name)
+        function AddItem(name, email, homeNumber, workNumber, mobileNumber)
         {
             $( document ).ready(function() {
-                $("#divItemList").load("../Includes/Ajax/AdminCategories.ajax.php", {a:1, name:name, l:1},
+                $("#divItemList").load("../Includes/Ajax/AdminSuppliers.ajax.php",
+                    {a:1, name:name, email:email, homeNumber:homeNumber, workNumber:workNumber,
+                        mobileNumber:mobileNumber, l:1},
                     function(responseTxt, statusTxt, xhr)
                     {
                         if(statusTxt == "success")
                         {
-                            $("#lblMessage").html("DONE: Check list for new category.");
+                            $("#lblMessage").html("DONE: Check list for new supplier.");
 
                             UpdateItemForm(1);
                         }
@@ -197,7 +224,7 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
                         <div class="col-xs-0 col-sm-4 col-sm-4">
                         </div>
                         <div class="col-xs-12 col-sm-4 col-sm-4">
-                            <H3>Categories</H3>
+                            <H3>Suppliers</H3>
                         </div>
                     </div>
                     <br/>
@@ -222,6 +249,48 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
                             <input disabled type="text" id="inputItemName" />
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-xs-0 col-sm-1 col-sm-1">
+                        </div>
+                        <div class="col-xs-8 col-sm-3 col-sm-3">
+                            <label for="inputItemEmail">Email :</label>
+                        </div>
+                        <div class="col-xs-6 col-sm-5 col-sm-5">
+                            <input disabled type="text" id="inputItemEmail" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-0 col-sm-1 col-sm-1">
+                        </div>
+                        <div class="col-xs-8 col-sm-3 col-sm-3">
+                            <label for="inputItemHomeNum">Home #:</label>
+                        </div>
+                        <div class="col-xs-6 col-sm-5 col-sm-5">
+                            <input disabled type="text" id="inputItemHomeNum" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-0 col-sm-1 col-sm-1">
+                        </div>
+                        <div class="col-xs-8 col-sm-3 col-sm-3">
+                            <label for="inputItemWorkNum">Work #:</label>
+                        </div>
+                        <div class="col-xs-6 col-sm-5 col-sm-5">
+                            <input disabled type="text" id="inputItemWorkNum" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-0 col-sm-1 col-sm-1">
+                        </div>
+                        <div class="col-xs-8 col-sm-3 col-sm-3">
+                            <label for="inputItemMobileNum">Mobile #:</label>
+                        </div>
+                        <div class="col-xs-6 col-sm-5 col-sm-5">
+                            <input disabled type="text" id="inputItemMobileNum" />
+                        </div>
+                    </div>
 
                     <br/>
 
@@ -235,7 +304,7 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
                             <input type="button" value="Undo" id="btnUndo" disabled onclick="Undo()" />
                         </div>
                         <div class="col-xs-6 col-sm-2 col-sm-2">
-                            <input type="button" value="New..." id="btnAdd" onclick="NewCategory()" />
+                            <input type="button" value="New..." id="btnAdd" onclick="NewSupplier()" />
                         </div>
                     </div>
 

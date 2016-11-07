@@ -1245,7 +1245,7 @@ class DataManager
         $mobileNumber = $this->_conn->real_escape_string($mobileNumber);
 
         $this->_conn->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
-        $sql =  "insert into Supplier (name, emailAddress, homeNumber, workNumber, mobileNumber) values ".
+        $sql =  "insert into Supplier (name, emailAddress, homeNumber, worknumber, mobileNumber) values ".
             "('" . $supplierName . "','" . $emailAddress . "','" . $homeNumber .
             "','" . $workNumber . "','" . $mobileNumber . "');";
         $this->_conn->query($sql);

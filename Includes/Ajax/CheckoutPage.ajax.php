@@ -21,7 +21,7 @@ if(isset($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]))
     $customerId = $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey];
 }
 
-\Common\Logging::Log('Executing Page. sessionId=' . session_id() . '; customer='
+\Common\Logging::Log('Executing Ajax. sessionId=' . session_id() . '; customer='
     . $customerId . "\r\n");
 
 if (!isset($_REQUEST["p"]))
