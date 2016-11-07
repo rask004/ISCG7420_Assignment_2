@@ -90,7 +90,11 @@ class Constants
 	
 	public static $ValidationAddressRegex = "/^[0-9a-zA-Z]+\s[a-zA-z\s]+/";
 	
-	//default emails.
+	// for calculation of cart totals.
+	
+	public static $GstRate = 0.15;
+	
+	// default emails.
 	public static $EmailAdminDefault = "AskewR04@myunitec.ac.nz";
 	
 	// default query string keys.

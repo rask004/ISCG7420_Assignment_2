@@ -503,6 +503,49 @@ $capPageSize = \Common\Constants::$HomeCapsTablePageSize;
                     
                     <br/>
                     
+                    <div class="row" style="margin-top: 4px">
+						<div class="container-fluid">
+                        	<div class="row">
+                            	<div class="col-xs-0 col-sm-2 col-md-2"></div>
+                            	<div class="col-xs-6 col-sm-4 col-md-4">
+                                	<label>SubTotal</label>
+                                </div>
+                                <div class="col-xs-6 col-sm-4 col-md-4">
+                                	<label id="lblCartSubTotal">$ 0.00</label>
+                                </div>
+                                <div class="col-xs-0 col-sm-2 col-md-2"></div>
+                            </div>
+                            <br/>
+                            
+                            <div class="row">
+                            	<div class="col-xs-0 col-sm-2 col-md-2"></div>
+                            	<div class="col-xs-6 col-sm-4 col-md-4">
+                                	<label>GST</label>
+                                </div>
+                                <div class="col-xs-6 col-sm-4 col-md-4">
+                                	<label id="lblCartGst">$ 0.00</label>
+                                </div>
+                                <div class="col-xs-0 col-sm-2 col-md-2"></div>
+                            </div>
+                            <br/>
+                            
+                            <div class="row">
+                            	<div class="col-xs-0 col-sm-2 col-md-2"></div>
+                            	<div class="col-xs-6 col-sm-4 col-md-4">
+                                	<label>Full Total</label>
+                                </div>
+                                <div class="col-xs-6 col-sm-4 col-md-4">
+                                	<label id="lblCartFullTotal">$ 0.00</label>
+                                </div>
+                                <div class="col-xs-0 col-sm-2 col-md-2"></div>
+                            </div>
+                            <br/>
+                            
+                        </div>
+                    </div>
+                    
+                    <br/>
+                    
                     <div class="row">
                         <div class="container-fluid">
                             <div class="col-xs-12 col-sm-12 col-md-12">
