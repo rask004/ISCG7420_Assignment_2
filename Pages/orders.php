@@ -48,9 +48,10 @@ $orderCount = $ordersManager->GetCountOfOrderSummariesByCustomer($_SESSION[\Comm
 <head>
     <meta charset="utf-8">
     <title>Quality Caps - Orders</title>
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/bootstrap.min.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="../css/Common.css">
-    <script type="text/javascript" src="../js/jquery.min.js"></script>
     <script type="text/javascript">
 		// ajax function, retrieve orders page, setup pagination controls
 		function ordersAjax(page)

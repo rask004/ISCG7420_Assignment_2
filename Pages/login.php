@@ -41,20 +41,29 @@ if (isset($_POST['inputLogin']) && isset($_POST['inputPassword']))
 	$CustomerManager = new CustomerManager();
 	
 	if ($CustomerManager->CheckMatchingPasswordForCustomerLogin($_POST['inputLogin'], $_POST['inputPassword']))
-	{		
-		// successful member login
-		$Customer = $CustomerManager->FindCustomerByLogin($_POST['inputLogin']);
-		
-		$_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] = 1;
-   		$_SESSION[\Common\SecurityConstraints::$SessionUserLoginKey]  = $Customer['login'];
-    	$_SESSION[\Common\SecurityConstraints::$SessionUserIdKey] = $Customer['id'];
+	{
+        $Customer = $CustomerManager->FindCustomerByLogin($_POST['inputLogin']);
+
+		// check if customer is disabled.if so, post warning
+		if ($Customer['isDisabled'] == 1)
+		{
+			$msg = "This account is disabled. If you believe this is in error, contact the Admin at " . $senderEmail ." immediately.";
+		}
+		else
+		{
+
+			// successful member login
+			$_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey] = 1;
+   			$_SESSION[\Common\SecurityConstraints::$SessionUserLoginKey]  = $Customer['login'];
+    			$_SESSION[\Common\SecurityConstraints::$SessionUserIdKey] = $Customer['id'];
+		}
 		
 		// prevent accidential misuse of member business layer objects.
 		unset($Customer);
 	}
 	else
     {
-        $AdminManager = new \BusinessLayer\AdminManager;
+        $AdminManager = new AdminManager;
         if ($AdminManager->CheckMatchingPasswordForAdminLogin($_POST['inputLogin'], $_POST['inputPassword']))
         {
             // successful admin login
@@ -100,9 +109,10 @@ if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && 
 <head>
     <meta charset="utf-8">
     <title>Quality Caps - Login</title>
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/bootstrap.min.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="../css/Common.css">
-    <script type="text/javascript" src="../js/jquery.min.js"></script>
 </head>
 
 <body>
@@ -156,7 +166,7 @@ if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && 
                                     </div>
                                     <div class="col-xs-12 col-sm-8 col-md-7">
                                         <input class="form-control" style="float: right; width:100%" id="inputPassword"
-                                               name="inputPassword" required minlength="10" type="text" />
+                                               name="inputPassword" required minlength="10" type="password" />
                                     </div>
                                 </div>
 

@@ -44,9 +44,10 @@ $capPageSize = \Common\Constants::$HomeCapsTablePageSize;
 <head>
     <meta charset="utf-8">
     <title>Quality Caps - Home Page</title>
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/bootstrap.min.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="../css/Common.css">
-    <script type="text/javascript" src="../js/jquery.min.js"></script>
     <script type="text/javascript">
 	
 		// clear the cart. 
@@ -417,6 +418,7 @@ $capPageSize = \Common\Constants::$HomeCapsTablePageSize;
                     
                 </div>
             </div>
+
             <div id="divCentreSpace" class="col-md-6">
                 <div class="container-fluid panel panel-default PageSection">
                     <br/>
@@ -503,6 +505,49 @@ $capPageSize = \Common\Constants::$HomeCapsTablePageSize;
                     
                     <br/>
                     
+                    <div class="row" style="margin-top: 4px">
+						<div class="container-fluid">
+                        	<div class="row">
+                            	<div class="col-xs-0 col-sm-2 col-md-2"></div>
+                            	<div class="col-xs-6 col-sm-4 col-md-4">
+                                	<label>SubTotal</label>
+                                </div>
+                                <div class="col-xs-6 col-sm-4 col-md-4">
+                                	<label id="lblCartSubTotal">$ 0.00</label>
+                                </div>
+                                <div class="col-xs-0 col-sm-2 col-md-2"></div>
+                            </div>
+                            <br/>
+                            
+                            <div class="row">
+                            	<div class="col-xs-0 col-sm-2 col-md-2"></div>
+                            	<div class="col-xs-6 col-sm-4 col-md-4">
+                                	<label>GST</label>
+                                </div>
+                                <div class="col-xs-6 col-sm-4 col-md-4">
+                                	<label id="lblCartGst">$ 0.00</label>
+                                </div>
+                                <div class="col-xs-0 col-sm-2 col-md-2"></div>
+                            </div>
+                            <br/>
+                            
+                            <div class="row">
+                            	<div class="col-xs-0 col-sm-2 col-md-2"></div>
+                            	<div class="col-xs-6 col-sm-4 col-md-4">
+                                	<label>Full Total</label>
+                                </div>
+                                <div class="col-xs-6 col-sm-4 col-md-4">
+                                	<label id="lblCartFullTotal">$ 0.00</label>
+                                </div>
+                                <div class="col-xs-0 col-sm-2 col-md-2"></div>
+                            </div>
+                            <br/>
+                            
+                        </div>
+                    </div>
+                    
+                    <br/>
+                    
                     <div class="row">
                         <div class="container-fluid">
                             <div class="col-xs-12 col-sm-12 col-md-12">
@@ -545,6 +590,8 @@ $capPageSize = \Common\Constants::$HomeCapsTablePageSize;
                 </div>
             </div>
         </div>
+        <br/>
+        <br/>
     </div>
     
     <script type="text/javascript">
