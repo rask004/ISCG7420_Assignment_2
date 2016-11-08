@@ -31,7 +31,7 @@ if (!isset($_REQUEST["l"]) && !isset($_REQUEST["a"]) && !isset($_REQUEST["d"]))
 {
 	// redirect to AJAX error page.
 	$_SESSION["last_Error"] = "AJAX_Error";
-	$_SESSION["Error_MSG"] = "Admin Categories ajax page: ";
+	$_SESSION["Error_MSG"] = "Admin Customers ajax page: ";
 	if (count($_REQUEST) == 0)
 	{
 		$_SESSION["Error_MSG"] .= "Empty Query String.";

@@ -417,6 +417,7 @@ $capPageSize = \Common\Constants::$HomeCapsTablePageSize;
                     
                 </div>
             </div>
+
             <div id="divCentreSpace" class="col-md-6">
                 <div class="container-fluid panel panel-default PageSection">
                     <br/>
@@ -588,6 +589,8 @@ $capPageSize = \Common\Constants::$HomeCapsTablePageSize;
                 </div>
             </div>
         </div>
+        <br/>
+        <br/>
     </div>
     
     <script type="text/javascript">

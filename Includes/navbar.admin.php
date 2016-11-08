@@ -32,6 +32,12 @@
                             <li><a id="navbarLogoutLink" style="color: white; text-align: center" href="../Pages/AdminFiles.php">Files</a></li>
                             <li><a id="navbarLogoutLink" style="color: white; text-align: center" href="../Pages/AdminCategories.php">Categories</a></li>
                             <li><a id="navbarLogoutLink" style="color: white; text-align: center" href="../Pages/AdminSuppliers.php">Suppliers</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 col-md-12">
+                        <ul class="nav navbar-nav navbar-left">
                             <li><a id="navbarLogoutLink" style="color: white; text-align: center" href="../Pages/AdminOrders.php">Orders</a></li>
                             <li><a id="navbarLogoutLink" style="color: white; text-align: center" href="../Pages/AdminUsers.php">Users</a></li>
                             <li><a id="navbarLogoutLink" style="color: white; text-align: center" href="../Pages/AdminCaps.php">Caps</a></li>

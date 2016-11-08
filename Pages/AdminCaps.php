@@ -47,15 +47,20 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
         // button clicks
 
         // prepare form for adding a category.
-        function NewCategory()
+        function NewCap()
         {
             if ($("#btnAdd").val() == "New...")
             {
                 // set the form for adding new item, do not allow delete. Allow undo and Save.
-                $( document ).ready(function() {
+                $( document ).ready(function()
+                {
                     $("#inputItemId").val("");
                     $("#inputItemName").val("");
                     $("#inputItemName").prop("disabled", false);
+                    $("#inputItemPrice").val("");
+                    $("#inputItemPrice").prop("disabled", false);
+                    $("#inputItemDesc").val("");
+                    $("#inputItemDesc").prop("disabled", false);
                     $("#btnDelete").prop("disabled", true);
                     $("#btnUndo").prop("disabled",false);
                     $("#btnAdd").prop("value", "Save");
@@ -92,12 +97,27 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
         function UpdateItemForm(id)
         {
             $( document ).ready(function() {
-                var id_text = 'category_' + id;
+                var id_text = 'cap_' + id;
                 var name = $("#" + id_text).data("name");
+                var desc = $("#" + id_text).data("description");
+                var price = $("#" + id_text).data("price");
+                var imageUrl = $("#" + id_text).data("imageurl");
+                var supplierId = $("#" + id_text).data("supplierid");
+                var categoryId = $("#" + id_text).data("categoryid");
 
                 $("#inputItemId").val(id);
                 $("#inputItemName").val(name);
                 $("#inputItemName").prop("disabled", true);
+                $("#inputItemPrice").val(price);
+                $("#inputItemPrice").prop("disabled", true);
+                $("#inputItemDesc").val(desc);
+                $("#inputItemDesc").prop("disabled", true);
+                $("#inputItemImage").val(imageUrl);
+                $("#inputItemImage").prop("disabled", true);
+                $("#inputItemSupplierId").val(supplierId);
+                $("#inputItemSupplierId").prop("disabled", true);
+                $("#inputItemCategoryId").val(categoryId);
+                $("#inputItemCategoryId").prop("disabled", true);
 
                 $("#btnAdd").prop("value", "New...");
                 $("#btnAdd").prop("disabled", false);
@@ -115,7 +135,7 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
         function UpdateItemList()
         {
             $( document ).ready(function() {
-                $("#divItemList").load("../Includes/Ajax/AdminCategories.ajax.php", {l:1},
+                $("#divItemList").load("../Includes/Ajax/AdminCaps.ajax.php", {l:1},
                     function(responseTxt, statusTxt, xhr)
                     {
                         if(statusTxt == "success")
@@ -133,23 +153,23 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
             var id = parseInt($("#inputItemId").val());
 
             $( document ).ready(function() {
-                $("#divItemList").load("../Includes/Ajax/AdminCategories.ajax.php", {d:1, id:id, l:1},
+                $("#divItemList").load("../Includes/Ajax/AdminCaps.ajax.php", {d:1, id:id, l:1},
                     function(responseTxt, statusTxt, xhr)
                     {
                         if(statusTxt == "success")
                         {
-                            // check that the category was actually deleted. element should not exist
-                            var id_text = 'category_' + id;
+                            // check that the cap was actually deleted. element should not exist
+                            var id_text = 'cap_' + id;
 
                             var element = document.getElementById(id_text);
 
                             if (typeof(element) != 'undefined' && element != null)
                             {
-                                $("#lblMessage").html("ERROR: could not delete Category #" + id);
+                                $("#lblMessage").html("ERROR: could not delete Cap #" + id);
                             }
                             else
                             {
-                                $("#lblMessage").html("SUCCESS: Category #" + id + " deleted.");
+                                $("#lblMessage").html("SUCCESS: Cap #" + id + " deleted.");
                             }
 
                             UpdateItemForm(1);
@@ -159,16 +179,18 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
             });
         };
 
-        // add one category
-        function AddItem(name)
+        // add one category NOTE missing the a param until is ready for adding.
+        function AddItem(name, price, description, imageUrl, supplierId, categoryId)
         {
             $( document ).ready(function() {
-                $("#divItemList").load("../Includes/Ajax/AdminCategories.ajax.php", {a:1, name:name, l:1},
+                $("#divItemList").load("../Includes/Ajax/AdminCaps.ajax.php",
+                    {name:name, price:price, description:description, imageUrl:imageUrl,
+                        supplierId:supplierId, categoryId:categoryId, l:1},
                     function(responseTxt, statusTxt, xhr)
                     {
                         if(statusTxt == "success")
                         {
-                            $("#lblMessage").html("DONE: Check list for new category.");
+                            $("#lblMessage").html("DONE: Check list for new cap.");
 
                             UpdateItemForm(1);
                         }
@@ -203,51 +225,101 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
                     <br/>
                     <br/>
                     <div class="row">
-                        <div class="col-xs-0 col-sm-1 col-sm-1">
+                        <div class="col-xs-0 col-sm-1 col-md-1">
                         </div>
-                        <div class="col-xs-8 col-sm-3 col-sm-3">
+                        <div class="col-xs-8 col-sm-3 col-md-3">
                             <label for="inputItemId">ID :</label>
                         </div>
-                        <div class="col-xs-6 col-sm-5 col-sm-5">
-                            <input type="number" id="inputItemId" disabled />
+                        <div class="col-xs-12 col-sm-6 col-md-6">
+                            <input type="number" style="width:100%" id="inputItemId" disabled />
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-xs-0 col-sm-1 col-sm-1">
+                        <div class="col-xs-0 col-sm-1 col-md-1">
                         </div>
-                        <div class="col-xs-8 col-sm-3 col-sm-3">
+                        <div class="col-xs-8 col-sm-3 col-md-3">
                             <label for="inputItemName">Name :</label>
                         </div>
-                        <div class="col-xs-6 col-sm-5 col-sm-5">
-                            <input disabled type="text" id="inputItemName" />
+                        <div class="col-xs-12 col-sm-6 col-md-6">
+                            <input disabled type="text" style="width:100%" id="inputItemName" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-0 col-sm-1 col-md-1">
+                        </div>
+                        <div class="col-xs-8 col-sm-3 col-md-3">
+                            <label for="inputItemPrice">Price ($):</label>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-6">
+                            <input disabled type="number" style="width:100%" step="any" min="1.00" id="inputItemPrice" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-0 col-sm-1 col-md-1">
+                        </div>
+                        <div class="col-xs-8 col-sm-3 col-md-3">
+                            <label for="inputItemDesc">Description :</label>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-6">
+                            <textarea  disabled rows="5" style="width:100%" id="inputItemDesc" ></textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-0 col-sm-1 col-md-1">
+                        </div>
+                        <div class="col-xs-8 col-sm-3 col-md-3">
+                            <label for="inputItemImage">Image Url :</label>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-6">
+                            <input disabled type="text" style="width:100%" id="inputItemImage" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-0 col-sm-1 col-md-1">
+                        </div>
+                        <div class="col-xs-8 col-sm-3 col-md-3">
+                            <label for="inputItemSupplierId">Supplier Id :</label>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-6">
+                            <input disabled type="text" style="width:100%" id="inputItemSupplierId" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-0 col-sm-1 col-md-1">
+                        </div>
+                        <div class="col-xs-8 col-sm-3 col-md-3">
+                            <label for="inputItemCategoryId">Category Id :</label>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-6">
+                            <input disabled type="text" style="width:100%" id="inputItemCategoryId" />
                         </div>
                     </div>
 
                     <br/>
 
                     <div class="row">
-                        <div class="col-xs-0 col-sm-3 col-sm-3">
+                        <div class="col-xs-0 col-sm-3 col-md-3">
                         </div>
-                        <div class="col-xs-6 col-sm-2 col-sm-2">
+                        <div class="col-xs-6 col-sm-2 col-md-2">
                             <input type="button" value="Delete" id="btnDelete" onclick="DeleteItem()"/>
                         </div>
-                        <div class="col-xs-6 col-sm-2 col-sm-2">
+                        <div class="col-xs-6 col-sm-2 col-md-2">
                             <input type="button" value="Undo" id="btnUndo" disabled onclick="Undo()" />
                         </div>
-                        <div class="col-xs-6 col-sm-2 col-sm-2">
-                            <input type="button" value="New..." id="btnAdd" onclick="NewCategory()" />
+                        <div class="col-xs-6 col-sm-2 col-md-2">
+                            <input type="button" value="New..." id="btnAdd" onclick="NewCap()" />
                         </div>
                     </div>
 
                     <br/>
 
                     <div class="row">
-                        <div class="col-xs-0 col-sm-2 col-sm-2">
+                        <div class="col-xs-0 col-sm-2 col-md-2">
                         </div>
-                        <div class="col-xs-12 col-sm-8 col-sm-8" style="background-color:#979797; text-align:center">
+                        <div class="col-xs-12 col-sm-8 col-md-8" style="background-color:#979797; text-align:center">
                             <label style="font-size:2em" id="lblMessage">READY</label>
                         </div>
-                        <div class="col-xs-0 col-sm-2 col-sm-2">
+                        <div class="col-xs-0 col-sm-2 col-md-2">
                         </div>
                     </div>
 

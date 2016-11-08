@@ -147,7 +147,7 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
 <body>
     <?php include_once("../Includes/navbar.admin.php"); ?>
 
-    <div class="container-fluid PageContainer" style="overflow-y:scroll;">
+    <div class="container-fluid AdminContainer">
 
         <div class="row">
             <div id="divLeftSidebar" class="col-md-1">

@@ -165,7 +165,7 @@ if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && 
                                     </div>
                                     <div class="col-xs-12 col-sm-8 col-md-7">
                                         <input class="form-control" style="float: right; width:100%" id="inputPassword"
-                                               name="inputPassword" required minlength="10" type="text" />
+                                               name="inputPassword" required minlength="10" type="password" />
                                     </div>
                                 </div>
 

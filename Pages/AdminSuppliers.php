@@ -209,11 +209,11 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
 <body>
     <?php include_once("../Includes/navbar.admin.php"); ?>
 
-    <div class="container-fluid PageContainer" style="overflow-y:scroll; ">
+    <div class="container-fluid AdminContainer">
 
         <div class="row">
             <div id="divLeftSidebar" class="col-xs-12 col-sm-4 col-md-4">
-                <div class="container-fluid PageSection" style="overflow-y:scroll; overflow-x:hidden" id="divItemList">
+                <div class="container-fluid PageSection" style="overflow-y:hidden; overflow-x:hidden" id="divItemList">
 
                 </div>
             </div>
