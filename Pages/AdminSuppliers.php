@@ -80,9 +80,10 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
                     var workNum = $("#inputItemWorkNum").val();
                     var mobileNum = $("#inputItemMobileNum").val();
                     AddItem(name, email, homeNum, workNum, mobileNum);
+                    UpdateItemForm(1);
                 });
 
-                UpdateItemForm(1);
+
             }
         }
 
@@ -98,6 +99,7 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
             }
 
             UpdateItemForm(id);
+            $("#lblMessage").html("READY");
         }
 
 

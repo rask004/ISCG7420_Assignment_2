@@ -51,7 +51,7 @@ if (!isset($_REQUEST["l"]) && !isset($_REQUEST["a"]) && !isset($_REQUEST["d"]))
 
 if (isset($_REQUEST["a"]))
 {
-	// add a supplier
+	// add a cap
     $name = $_REQUEST["name"];
     $price = $_REQUEST["price"];
     $desc = $_REQUEST["description"];
@@ -63,10 +63,17 @@ if (isset($_REQUEST["a"]))
 }
 else if (isset($_REQUEST["d"]))
 {
-    // delete a supplier
+    // delete a cap
     $id = $_REQUEST["id"];
 
     $Manager->DeleteCap($id);
+}
+else if (isset($_REQUEST["r"]))
+{
+    // remove the category of a cap
+    $id = $_REQUEST["id"];
+
+    $Manager->RetireCap($id);
 }
 
 // allows updating the category list to be simultaineous.

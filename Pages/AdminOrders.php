@@ -109,6 +109,7 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
                         if(statusTxt == "success")
                         {
                             UpdateItemForm(1);
+                            $("#lblMessage").html("READY");
                         }
                     }
                 );

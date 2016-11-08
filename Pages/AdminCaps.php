@@ -79,7 +79,7 @@ $Manager = new AdminManager();
                     $("#inputItemId").val("");
                     $("#inputItemName").val("");
                     $("#inputItemName").prop("disabled", false);
-                    $("#inputItemPrice").val("");
+                    $("#inputItemPrice").val("1.00");
                     $("#inputItemPrice").prop("disabled", false);
                     $("#inputItemDesc").val("");
                     $("#inputItemDesc").prop("disabled", false);
@@ -94,6 +94,7 @@ $Manager = new AdminManager();
                     $("#divDropImageUrl").prop("hidden", false);
 
                     $("#btnDelete").prop("disabled", true);
+                    $("#btnRetire").prop("disabled", true);
                     $("#btnUndo").prop("disabled",false);
                     $("#btnAdd").prop("value", "Save");
                 });
@@ -103,10 +104,37 @@ $Manager = new AdminManager();
                 // save the new item.
                 $( document ).ready(function() {
                     var name = $("#inputItemName").val();
-                    AddItem(name);
+                    var price = parseFloat($("#inputItemPrice").val());
+                    var description = $("#inputItemDesc").val();
+                    var imageUrl = $("#inputItemImage").val();
+                    var supplierId = $("#inputItemSupplierId").val();
+                    var categoryId = $("#inputItemCategoryId").val();
+
+                    if (imageUrl == "" || supplierId == "" || categoryId == "")
+                    {
+                        $("#lblMessage").html("ERROR: You must select a category id (or NULL), a supplier Id and an image.");
+                    }
+                    else if (description == "")
+                    {
+                        $("#lblMessage").html("ERROR: You must provide a description.");
+                    }
+                    else if (name == "")
+                    {
+                        $("#lblMessage").html("ERROR: You must provide a name.");
+                    }
+                    else if (price < 1.0)
+                    {
+                        $("#lblMessage").html("ERROR: The price is too low! Must be at least $1.00.");
+                    }
+                    else
+                    {
+                        AddItem(name, price, description, imageUrl, supplierId, categoryId);
+                        UpdateItemForm(1);
+                    }
+
                 });
 
-                UpdateItemForm(1);
+
             }
         }
 
@@ -122,6 +150,7 @@ $Manager = new AdminManager();
             }
 
             UpdateItemForm(id);
+            $("#lblMessage").html("READY");
         }
 
 
@@ -136,6 +165,11 @@ $Manager = new AdminManager();
                 var imageUrl = $("#" + id_text).data("imageurl");
                 var supplierId = $("#" + id_text).data("supplierid");
                 var categoryId = $("#" + id_text).data("categoryid");
+
+                if (categoryId == "")
+                {
+                    categoryId = "Not Assigned.";
+                }
 
                 $("#inputItemId").val(id);
                 $("#inputItemName").val(name);
@@ -152,13 +186,15 @@ $Manager = new AdminManager();
                 $("#inputItemImage").prop("disabled", true);
                 $("#inputItemSupplierId").prop("disabled", true);
                 $("#divDropCategoryId").prop("hidden", true);
-                //$("#divDropSupplierId").prop("hidden", true);
-                //$("#divDropImage").prUrlop("hidden", true);
+                $("#divDropSupplierId").prop("hidden", true);
+                $("#divDropImageUrl").prop("hidden", true);
 
                 $("#btnAdd").prop("value", "New...");
                 $("#btnAdd").prop("disabled", false);
 
                 $("#btnUndo").prop("disabled", true);
+
+                $("#btnRetire").prop("disabled", false);
 
                 $("#btnDelete").prop("disabled", false);
             });
@@ -215,12 +251,12 @@ $Manager = new AdminManager();
             });
         };
 
-        // add one category NOTE missing the a param until is ready for adding.
+        // add one category
         function AddItem(name, price, description, imageUrl, supplierId, categoryId)
         {
             $( document ).ready(function() {
                 $("#divItemList").load("../Includes/Ajax/AdminCaps.ajax.php",
-                    {name:name, price:price, description:description, imageUrl:imageUrl,
+                    {a:1, name:name, price:price, description:description, imageUrl:imageUrl,
                         supplierId:supplierId, categoryId:categoryId, l:1},
                     function(responseTxt, statusTxt, xhr)
                     {
@@ -229,6 +265,27 @@ $Manager = new AdminManager();
                             $("#lblMessage").html("DONE: Check list for new cap.");
 
                             UpdateItemForm(1);
+                        }
+                    }
+                );
+            });
+        };
+
+        // set the category to null.
+        function RetireCap()
+        {
+            var id = parseInt($("#inputItemId").val());
+
+            $( document ).ready(function() {
+                $("#divItemList").load("../Includes/Ajax/AdminCaps.ajax.php",
+                    {r:1, id:id, l:1},
+                    function(responseTxt, statusTxt, xhr)
+                    {
+                        if(statusTxt == "success")
+                        {
+                            $("#lblMessage").html("DONE. Check category is empty.");
+
+                            UpdateItemForm(id);
                         }
                     }
                 );
@@ -382,19 +439,25 @@ $Manager = new AdminManager();
                             <input required readonly disabled type="text" style="width:100%" id="inputItemCategoryId" />
                         </div>
                         <div class="col-xs-8 col-sm-3 col-md-3">
+                            <?php
+                                $Categories = $Manager->GetAllCategories();
+                                $ids = array();
+
+                                foreach ($Categories as $category)
+                                {
+                                    $ids[] = $category['id'];
+                                }
+                            ?>
                             <div hidden id="divDropCategoryId" class="dropdown">
                                 <button class="dropdown-toggle" type="button"
                                         data-toggle="dropdown">Category Id
                                     <span class="caret"></span></button>
                                 <ul id="ulCategoryId" class="dropdown-menu dropdown-menu-left">
                                     <?php
-                                        $Categories = $Manager->GetAllCategories();
-
                                         // populate supplier dropdown with supplier ids. clicking an
                                         // id loads it in the supplier id input.
-                                        foreach ($Categories as $category)
+                                        foreach ($ids as $__ => $id)
                                         {
-                                            $id = $category['id'];
                                             echo '<li><a href="#" onclick="SetCategoryId(' . $id . ')">' . $id . '</a></li>';
                                         }
                                     ?>
@@ -406,7 +469,7 @@ $Manager = new AdminManager();
                     <br/>
 
                     <div class="row">
-                        <div class="col-xs-0 col-sm-3 col-md-3">
+                        <div class="col-xs-0 col-sm-2 col-md-2">
                         </div>
                         <div class="col-xs-6 col-sm-2 col-md-2">
                             <input type="button" value="Delete" id="btnDelete" onclick="DeleteItem()"/>
@@ -414,8 +477,12 @@ $Manager = new AdminManager();
                         <div class="col-xs-6 col-sm-2 col-md-2">
                             <input type="button" value="Undo" id="btnUndo" disabled onclick="Undo()" />
                         </div>
+
                         <div class="col-xs-6 col-sm-2 col-md-2">
                             <input type="button" value="New..." id="btnAdd" onclick="NewCap()" />
+                        </div>
+                        <div class="col-xs-6 col-sm-2 col-md-2">
+                            <input type="button" value="Remove Category" id="btnRetire" onclick="RetireCap()" />
                         </div>
                     </div>
 

@@ -44,6 +44,7 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
     <script type="text/javascript" src="../js/bootstrap.min.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="../css/Common.css">
+
     <script type="text/javascript">
         // button clicks
 
@@ -67,10 +68,20 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
                 // save the new item.
                 $( document ).ready(function() {
                     var name = $("#inputItemName").val();
-                    AddItem(name);
+
+                    if (name == "")
+                    {
+                        $("#lblMessage").html("ERROR: New Category must have a name!!");
+                    }
+                    else
+                    {
+                        AddItem(name);
+                        UpdateItemForm(1);
+                    }
+
                 });
 
-                UpdateItemForm(1);
+
             }
         }
 
@@ -86,6 +97,7 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
             }
 
             UpdateItemForm(id);
+            $("#lblMessage").html("READY");
         }
 
 
@@ -220,7 +232,7 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
                             <label for="inputItemName">Name :</label>
                         </div>
                         <div class="col-xs-6 col-sm-5 col-sm-5">
-                            <input disabled type="text" id="inputItemName" />
+                            <input disabled type="text" id="inputItemName" maxlength="40"/>
                         </div>
                     </div>
 

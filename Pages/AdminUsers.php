@@ -98,11 +98,54 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
                     var address = $("#inputItemAddress").val();
                     var suburb = $("#inputItemSuburb").val();
                     var city = $("#inputItemCity").val();
-                    AddItem(firstname, lastname, login, password, email, homeNum, workNum, mobileNum,
-                        address, suburb, city);
+
+                    if (homeNum == "" || workNum == "" || mobileNum == "")
+                    {
+                        $("#lblMessage").html("ERROR: must provide at least one contact number.");
+                    }
+                    else if (address == "")
+                    {
+                        $("#lblMessage").html("ERROR: must provide an address.");
+                    }
+                    else if (suburb == "")
+                    {
+                        $("#lblMessage").html("ERROR: must provide a suburb.");
+                    }
+                    else if (city == "")
+                    {
+                        $("#lblMessage").html("ERROR: must provide a city.");
+                    }
+                    else if (firstname == "")
+                    {
+                        $("#lblMessage").html("ERROR: must provide a first name.");
+                    }
+                    else if (lastname == "")
+                    {
+                        $("#lblMessage").html("ERROR: must provide a last name.");
+                    }
+                    else if (login == "")
+                    {
+                        $("#lblMessage").html("ERROR: must provide a login.");
+                    }
+                    else if (email == "")
+                    {
+                        $("#lblMessage").html("ERROR: must provide an email.");
+                    }
+                    else if (password.length < 10)
+                    {
+                        $("#lblMessage").html("ERROR: must provide password, at least 10 characters.");
+                    }
+                    else
+                    {
+                        AddItem(firstname, lastname, login, password, email, homeNum, workNum, mobileNum,
+                            address, suburb, city);
+
+                        UpdateItemForm(1);
+                    }
+
                 });
 
-                UpdateItemForm(1);
+
             }
         }
 
@@ -118,6 +161,7 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
             }
 
             UpdateItemForm(id);
+            $("#lblMessage").html("READY");
         }
 
 
