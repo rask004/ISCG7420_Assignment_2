@@ -9,6 +9,9 @@
 
 include_once('../Includes/Session.php');
 include_once('../Includes/Common.php');
+include_once('../Includes/AdminManager.php');
+
+use \BusinessLayer\AdminManager;
 
 // check and log if this is an Admin
 $customerId = "UNKNOWN";
@@ -32,6 +35,9 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
     header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/logout.php");
     exit;
 }
+
+$Manager = new AdminManager();
+
 ?>
 
 
@@ -40,10 +46,26 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
 <head>
     <meta charset="utf-8">
     <title>Quality Caps - Admin Section</title>
-    <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="../css/Common.css">
     <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/bootstrap.min.js"></script>
     <script type="text/javascript">
+        // drop-down clicks
+
+        function SetCategoryId(id)
+        {
+            $("#inputItemCategoryId").val(id);
+        }
+
+        function SetSupplierId(id)
+        {
+            $("#inputItemSupplierId").val(id);
+        }
+
+        function SetImageUrl(url)
+        {
+            $("#inputItemImage").val(url);
+        }
+
         // button clicks
 
         // prepare form for adding a category.
@@ -61,6 +83,16 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
                     $("#inputItemPrice").prop("disabled", false);
                     $("#inputItemDesc").val("");
                     $("#inputItemDesc").prop("disabled", false);
+                    $("#inputItemCategoryId").val("");
+                    $("#inputItemCategoryId").prop("disabled", false);
+                    $("#divDropCategoryId").prop("hidden", false);
+                    $("#inputItemSupplierId").val("");
+                    $("#inputItemSupplierId").prop("disabled", false);
+                    $("#divDropSupplierId").prop("hidden", false);
+                    $("#inputItemImage").val("");
+                    $("#inputItemImage").prop("disabled", false);
+                    $("#divDropImageUrl").prop("hidden", false);
+
                     $("#btnDelete").prop("disabled", true);
                     $("#btnUndo").prop("disabled",false);
                     $("#btnAdd").prop("value", "Save");
@@ -113,11 +145,15 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
                 $("#inputItemDesc").val(desc);
                 $("#inputItemDesc").prop("disabled", true);
                 $("#inputItemImage").val(imageUrl);
-                $("#inputItemImage").prop("disabled", true);
                 $("#inputItemSupplierId").val(supplierId);
-                $("#inputItemSupplierId").prop("disabled", true);
                 $("#inputItemCategoryId").val(categoryId);
+
                 $("#inputItemCategoryId").prop("disabled", true);
+                $("#inputItemImage").prop("disabled", true);
+                $("#inputItemSupplierId").prop("disabled", true);
+                $("#divDropCategoryId").prop("hidden", true);
+                //$("#divDropSupplierId").prop("hidden", true);
+                //$("#divDropImage").prUrlop("hidden", true);
 
                 $("#btnAdd").prop("value", "New...");
                 $("#btnAdd").prop("disabled", false);
@@ -199,6 +235,8 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
             });
         };
 	</script>
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../css/Common.css">
 </head>
 
 <body>
@@ -241,7 +279,7 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
                             <label for="inputItemName">Name :</label>
                         </div>
                         <div class="col-xs-12 col-sm-6 col-md-6">
-                            <input disabled type="text" style="width:100%" id="inputItemName" />
+                            <input required disabled type="text" style="width:100%" id="inputItemName" />
                         </div>
                     </div>
                     <div class="row">
@@ -251,7 +289,7 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
                             <label for="inputItemPrice">Price ($):</label>
                         </div>
                         <div class="col-xs-12 col-sm-6 col-md-6">
-                            <input disabled type="number" style="width:100%" step="any" min="1.00" id="inputItemPrice" />
+                            <input required disabled type="number" style="width:100%" step="any" min="1.00" id="inputItemPrice" />
                         </div>
                     </div>
                     <div class="row">
@@ -261,7 +299,7 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
                             <label for="inputItemDesc">Description :</label>
                         </div>
                         <div class="col-xs-12 col-sm-6 col-md-6">
-                            <textarea  disabled rows="5" style="width:100%" id="inputItemDesc" ></textarea>
+                            <textarea required  disabled rows="5" style="width:100%" id="inputItemDesc" ></textarea>
                         </div>
                     </div>
                     <div class="row">
@@ -270,8 +308,38 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
                         <div class="col-xs-8 col-sm-3 col-md-3">
                             <label for="inputItemImage">Image Url :</label>
                         </div>
-                        <div class="col-xs-12 col-sm-6 col-md-6">
-                            <input disabled type="text" style="width:100%" id="inputItemImage" />
+                        <div class="col-xs-12 col-sm-3 col-md-3">
+                            <input required readonly disabled type="text" style="width:100%" id="inputItemImage" />
+                        </div>
+                        <div class="col-xs-8 col-sm-3 col-md-3">
+                            <div hidden id="divDropImageUrl" class="dropdown">
+                                <button class="dropdown-toggle" type="button"
+                                        data-toggle="dropdown">Image Url
+                                    <span class="caret"></span></button>
+                                <ul id="ulImageUrl" class="dropdown-menu dropdown-menu-left">
+                                    <?php
+                                        // populate image urls dropdown with filenames. clicking an filename loads it in the image url input.
+                                        // get list of files in upload folder.
+                                        $contents = scandir( "../" . \Common\Constants::$AdminFileuploadFolder);
+                                        foreach ($contents as $key => $value)
+                                        {
+                                            $file_parts = explode(".", $value);
+                                            $extension = $file_parts[count($file_parts) - 1 ];
+                                            // remove directory indicators, and non-permitted files.
+                                            if ($value == "." || $value == ".."
+                                                || !in_array($extension, \Common\Constants::$AdminPermittedFileuploadExtensions))
+                                            {
+                                                unset($contents[$key]);
+                                            }
+                                        }
+
+                                        foreach(array_values($contents) as $url)
+                                        {
+                                            echo '<li><a href="#" onclick="SetImageUrl(\'' . $url . '\')">' . $url . '</a></li>';
+                                        }
+                                    ?>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                     <div class="row">
@@ -280,18 +348,58 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
                         <div class="col-xs-8 col-sm-3 col-md-3">
                             <label for="inputItemSupplierId">Supplier Id :</label>
                         </div>
-                        <div class="col-xs-12 col-sm-6 col-md-6">
-                            <input disabled type="text" style="width:100%" id="inputItemSupplierId" />
+                        <div class="col-xs-12 col-sm-3 col-md-3">
+                            <input required readonly disabled type="text" style="width:100%" id="inputItemSupplierId" />
+                        </div>
+                        <div class="col-xs-8 col-sm-3 col-md-3">
+                            <div hidden id="divDropSupplierId" class="dropdown">
+                                <button class="dropdown-toggle" type="button"
+                                        data-toggle="dropdown">Supplier Id
+                                    <span class="caret"></span></button>
+                                <ul id="ulSupplierId" class="dropdown-menu dropdown-menu-left">
+                                    <?php
+                                        $Suppliers = $Manager->GetAllSuppliers();
+
+                                        // populate supplier dropdown with supplier ids. clicking an
+                                        // id loads it in the supplier id input.
+                                        foreach ($Suppliers as $supplier)
+                                        {
+                                            $id = $supplier['id'];
+                                            echo '<li><a href="#" onclick="SetSupplierId(' . $id . ')">' . $id . '</a></li>';
+                                        }
+                                    ?>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-xs-0 col-sm-1 col-md-1">
                         </div>
-                        <div class="col-xs-8 col-sm-3 col-md-3">
+                        <div class="col-xs-6 col-sm-3 col-md-3">
                             <label for="inputItemCategoryId">Category Id :</label>
                         </div>
-                        <div class="col-xs-12 col-sm-6 col-md-6">
-                            <input disabled type="text" style="width:100%" id="inputItemCategoryId" />
+                        <div class="col-xs-6 col-sm-3 col-md-3">
+                            <input required readonly disabled type="text" style="width:100%" id="inputItemCategoryId" />
+                        </div>
+                        <div class="col-xs-8 col-sm-3 col-md-3">
+                            <div hidden id="divDropCategoryId" class="dropdown">
+                                <button class="dropdown-toggle" type="button"
+                                        data-toggle="dropdown">Category Id
+                                    <span class="caret"></span></button>
+                                <ul id="ulCategoryId" class="dropdown-menu dropdown-menu-left">
+                                    <?php
+                                        $Categories = $Manager->GetAllCategories();
+
+                                        // populate supplier dropdown with supplier ids. clicking an
+                                        // id loads it in the supplier id input.
+                                        foreach ($Categories as $category)
+                                        {
+                                            $id = $category['id'];
+                                            echo '<li><a href="#" onclick="SetCategoryId(' . $id . ')">' . $id . '</a></li>';
+                                        }
+                                    ?>
+                                </ul>
+                            </div>
                         </div>
                     </div>
 
@@ -340,5 +448,43 @@ if (!(isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) &
     </script>
 
     <?php include_once("../Includes/footer.php"); ?>
+
+    <?php
+
+        // populate the drop down lists.
+
+        $Categories = $Manager->GetAllCategories();
+
+
+        // populate category dropdown with category ids. clicking an id loads it in the category id input.
+        $html = "";
+
+        foreach ($Categories as $category)
+        {
+            $id = $category['id'];
+            $html .= '<li><a href="#" onclick="SetCategoryId(' . $id . ')">' . $id . '</a></li>';
+        }
+
+        echo '<script type="text/javascript"> $("#ulCategoryId").html(';
+        echo "'" . $html . "'";
+        echo ');</script>';
+
+        $Suppliers = $Manager->GetAllSuppliers();
+
+        // populate supplier dropdown with supplier ids. clicking an id loads it in the supplier id input.
+        $html = "";
+
+        foreach ($Suppliers as $supplier)
+        {
+            $id = $supplier['id'];
+            $html .= '<li><a href="#" onclick="SetSupplierId(' . $id . ')">' . $id . '</a></li>';
+        }
+
+        echo '<script type="text/javascript"> $("#ulSupplierId").html(';
+        echo "'" . $html . "'";
+        echo ');</script>';
+
+    ?>
+
 </body>
 </html>
