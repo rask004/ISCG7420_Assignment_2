@@ -15,15 +15,15 @@ if(isset($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]))
     $customerId = $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey];
 }
 
-\Common\Logging::Log('Error Pages', 'Page /Pages/Error/DB_Error_SQL.php accessed. sessionId=' . session_id() . '; customer='
-    . $customerId . "\r\n");
-
 // If no error, redirect to home.
 if( !(isset( $_SESSION["last_Error"]) && $_SESSION["last_Error"] == "DB_Error_Generic"))
 {
 	header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/home.php");
 	exit;
 }
+
+\Common\Logging::Log('sessionId=' . session_id() . '; customer='
+    . $customerId . '; Error Message=' . $_SESSION["Error_MSG"] . "\r\n");
 
 ?>
 
@@ -88,7 +88,7 @@ if( !(isset( $_SESSION["last_Error"]) && $_SESSION["last_Error"] == "DB_Error_Ge
 					
 					$receiverEmail = \Common\Constants::$EmailAdminDefault;
 					$subject = "Quality Caps ERROR, Database query";
-					$body = "An Error was experienced during a database query.\r\nError Message : " . $dbErrorMsg . "\r\n\r\n";
+					$body = wordwrap("An Error was experienced during a database query.\r\nError Message : " . $dbErrorMsg . "\r\n\r\n", 70, "\r\n");
 					$headers = "Content-Type: text/html; charset=TIS-620 \n";
 					$headers .= "MIME-Version: 1.0 \r\n";
 					

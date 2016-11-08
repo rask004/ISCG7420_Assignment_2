@@ -90,7 +90,11 @@ class Constants
 	
 	public static $ValidationAddressRegex = "/^[0-9a-zA-Z]+\s[a-zA-z\s]+/";
 	
-	//default emails.
+	// for calculation of cart totals.
+	
+	public static $GstRate = 0.15;
+	
+	// default emails.
 	public static $EmailAdminDefault = "AskewR04@myunitec.ac.nz";
 	
 	// default query string keys.
@@ -104,6 +108,13 @@ class Constants
 	public static  $AdminMessageFailedUpload = "Error, cannot upload file";
 	
 	public static  $AdminMessageSuccessfulDelete = "Success, file deleted";
+
+    // static Administration data
+    public static $OrderStatusWaiting = 'waiting';
+
+    public static $OrderStatusShipped = 'shipped';
+
+    public static $AllowedOrderStatuses = array('waiting', 'shipped');
 	
 	// static file upload data
 	public static  $AdminFileuploadFolder = "uploaded_pictures";

@@ -8,6 +8,7 @@
 
 namespace DataLayer;
 
+
 require_once('Session.php');
 require_once('Common.php');
 
@@ -32,6 +33,7 @@ class DataManager
                             "`lastName`    varchar(32), `streetAddress`   varchar(64), `suburb`      varchar(24), `city`        varchar(16), " .
                             "`isDisabled`  BIT(1)    not null DEFAULT 0 );"))
 		{
+            $this->_CloseConnection();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
 			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SiteUser table Generation";
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
@@ -43,6 +45,7 @@ class DataManager
                            "`status` varchar(7) not null DEFAULT 'waiting', `datePlaced` datetime not null, ".
 						   "CONSTRAINT fk_OrderCustomer Foreign Key (`userId`) References `SiteUser`(`id`));"))
 		{
+            $this->_CloseConnection();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
 			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; CustomerOrder table Generation";
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
@@ -54,6 +57,7 @@ class DataManager
                             "`homeNumber`   varchar(11) null, `worknumber` varchar(11) null, " .
                             "`mobileNumber` varchar(13) null, `emailAddress` varchar(64) not null);"))
 		{
+            $this->_CloseConnection();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
 			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; Supplier table Generation";
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
@@ -63,6 +67,7 @@ class DataManager
 
         if(!$this->_conn->query("create table if not exists `Category`(`id` int UNSIGNED AUTO_INCREMENT primary key, `name` varchar(40) not null); "))
 		{
+            $this->_CloseConnection();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
 			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; Category table Generation";
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
@@ -77,6 +82,7 @@ class DataManager
 							"CONSTRAINT fk_supplier Foreign Key (`supplierId`) References  `Supplier`(`id`), " .
 							"CONSTRAINT fk_category Foreign Key (`categoryId`) References `Category`(`id`)); "))
 		{
+            $this->_CloseConnection();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
 			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; Cap table Generation";
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
@@ -91,6 +97,7 @@ class DataManager
 													   "CONSTRAINT fk_OrderOrderItem Foreign Key (`orderId`) References `CustomerOrder`(`id`), ". 
 													   "CONSTRAINT fk_capOrderItem Foreign Key (`capId`) References `Cap`(`id`)); "))
 		{
+            $this->_CloseConnection();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
 			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; OrderItem table Generation";
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
@@ -164,6 +171,7 @@ class DataManager
 			if (!$this->_conn->query($sql))
 			{
 				$this->_conn->rollback();
+                $this->_CloseConnection();
 				$_SESSION["last_Error"] = "DB_Error_Generic";
 				$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL='". $sql ."'";
 				header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error.php");
@@ -173,7 +181,7 @@ class DataManager
             Logging::Log('DataManager, query: ' . $sql  . "\r\n");
 
 			// create each new order item, using the order id.
-			$sql = "insert into OrderItem (orderId, capId, quantity ) values ";			
+			$sql = "insert into OrderItem (orderId, capId, quantity ) values ";
 			$first_item = true;
 			foreach ($cap_quantity_list as $capId => $quantity)
 			{
@@ -200,6 +208,7 @@ class DataManager
 			if (!$this->_conn->commit())
 			{
 				$this->_conn->rollback();
+                $this->_CloseConnection();
 				$_SESSION["last_Error"] = "DB_Error_Generic";
 				$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 				header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
@@ -244,6 +253,7 @@ class DataManager
 		if (!$this->_conn->commit())
 		{
 			$this->_conn->rollback();
+            $this->_CloseConnection();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
 			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
@@ -289,6 +299,7 @@ class DataManager
 		if (!$this->_conn->commit())
 		{
 			$this->_conn->rollback();
+            $this->_CloseConnection();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
 			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
@@ -344,6 +355,7 @@ class DataManager
 		if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
+            $this->_CloseConnection();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
 			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
@@ -386,6 +398,7 @@ class DataManager
         if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
+            $this->_CloseConnection();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
 			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
@@ -428,6 +441,7 @@ class DataManager
         if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
+            $this->_CloseConnection();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
 			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
@@ -466,6 +480,7 @@ class DataManager
         if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
+            $this->_CloseConnection();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
 			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
@@ -504,6 +519,7 @@ class DataManager
         if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
+            $this->_CloseConnection();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
 			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
@@ -546,6 +562,7 @@ class DataManager
         if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
+            $this->_CloseConnection();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
 			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
@@ -588,6 +605,7 @@ class DataManager
         if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
+            $this->_CloseConnection();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
 			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
@@ -638,6 +656,7 @@ class DataManager
         if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
+            $this->_CloseConnection();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
 			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
@@ -677,6 +696,7 @@ class DataManager
         if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
+            $this->_CloseConnection();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
 			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
@@ -723,6 +743,7 @@ class DataManager
         if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
+            $this->_CloseConnection();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
 			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
@@ -764,6 +785,7 @@ class DataManager
         if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
+            $this->_CloseConnection();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
 			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
@@ -785,16 +807,18 @@ class DataManager
 	}
 	
 	/*
-		get all products for a category, using the categoryId. use LIMIT.
+		get all caps associated with categories.
 	*/
-	public function SelectAllCaps($firstItemIndex,  $numberOfItems)
+	public function SelectAllCapsWithCategoriesWithLimit($firstItemIndex, $numberOfItems)
 	{
 		$this->_OpenConnection();
 
-        $sql = "Select * from `cap` order by id LIMIT " . $firstItemIndex . ", " . $numberOfItems . ";";
+        $sql = "Select * from `cap` where categoryId in (select distinct id from category) " .
+            "order by id LIMIT " . $firstItemIndex . ", " . $numberOfItems . ";";
         if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
+            $this->_CloseConnection();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
 			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
@@ -834,6 +858,7 @@ class DataManager
         if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
+            $this->_CloseConnection();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
 			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
@@ -867,6 +892,7 @@ class DataManager
         if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
+            $this->_CloseConnection();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
 			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
@@ -909,6 +935,7 @@ class DataManager
         if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
+            $this->_CloseConnection();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
 			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
@@ -955,6 +982,7 @@ class DataManager
         if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
+            $this->_CloseConnection();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
 			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
@@ -967,7 +995,7 @@ class DataManager
 		{
 			while ($row = $query_result->fetch_assoc())
 			{
-				$orders[] = $row;			
+                $summaries[] = $row;
 			}
 		}
 		
@@ -980,7 +1008,7 @@ class DataManager
 		
 		$this->_CloseConnection();	
 		
-		return $orders;	
+		return $summaries;
 	}
 	
 	/*
@@ -998,6 +1026,7 @@ class DataManager
         if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
+            $this->_CloseConnection();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
 			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
@@ -1033,6 +1062,7 @@ class DataManager
         if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
+            $this->_CloseConnection();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
 			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
@@ -1071,6 +1101,7 @@ class DataManager
         if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
+            $this->_CloseConnection();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
 			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
@@ -1109,6 +1140,7 @@ class DataManager
         if (!$query_result = $this->_conn->query($sql))
 		{
 			$this->_conn->rollback();
+            $this->_CloseConnection();
 			$_SESSION["last_Error"] = "DB_Error_Generic";
 			$_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
 			header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
@@ -1131,4 +1163,636 @@ class DataManager
 		
 		return $data;
 	}
+
+    /*
+		generate a new category
+	*/
+    public function InsertCategory($categoryName)
+    {
+        $this->_OpenConnection();
+
+        // sanitize inputs
+        $categoryName = $this->_conn->real_escape_string($categoryName);
+
+        $this->_conn->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
+
+        $sql =  "insert into Category (name) values ('" . $categoryName . "');";
+        $this->_conn->query($sql);
+
+        if (!$this->_conn->commit())
+        {
+            $this->_conn->rollback();
+            $this->_CloseConnection();
+            $_SESSION["last_Error"] = "DB_Error_Generic";
+            $_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
+            header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
+            exit;
+        }
+
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
+
+        $this->_CloseConnection();
+
+        return true;
+    }
+
+    /*
+		delete an existing category
+	*/
+    public function DeleteCategory($id)
+    {
+        $this->_OpenConnection();
+
+        // sanitize inputs
+        $id = (integer) ($id);
+
+        $this->_conn->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
+
+        // cannot delete caps currently in use.
+        $sql =  "delete from Category where id = " . $id . " AND id NOT IN " .
+            " (select distinct categoryId from cap);";
+        $this->_conn->query($sql);
+
+        if (!$this->_conn->commit())
+        {
+            $this->_conn->rollback();
+            $this->_CloseConnection();
+            $_SESSION["last_Error"] = "DB_Error_Generic";
+            $_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
+            header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
+            exit;
+        }
+
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
+
+        $this->_CloseConnection();
+
+        return true;
+    }
+
+    /*
+		generate a new supplier
+	*/
+    public function InsertSupplier($supplierName, $emailAddress, $homeNumber, $workNumber, $mobileNumber)
+    {
+        $this->_OpenConnection();
+
+        // sanitize inputs
+        $supplierName = $this->_conn->real_escape_string($supplierName);
+        $emailAddress = $this->_conn->real_escape_string($emailAddress);
+        $homeNumber = $this->_conn->real_escape_string($homeNumber);
+        $workNumber = $this->_conn->real_escape_string($workNumber);
+        $mobileNumber = $this->_conn->real_escape_string($mobileNumber);
+
+        $this->_conn->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
+        $sql =  "insert into Supplier (name, emailAddress, homeNumber, worknumber, mobileNumber) values ".
+            "('" . $supplierName . "','" . $emailAddress . "','" . $homeNumber .
+            "','" . $workNumber . "','" . $mobileNumber . "');";
+        $this->_conn->query($sql);
+
+        if (!$this->_conn->commit())
+        {
+            $this->_conn->rollback();
+            $this->_CloseConnection();
+            $_SESSION["last_Error"] = "DB_Error_Generic";
+            $_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
+            header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
+            exit;
+        }
+
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
+
+        $this->_CloseConnection();
+    }
+
+    /*
+		delete an existing supplier
+	*/
+    public function DeleteSupplier($id)
+    {
+        $this->_OpenConnection();
+
+        // sanitize inputs
+        $id = (integer) ($id);
+
+        $this->_conn->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
+
+        // cannot delete suppliers currently in use.
+        $sql =  "delete from Supplier where id = " . $id . " AND id NOT IN " .
+            " (select distinct supplierId from cap);";
+        $this->_conn->query($sql);
+
+        if (!$this->_conn->commit())
+        {
+            $this->_conn->rollback();
+            $this->_CloseConnection();
+            $_SESSION["last_Error"] = "DB_Error_Generic";
+            $_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
+            header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
+            exit;
+        }
+
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
+
+        $this->_CloseConnection();
+    }
+
+    /*
+		generate a new cap
+	*/
+    public function InsertCap($capName, $price, $description, $imageUrl, $supplierId, $categoryId)
+    {
+        $this->_OpenConnection();
+
+        // sanitize inputs
+        $capName = $this->_conn->real_escape_string($capName);
+        $price = (float) ($price);
+        $description = $this->_conn->real_escape_string($description);
+        $imageUrl = $this->_conn->real_escape_string($imageUrl);
+        $supplierId = (integer) ($supplierId);
+        $categoryId = (integer) ($categoryId);
+
+        $this->_conn->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
+        $sql =  "insert into Cap (name, price, description, imageUrl, supplierId, categoryId) values ".
+            "('" . $capName . "'," . $price . ",'" . $description .
+            "','" . $imageUrl . "'," . $supplierId . "," . $categoryId . ");";
+        $this->_conn->query($sql);
+
+        if (!$this->_conn->commit())
+        {
+            $this->_conn->rollback();
+            $this->_CloseConnection();
+            $_SESSION["last_Error"] = "DB_Error_Generic";
+            $_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
+            header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
+            exit;
+        }
+
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
+
+        $this->_CloseConnection();
+    }
+
+    /*
+		delete an existing cap
+	*/
+    public function DeleteCap($id)
+    {
+        $this->_OpenConnection();
+
+        // sanitize inputs
+        $id = (integer) ($id);
+
+        $this->_conn->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
+
+        // cannot delete caps currently used by Orders.
+        $sql =  "delete from Cap where id = " . $id . " AND id NOT IN " .
+            " (select distinct capId from orderitem);";
+        $this->_conn->query($sql);
+
+        if (!$this->_conn->commit())
+        {
+            $this->_conn->rollback();
+            $this->_CloseConnection();
+            $_SESSION["last_Error"] = "DB_Error_Generic";
+            $_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
+            header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
+            exit;
+        }
+
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
+
+        $this->_CloseConnection();
+    }
+
+    /*
+		disable an existing customer
+	*/
+    public function DisableCustomer($id)
+    {
+        $this->_OpenConnection();
+
+        // sanitize inputs
+        $id = (integer) ($id);
+
+        $this->_conn->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
+
+        // cannot delete caps currently used by Orders.
+        $sql =  "update SiteUser set idDisabled = 1 where id = " . $id . ";";
+        $this->_conn->query($sql);
+
+        if (!$this->_conn->commit())
+        {
+            $this->_conn->rollback();
+            $this->_CloseConnection();
+            $_SESSION["last_Error"] = "DB_Error_Generic";
+            $_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
+            header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
+            exit;
+        }
+
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
+
+        $this->_CloseConnection();
+    }
+
+    /*
+		delete an existing user
+	*/
+    public function DeleteCustomer($id)
+    {
+        $this->_OpenConnection();
+
+        // sanitize inputs
+        $id = (integer) ($id);
+
+        $this->_conn->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
+
+        // cannot delete customers with orders..
+        $sql =  "delete from SiteUser where userType = 'C' AND id = " . $id . " AND id not in " .
+            "(select distinct userId from customerOrder);";
+        $this->_conn->query($sql);
+
+        if (!$this->_conn->commit())
+        {
+            $this->_conn->rollback();
+            $this->_CloseConnection();
+            $_SESSION["last_Error"] = "DB_Error_Generic";
+            $_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
+            header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
+            exit;
+        }
+
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
+
+        $this->_CloseConnection();
+    }
+
+    /*
+     *   Retire a Cap, so customers cannot order it.
+     */
+    public function RetireCap($id)
+    {
+        $this->_OpenConnection();
+
+        // sanitize inputs
+        $id = (integer) ($id);
+
+        $this->_conn->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
+
+        // NULL categoryId represents a retired cap.
+        $sql =  "update Cap set `categoryId` = NULL where id = " . $id . ";";
+        $this->_conn->query($sql);
+
+        if (!$this->_conn->commit())
+        {
+            $this->_conn->rollback();
+            $this->_CloseConnection();
+            $_SESSION["last_Error"] = "DB_Error_Generic";
+            $_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
+            header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
+            exit;
+        }
+
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
+
+        $this->_CloseConnection();
+    }
+
+    /*
+		delete an existing order
+	*/
+    public function DeleteOrder($id)
+    {
+        $this->_OpenConnection();
+
+        // sanitize inputs
+        $id = (integer) ($id);
+
+        $this->_conn->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
+
+        // cannot delete suppliers currently in use.
+        $sql =  "delete from orderItem where orderId = " . $id . " ;";
+        $this->_conn->query($sql);
+
+        if (!$this->_conn->commit())
+        {
+            $this->_conn->rollback();
+            $this->_CloseConnection();
+            $_SESSION["last_Error"] = "DB_Error_Generic";
+            $_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
+            header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
+            exit;
+        }
+
+        $this->_conn->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
+
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
+
+        $sql =  "delete from customerOrder where id = " . $id . " ;";
+        $this->_conn->query($sql);
+
+        if (!$this->_conn->commit())
+        {
+            $this->_conn->rollback();
+            $this->_CloseConnection();
+            $_SESSION["last_Error"] = "DB_Error_Generic";
+            $_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
+            header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
+            exit;
+        }
+
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
+
+        $this->_CloseConnection();
+    }
+
+    /*
+     *   RChange order status
+     */
+    public function ChangeOrderStatus($id, $status)
+    {
+        $this->_OpenConnection();
+
+        // sanitize inputs
+        $status = $this->_conn->real_escape_string($status);
+        $status = strtolower($status);
+
+        if (!in_array($status, \Common\Constants::$AllowedOrderStatuses))
+        {
+            $this->_CloseConnection();
+            $_SESSION["last_Error"] = "DB_Error_Generic";
+            $_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; bad order status";
+            header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
+            exit;
+        }
+
+        $this->_conn->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
+
+        // change status
+        $sql =  "update CustomerOrder set `status` = '" . $status . "' where id = " . $id . ";";
+        $this->_conn->query($sql);
+
+        if (!$this->_conn->commit())
+        {
+            $this->_conn->rollback();
+            $this->_CloseConnection();
+            $_SESSION["last_Error"] = "DB_Error_Generic";
+            $_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
+            header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
+            exit;
+        }
+
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
+
+        $this->_CloseConnection();
+    }
+
+    /*
+		get all categories
+	*/
+    public function SelectAllCategories()
+    {
+        $this->_OpenConnection();
+
+        $sql = "Select * from `category` order by name;";
+        if (!$query_result = $this->_conn->query($sql))
+        {
+            $this->_conn->rollback();
+            $this->_CloseConnection();
+            $_SESSION["last_Error"] = "DB_Error_Generic";
+            $_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
+            header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
+            exit;
+        }
+
+        $items = array();
+
+        if ($query_result->num_rows > 0)
+        {
+            while ($row = $query_result->fetch_assoc())
+            {
+                $items[] = $row;
+            }
+        }
+
+        if ($query_result)
+        {
+            $query_result->free();
+        }
+
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
+
+        $this->_CloseConnection();
+
+        return $items;
+    }
+
+    /*
+		get single categories
+	*/
+    public function SelectSingleCategory($id)
+    {
+        $this->_OpenConnection();
+
+        $id = (integer) ($id);
+
+        $sql = "Select * from `category` where id=" . $id . ";";
+        if (!$query_result = $this->_conn->query($sql))
+        {
+            $this->_conn->rollback();
+            $this->_CloseConnection();
+            $_SESSION["last_Error"] = "DB_Error_Generic";
+            $_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
+            header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
+            exit;
+        }
+
+        $category = array();
+
+        if ($query_result->num_rows > 0)
+        {
+            while ($row = $query_result->fetch_assoc())
+            {
+                $category = $row;
+            }
+        }
+
+        if ($query_result)
+        {
+            $query_result->free();
+        }
+
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
+
+        $this->_CloseConnection();
+
+        return $category;
+    }
+
+
+    /*
+		get all suppliers
+	*/
+    public function SelectAllSuppliers()
+    {
+        $this->_OpenConnection();
+
+        $sql = "Select * from `supplier` order by name;";
+        if (!$query_result = $this->_conn->query($sql))
+        {
+            $this->_conn->rollback();
+            $this->_CloseConnection();
+            $_SESSION["last_Error"] = "DB_Error_Generic";
+            $_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
+            header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
+            exit;
+        }
+
+        $items = array();
+
+        if ($query_result->num_rows > 0)
+        {
+            while ($row = $query_result->fetch_assoc())
+            {
+                $items[] = $row;
+            }
+        }
+
+        if ($query_result)
+        {
+            $query_result->free();
+        }
+
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
+
+        $this->_CloseConnection();
+
+        return $items;
+    }
+
+    /*
+		get all orders
+	*/
+    public function SelectAllOrders()
+    {
+        $this->_OpenConnection();
+
+        $sql = "Select co.id as id, co.userId as userId, su.firstName as firstName, su.lastName as lastName, " .
+            " co.datePlaced as datePlaced, co.status as status, COUNT(oi.capId) as capCount, " .
+            " SUM(oi.quantity) as totalQuantity, SUM(oi.quantity * c.price) as totalPrice ".
+            " from `customerOrder` co, `siteUser` su, ".
+            "`orderitem` oi, `cap` c where oi.capId = c.id AND co.userId = su.id and oi.orderId = co.id ".
+            "group by oi.orderId order by datePlaced;";
+        if (!$query_result = $this->_conn->query($sql))
+        {
+            $this->_conn->rollback();
+            $this->_CloseConnection();
+            $_SESSION["last_Error"] = "DB_Error_Generic";
+            $_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
+            header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
+            exit;
+        }
+
+        $items = array();
+
+        if ($query_result->num_rows > 0)
+        {
+            while ($row = $query_result->fetch_assoc())
+            {
+                $items[] = $row;
+            }
+        }
+
+        if ($query_result)
+        {
+            $query_result->free();
+        }
+
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
+
+        $this->_CloseConnection();
+
+        return $items;
+    }
+
+    /*
+		get all customers
+	*/
+    public function SelectAllCustomers()
+    {
+        $this->_OpenConnection();
+
+        $sql = "Select * from siteUser where userType='C' order by login;";
+        if (!$query_result = $this->_conn->query($sql))
+        {
+            $this->_conn->rollback();
+            $this->_CloseConnection();
+            $_SESSION["last_Error"] = "DB_Error_Generic";
+            $_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
+            header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
+            exit;
+        }
+
+        $items = array();
+
+        if ($query_result->num_rows > 0)
+        {
+            while ($row = $query_result->fetch_assoc())
+            {
+                $items[] = $row;
+            }
+        }
+
+        if ($query_result)
+        {
+            $query_result->free();
+        }
+
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
+
+        $this->_CloseConnection();
+
+        return $items;
+    }
+
+    /*
+     get all caps
+    */
+    public function SelectAllCaps()
+    {
+        $this->_OpenConnection();
+
+        $sql = "Select * from cap order by id;";
+        if (!$query_result = $this->_conn->query($sql))
+        {
+            $this->_conn->rollback();
+            $this->_CloseConnection();
+            $_SESSION["last_Error"] = "DB_Error_Generic";
+            $_SESSION["Error_MSG"] = (string) $this->_conn->errno . "; " . $this->_conn->error . "; SQL=". $sql;
+            header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/Error/DB_Error_SQL.php");
+            exit;
+        }
+
+        $items = array();
+
+        if ($query_result->num_rows > 0)
+        {
+            while ($row = $query_result->fetch_assoc())
+            {
+                $items[] = $row;
+            }
+        }
+
+        if ($query_result)
+        {
+            $query_result->free();
+        }
+
+        Logging::Log('DataManager, query: ' . $sql  . "\r\n");
+
+        $this->_CloseConnection();
+
+        return $items;
+    }
 }

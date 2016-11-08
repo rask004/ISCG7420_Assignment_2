@@ -21,7 +21,7 @@ if(isset($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]))
     $customerId = $_SESSION[\Common\SecurityConstraints::$SessionUserIdKey];
 }
 
-\Common\Logging::Log('Executing Page. sessionId=' . session_id() . '; customer='
+\Common\Logging::Log('Executing Ajax. sessionId=' . session_id() . '; customer='
     . $customerId . "\r\n");
 
 // check for malformed AJAX
@@ -51,13 +51,20 @@ elseif (isset($_REQUEST["c"]))
 {
 	$_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey] = array();
 	
-	// disable checkout
-	echo '<script type="text/javascript">$("#btnCheckout").prop("disabled", true);</script>';
+	// disable checkout, clear totals
+	echo '<script type="text/javascript">' . 
+	'$("#btnCheckout").prop("disabled", true);' .
+	'$("#lblCartSubTotal").html("$ 0.00");' .
+	'$("#lblCartGst").html("$ 0.00");' .
+	'$("#lblCartFullTotal").html("$ 0.00");' .
+    '</script>';
 }
 
 // delete one cart item.
 elseif (isset($_REQUEST["d"]))
 {
+	$capsManager = new CapManager();
+	
 	$id = (integer) ($_REQUEST["d"] + 0);
 	
 	unset($_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey][$id]);
@@ -68,13 +75,40 @@ elseif (isset($_REQUEST["d"]))
 	// if cart is empty, disable checkout.
 	if ($itemCount == 0)
 	{
-		echo '<script type="text/javascript">$("#btnCheckout").prop("disabled", true);</script>';
+		echo '<script type="text/javascript">$("#btnCheckout").prop("disabled", true);' .
+			'</script>';
 	}
+	
+	
+	
+	// update totals
+	
+	// find the subtotal.
+	$subTotal = 0.0;
+	
+	foreach ($cart as $id => $qty)
+	{
+		$cap = $capsManager->GetSingleCap($id);
+		$price = (float) ($cap['price'] + 0);
+		$subTotal += $qty * $price;
+	}
+	
+	$gst = $subTotal * \Common\Constants::$GstRate;
+	
+	$fullTotal = $subTotal + $gst;
+	
+	echo '<script type="text/javascript">' . 
+		'$("#lblCartSubTotal").html("$ ' . number_format((float) ($subTotal), 2, '.', '') . '");' .
+		'$("#lblCartGst").html("$ ' . number_format((float) ($gst), 2, '.', '') . '");' .
+		'$("#lblCartFullTotal").html("$ ' . number_format((float) ($fullTotal), 2, '.', '') . '");' .
+		'</script>';
 }
 
 // add a cart item, with a quantity to add by.
 elseif( isset($_REQUEST["a"]) && isset($_REQUEST["aq"]) )
 {
+	$capsManager = new CapManager();
+	
 	// prevent query injection errors, convert all request parameters to numbers.
 	$id = (integer) ($_REQUEST["a"] + 0);
 	$qty = (integer) ($_REQUEST["aq"] + 0);
@@ -85,6 +119,28 @@ elseif( isset($_REQUEST["a"]) && isset($_REQUEST["aq"]) )
 	}
 	
 	$_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey][$id] += $qty;	
+	
+	// update totals
+	
+	// find the subtotal.
+	$subTotal = 0.0;
+	
+	foreach ($cart as $id => $qty)
+	{
+		$cap = $capsManager->GetSingleCap($id);
+		$price = (float) ($cap['price'] + 0);
+		$subTotal += $qty * $price;
+	}
+	
+	$gst = $subTotal * \Common\Constants::$GstRate;
+	
+	$fullTotal = $subTotal + $gst;
+	
+	echo '<script type="text/javascript">' . 
+		'$("#lblCartSubTotal").html("$ ' . number_format((float) ($subTotal), 2, '.', '') . '");' .
+		'$("#lblCartGst").html("$ ' . number_format((float) ($gst), 2, '.', '') . '");' .
+		'$("#lblCartFullTotal").html("$ ' . number_format((float) ($fullTotal), 2, '.', '') . '");' .
+		'</script>';
 }
 
 // update cart page
@@ -195,5 +251,27 @@ if (isset($_REQUEST["p"]))
 		{
 			echo '<script type="text/javascript">$("#btnCheckout").prop("disabled", true);</script>';
 		}
+		
+		// update totals
+	
+		// find the subtotal.
+		$subTotal = 0.0;
+		
+		foreach ($cart as $id => $qty)
+		{
+			$cap = $capsManager->GetSingleCap($id);
+			$price = (float) ($cap['price'] + 0);
+			$subTotal += $qty * $price;
+		}
+		
+		$gst = $subTotal * \Common\Constants::$GstRate;
+		
+		$fullTotal = $subTotal + $gst;
+		
+		echo '<script type="text/javascript">' . 
+			 '$("#lblCartSubTotal").html("$ ' . number_format((float) ($subTotal), 2, '.', '') . '");' .
+			 '$("#lblCartGst").html("$ ' . number_format((float) ($gst), 2, '.', '') . '");' .
+			 '$("#lblCartFullTotal").html("$ ' . number_format((float) ($fullTotal), 2, '.', '') . '");' .
+			 '</script>';
 	}
 }
