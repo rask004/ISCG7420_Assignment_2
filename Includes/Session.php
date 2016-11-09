@@ -16,6 +16,8 @@
  */
 session_start();
 
+
+
 function checkTimeOut()
 {
     if(isset($_SESSION[\Common\SecurityConstraints::$SessionTimestampLastVisit]))
@@ -40,4 +42,33 @@ if ( !(isset( $_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey] )
 {
 	$_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey] = array();
 };
+
+// record time of last visit.
+if(!isset($_SESSION[\Common\SecurityConstraints::$SessionTimestampLastVisit]))
+{
+    $_SESSION[\Common\SecurityConstraints::$SessionTimestampLastVisit] = time();
+}
+
+$lastVisitTime = (integer) ($_SESSION[\Common\SecurityConstraints::$SessionTimestampLastVisit]);
+$timeoutThreshold = $lastVisitTime + \Common\SecurityConstraints::$SessionTimeOutSeconds;
+
+// identify timeout and respond.
+if (time() > $timeoutThreshold)
+{
+    // logout timedout user,
+    unset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]);
+    unset($_SESSION[\Common\SecurityConstraints::$SessionUserLoginKey]);
+    unset($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]);
+    unset($_SESSION[\Common\SecurityConstraints::$SessionAdminCheckKey]);
+    session_regenerate_id();
+
+    // kill cart - assume user will not be back and prevent undesirable purchases.
+    $_SESSION[\Common\SecurityConstraints::$SessionCartArrayKey] = array();
+
+    // prevent circular redirection, update current time.
+    $_SESSION[\Common\SecurityConstraints::$SessionTimestampLastVisit] = time();
+
+    header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/home.php");
+    exit;
+}
 
