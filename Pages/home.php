@@ -7,6 +7,12 @@
  */
 
 include_once('../Includes/Session.php');
+
+// check timeout
+checkTimeOut();
+// no timeout - update the last access time.
+$_SESSION[\Common\SecurityConstraints::$SessionTimestampLastVisit] = time();
+
 include_once('../Includes/Common.php');
 include_once('../Includes/CategoryManager.php');
 
@@ -24,7 +30,7 @@ if(isset($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]))
 // only customers and visitors can visit home page. 
 if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && isset($_SESSION[\Common\SecurityConstraints::$SessionAdminCheckKey]))
 {
-    header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/AdminFiles.php");
+    header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/AdminOrders.php");
     exit;
 }
 $categoryManager = new CategoryManager();
@@ -588,10 +594,13 @@ $capPageSize = \Common\Constants::$HomeCapsTablePageSize;
                     </div>
                     <br/> 
                 </div>
+
+                <?php print_r($_SESSION) ?>
             </div>
         </div>
         <br/>
         <br/>
+
     </div>
     
     <script type="text/javascript">

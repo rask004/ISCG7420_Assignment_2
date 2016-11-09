@@ -21,8 +21,14 @@ class SecurityConstraints
 	public static $SessionAdminCheckKey = "IsAdmin";
 	
 	public static $SessionCartArrayKey = "ShoppingCart";
-	
-	// maximum size of salts.
+
+    public static $SessionTimestampLastVisit = "TimeOfLastVisit";
+
+    // fixed timeout in seconds
+
+    public static $SessionTimeOutSeconds = 1800;    // 30 minutes of inactivity.
+
+        // maximum size of salts.
 	private static $_cryptoSaltLength = 16;
 	
 	// maximum size of hashes
@@ -63,10 +69,10 @@ class SecurityConstraints
 		generate a hash using the HMAC approach, with a salt and an SHA algorithm.
 	*/
 	public static function generatePasswordHash($password, $salt)
-	{
-		$hash = hash_hmac( 'sha256', $password, $salt);
-		return $hash;
-	}
+    {
+        $hash = hash_hmac('sha256', $password, $salt);
+        return $hash;
+    }
 }
 
 /*

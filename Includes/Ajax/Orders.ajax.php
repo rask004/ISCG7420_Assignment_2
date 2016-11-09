@@ -71,9 +71,11 @@ else
 	
 	foreach($orderSummaries as $summary)
 	{
+		$totalPrice = (float) ($summary['totalPrice']) * \Common\Constants::$GstRate + (float) ($summary['totalPrice']);
+
 		$date_parts = explode(" ", $summary['datePlaced']);
 		echo "<tr><td>". $summary['id'] ."</td><td>". $date_parts[0] ."</td><td>". $summary['status'] .
-		"</td><td>". $summary['totalQuantity'] ."</td><td>". number_format((float) $summary['totalPrice'], 2, '.', '') ."</td><td></tr>";
+		"</td><td>". $summary['totalQuantity'] ."</td><td>". number_format($totalPrice, 2, '.', '') ."</td><td></tr>";
 	}
 	
 	// placeholders to retain page layout

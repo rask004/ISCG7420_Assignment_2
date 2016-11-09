@@ -9,6 +9,12 @@
 
 include_once('../Includes/Session.php');
 include_once('../Includes/Common.php');
+
+// check timeout
+checkTimeOut();
+// no timeout - update the last access time.
+$_SESSION[\Common\SecurityConstraints::$SessionTimestampLastVisit] = time();
+
 include_once('../Includes/AdminManager.php');
 
 use \BusinessLayer\AdminManager;
@@ -422,7 +428,8 @@ $Manager = new AdminManager();
                                         foreach ($Suppliers as $supplier)
                                         {
                                             $id = $supplier['id'];
-                                            echo '<li><a href="#" onclick="SetSupplierId(' . $id . ')">' . $id . '</a></li>';
+                                            echo '<li><a href="#" onclick="SetSupplierId(' . $id . ')">' .
+                                                $supplier['name'] . '</a></li>';
                                         }
                                     ?>
                                 </ul>
@@ -439,27 +446,23 @@ $Manager = new AdminManager();
                             <input required readonly disabled type="text" style="width:100%" id="inputItemCategoryId" />
                         </div>
                         <div class="col-xs-8 col-sm-3 col-md-3">
-                            <?php
-                                $Categories = $Manager->GetAllCategories();
-                                $ids = array();
-
-                                foreach ($Categories as $category)
-                                {
-                                    $ids[] = $category['id'];
-                                }
-                            ?>
                             <div hidden id="divDropCategoryId" class="dropdown">
                                 <button class="dropdown-toggle" type="button"
                                         data-toggle="dropdown">Category Id
                                     <span class="caret"></span></button>
                                 <ul id="ulCategoryId" class="dropdown-menu dropdown-menu-left">
                                     <?php
+                                        $Categories = $Manager->GetAllCategories();
                                         // populate supplier dropdown with supplier ids. clicking an
                                         // id loads it in the supplier id input.
-                                        foreach ($ids as $__ => $id)
+                                        foreach ($Categories as $category)
                                         {
-                                            echo '<li><a href="#" onclick="SetCategoryId(' . $id . ')">' . $id . '</a></li>';
+                                            echo '<li><a href="#" onclick="SetCategoryId(' . $category['id'] . ')">' .
+                                                $category['name'] . '</a></li>';
                                         }
+
+                                        echo '<li><a href="#" onclick="SetCategoryId(-1)">None</a></li>';
+
                                     ?>
                                 </ul>
                             </div>
@@ -515,43 +518,6 @@ $Manager = new AdminManager();
     </script>
 
     <?php include_once("../Includes/footer.php"); ?>
-
-    <?php
-
-        // populate the drop down lists.
-
-        $Categories = $Manager->GetAllCategories();
-
-
-        // populate category dropdown with category ids. clicking an id loads it in the category id input.
-        $html = "";
-
-        foreach ($Categories as $category)
-        {
-            $id = $category['id'];
-            $html .= '<li><a href="#" onclick="SetCategoryId(' . $id . ')">' . $id . '</a></li>';
-        }
-
-        echo '<script type="text/javascript"> $("#ulCategoryId").html(';
-        echo "'" . $html . "'";
-        echo ');</script>';
-
-        $Suppliers = $Manager->GetAllSuppliers();
-
-        // populate supplier dropdown with supplier ids. clicking an id loads it in the supplier id input.
-        $html = "";
-
-        foreach ($Suppliers as $supplier)
-        {
-            $id = $supplier['id'];
-            $html .= '<li><a href="#" onclick="SetSupplierId(' . $id . ')">' . $id . '</a></li>';
-        }
-
-        echo '<script type="text/javascript"> $("#ulSupplierId").html(';
-        echo "'" . $html . "'";
-        echo ');</script>';
-
-    ?>
 
 </body>
 </html>

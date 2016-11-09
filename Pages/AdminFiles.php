@@ -8,6 +8,12 @@
  */
 
 include_once('../Includes/Session.php');
+
+// check timeout
+checkTimeOut();
+// no timeout - update the last access time.
+$_SESSION[\Common\SecurityConstraints::$SessionTimestampLastVisit] = time();
+
 include_once('../Includes/Common.php');
 
 $customerId = "UNKNOWN";

@@ -9,6 +9,12 @@
  */
  
 include_once('../Includes/Session.php');
+
+// check timeout
+checkTimeOut();
+// no timeout - update the last access time.
+$_SESSION[\Common\SecurityConstraints::$SessionTimestampLastVisit] = time();
+
 include_once('../Includes/Common.php');
 include_once("../Includes/CustomerManager.php");
 
@@ -22,6 +28,14 @@ if(isset($_SESSION[\Common\SecurityConstraints::$SessionUserIdKey]))
 
 \Common\Logging::Log('Executing Page. sessionId=' . session_id() . '; customer='
 	. $customerId . "\r\n");
+
+// redirect admin users to the admin page.
+if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey])
+    && isset($_SESSION[\Common\SecurityConstraints::$SessionAdminCheckKey]))
+{
+    header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/AdminOrders.php");
+    exit;
+}
 
 // for adding and updating customers.
 $CustomerManager = new CustomerManager();
@@ -262,14 +276,6 @@ if (isset($_POST["submit"]) && @strcmp($_POST["submit"], $postRegisterKey) === 0
 			}
 		}
 	}	
-}
-
-// redirect admin users to the admin page.
-if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) 
-	&& isset($_SESSION[\Common\SecurityConstraints::$SessionAdminCheckKey]))
-{
-    header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/AdminFiles.php");
-    exit;
 }
 
 
@@ -882,6 +888,8 @@ else
                 <div id="divLeftSidebar" class="col-md-3">
                 </div>
             </div>
+	        <br/>
+            <br/>
 
         </div>
         
