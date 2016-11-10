@@ -14,7 +14,6 @@ include_once('../Session.php');
 // for timeout
 $_SESSION[\Common\SecurityConstraints::$SessionTimestampLastVisit] = time();
 
-
 include_once("../CategoryManager.php");
 include_once('../Common.php');
 

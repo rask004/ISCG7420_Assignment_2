@@ -592,8 +592,6 @@ $capPageSize = \Common\Constants::$HomeCapsTablePageSize;
                     </div>
                     <br/> 
                 </div>
-
-                <?php print_r($_SESSION) ?>
             </div>
         </div>
         <br/>

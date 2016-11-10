@@ -32,7 +32,7 @@ include_once('../Includes/Common.php');
             </span>
     </div>
 
-    <div class="col-xs-8 col-sm-4 col-md-4" style="color: white; text-align: center">
+    <div class="col-xs-8 col-sm-2 col-md-2" style="color: white; text-align: center">
     	<!-- show greeting to vistor / member -->
         <span id="loginGreeting">
                 <?php
@@ -46,6 +46,15 @@ include_once('../Includes/Common.php');
                 }
                 ?>
         </span>
+    </div>
+
+    <div class="col-xs-8 col-sm-2 col-md-2" style="color: white; text-align: center">
+        <script type="text/javascript">
+            var timeoutValue = 1800;    // seconds
+            // if idle for too long, force a page reload.
+            // combined with session timeout, harder to circumvent timeout events.
+            setTimeout(function() { window.location.reload() }, 1000 * timeoutValue);
+        </script>
     </div>
 
 	<!-- copyright data -->
