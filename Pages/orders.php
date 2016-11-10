@@ -7,6 +7,11 @@
  */
 
 include_once('../Includes/Session.php');
+
+// for timeout
+$_SESSION[\Common\SecurityConstraints::$SessionTimestampLastVisit] = time();
+
+
 include_once('../Includes/Common.php');
 include_once("../Includes/OrderManager.php");
 
@@ -25,7 +30,7 @@ $ordersManager = new OrderManager();
 
 if (isset($_SESSION[\Common\SecurityConstraints::$SessionAuthenticationKey]) && isset($_SESSION[\Common\SecurityConstraints::$SessionAdminCheckKey]))
 {
-    header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/AdminFiles.php");
+    header("Location: http://dochyper.unitec.ac.nz/AskewR04/PHP_Assignment/Pages/AdminOrders.php");
     exit;
 }
 

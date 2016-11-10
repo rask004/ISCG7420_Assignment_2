@@ -1310,12 +1310,27 @@ class DataManager
         $description = $this->_conn->real_escape_string($description);
         $imageUrl = $this->_conn->real_escape_string($imageUrl);
         $supplierId = (integer) ($supplierId);
-        $categoryId = (integer) ($categoryId);
+
+        // indicates no category to assign.
+        if ($categoryId  == -1)
+        {
+            $sql =  "insert into Cap (name, price, description, imageUrl, supplierId) values ";
+        }
+        else
+        {
+            $categoryId = (integer) ($categoryId);
+            $sql =  "insert into Cap (name, price, description, imageUrl, supplierId, categoryId) values ";
+        }
+
 
         $this->_conn->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
-        $sql =  "insert into Cap (name, price, description, imageUrl, supplierId, categoryId) values ".
-            "('" . $capName . "'," . $price . ",'" . $description .
-            "','" . $imageUrl . "'," . $supplierId . "," . $categoryId . ");";
+        $sql .= "('" . $capName . "'," . $price . ",'" . $description . "','" . $imageUrl . "'," . $supplierId;
+        if ($categoryId  != -1)
+        {
+            $sql .= "," . $categoryId;
+        }
+        $sql .= ");";
+
         $this->_conn->query($sql);
 
         if (!$this->_conn->commit())

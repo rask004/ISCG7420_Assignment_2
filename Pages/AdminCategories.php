@@ -8,6 +8,11 @@
  */
 
 include_once('../Includes/Session.php');
+
+// for timeout
+$_SESSION[\Common\SecurityConstraints::$SessionTimestampLastVisit] = time();
+
+
 include_once('../Includes/Common.php');
 
 // check and log if this is an Admin
